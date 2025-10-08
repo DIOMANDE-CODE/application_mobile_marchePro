@@ -1,98 +1,218 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import { COLORS, stylesCss } from "@/styles/styles";
+import { Ionicons } from "@expo/vector-icons";
+import { router } from "expo-router";
+import { useState } from "react";
+import {
+  Pressable,
+  ScrollView,
+  Text,
+  TouchableWithoutFeedback,
+  View,
+} from "react-native";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
-import { HelloWave } from '@/components/hello-wave';
-import ParallaxScrollView from '@/components/parallax-scroll-view';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { Link } from 'expo-router';
+export default function TableauBord() {
+  const [menuVisible, setMenuVisible] = useState(false);
 
-export default function HomeScreen() {
+  const toggleMenu = () => {
+    setMenuVisible(!menuVisible);
+  };
+
+  const handleProfile = () => {
+    setMenuVisible(false);
+    router.push("/profil"); 
+  };
+
+  const handleLogout = () => {
+    setMenuVisible(false);
+    router.replace("/(pages)/profil");
+  };
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <Link href="/modal">
-          <Link.Trigger>
-            <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-          </Link.Trigger>
-          <Link.Preview />
-          <Link.Menu>
-            <Link.MenuAction title="Action" icon="cube" onPress={() => alert('Action pressed')} />
-            <Link.MenuAction
-              title="Share"
-              icon="square.and.arrow.up"
-              onPress={() => alert('Share pressed')}
-            />
-            <Link.Menu title="More" icon="ellipsis">
-              <Link.MenuAction
-                title="Delete"
-                icon="trash"
-                destructive
-                onPress={() => alert('Delete pressed')}
-              />
-            </Link.Menu>
-          </Link.Menu>
-        </Link>
+    <SafeAreaProvider>
+      <SafeAreaView style={{ flex: 1 }}>
+        <TouchableWithoutFeedback onPress={() => setMenuVisible(false)}>
+          <View style={styles.container}>
+            {/* Header */}
+            <View style={styles.header}>
+              <Text style={styles.headerTitle}>Tableau de bord</Text>
+              <View style={styles.headerActions}>
+                <Pressable style={styles.iconBtn} onPress={toggleMenu}>
+                  <Ionicons name="person-circle" size={35} color={COLORS.light} />
+                </Pressable>  
+              </View>
+            </View>
+            {menuVisible && (
+                  <View style={stylesCss.menu}>
+                    <Pressable
+                      style={stylesCss.menuItem}
+                      onPress={handleProfile}
+                    >
+                      <Ionicons
+                        name="person-circle-outline"
+                        size={20}
+                        color={COLORS.primary}
+                        style={{ marginRight: 8 }}
+                      />
+                      <Text style={stylesCss.menuText}>Mon profil</Text>
+                    </Pressable>
 
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+                    <Pressable
+                      style={stylesCss.menuItem}
+                      onPress={handleLogout}
+                    >
+                      <Ionicons
+                        name="log-out-outline"
+                        size={20}
+                        color={COLORS.danger}
+                        style={{ marginRight: 8 }}
+                      />
+                      <Text
+                        style={[stylesCss.menuText, { color: COLORS.danger }]}
+                      >
+                        Déconnexion
+                      </Text>
+                    </Pressable>
+                  </View>
+                )}
+
+            <ScrollView style={styles.content}>
+              {/* Section Aujourd'hui */}
+              <View style={styles.section}>
+                <Text style={styles.sectionTitle}>{"Aujourd'hui"}</Text>
+
+                <View style={styles.statsContainer}>
+                  <View style={styles.statCard}>
+                    <Text style={styles.statValue}>1,250€</Text>
+                    <Text style={styles.statLabel}>Ventes</Text>
+                  </View>
+                  <View style={styles.statCard}>
+                    <Text style={styles.statValue}>42</Text>
+                    <Text style={styles.statLabel}>Produits en stock</Text>
+                  </View>
+                </View>
+                <View style={styles.statsContainer}>
+                  <View style={styles.statCard}>
+                    <Text style={styles.statValue}>18</Text>
+                    <Text style={styles.statLabel}>Clients</Text>
+                  </View>
+                  <View style={styles.statCard}>
+                    <Text style={styles.statValue}>5</Text>
+                    <Text style={styles.statLabel}>Stocks faibles</Text>
+                  </View>
+                </View>
+
+                <View style={styles.quickActions}>
+                  <Pressable
+                    style={[styles.btn, styles.btnPrimary]}
+                    onPress={() => router.push("/(tabs)/ventes")}
+                  >
+                    <Text style={styles.btnText}>Ventes du</Text>
+                  </Pressable>
+                  <Pressable style={[styles.btn, styles.btnOutline]}>
+                    <Text
+                      style={[styles.btnText, styles.textPrimary]}
+                      onPress={() => router.push("/(tabs)/produits")}
+                    >
+                      Gérer les stocks
+                    </Text>
+                  </Pressable>
+                </View>
+
+                <View style={[styles.alert, styles.alertWarning]}>
+                  <Ionicons
+                    name="warning-outline"
+                    size={30}
+                    color={COLORS.danger}
+                  />
+                  <View>
+                    <Text style={{ fontWeight: "bold" }}>
+                      5 produits en stock faible
+                    </Text>
+                    <Text>Saumon, Thon, Filet de bœuf...</Text>
+                  </View>
+                </View>
+              </View>
+
+              {/* Section Produits récents */}
+              <View style={styles.section}>
+                <View style={styles.cardHeader}>
+                  <Text style={styles.cardTitle}>Produits récents</Text>
+                  <Pressable>
+                    <Text
+                      style={styles.btnSmall}
+                      onPress={() => router.push("/(tabs)/produits")}
+                    >
+                      Voir tout
+                    </Text>
+                  </Pressable>
+                </View>
+
+                <View style={styles.productCard}>
+                  <Text style={styles.productImage}></Text>
+                  <View style={styles.productInfo}>
+                    <Text style={styles.productName}>Saumon frais</Text>
+                    <Text style={styles.productDetails}>
+                      Poissonnerie • 32.50€/kg
+                    </Text>
+                    <Text style={styles.productPrice}>32.50€/kg</Text>
+                  </View>
+                  <Text style={[styles.productStock, styles.badgeWarning]}>
+                    Stock faible
+                  </Text>
+                </View>
+
+                <View style={styles.productCard}>
+                  <Text style={styles.productImage}></Text>
+                  <View style={styles.productInfo}>
+                    <Text style={styles.productName}>Filet de bœuf</Text>
+                    <Text style={styles.productDetails}>
+                      Boucherie • 24.90€/kg
+                    </Text>
+                    <Text style={styles.productPrice}>24.90€/kg</Text>
+                  </View>
+                  <Text style={[styles.productStock, styles.badgeSuccess]}>
+                    En stock
+                  </Text>
+                </View>
+              </View>
+
+              {/* Section Ventes récentes */}
+              <View style={styles.section}>
+                <View style={styles.cardHeader}>
+                  <Text style={styles.cardTitle}>Ventes récentes</Text>
+                  <Pressable>
+                    <Text
+                      style={styles.btnSmall}
+                      onPress={() => router.push("/(tabs)/ventes")}
+                    >
+                      Voir tout
+                    </Text>
+                  </Pressable>
+                </View>
+
+                <View style={styles.saleItem}>
+                  <View style={styles.saleInfo}>
+                    <Text style={styles.saleClient}>Martin Dupont</Text>
+                    <Text style={styles.saleDetails}>2 produits • 10:24</Text>
+                  </View>
+                  <Text style={styles.saleAmount}>45.80€</Text>
+                </View>
+
+                <View style={styles.saleItem}>
+                  <View style={styles.saleInfo}>
+                    <Text style={styles.saleClient}>Sophie Leroy</Text>
+                    <Text style={styles.saleDetails}>3 produits • 09:15</Text>
+                  </View>
+                  <Text style={styles.saleAmount}>67.20€</Text>
+                </View>
+              </View>
+            </ScrollView>
+          </View>
+        </TouchableWithoutFeedback>
+      </SafeAreaView>
+    </SafeAreaProvider>
   );
 }
 
-const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
-  },
-});
+const styles = stylesCss;
