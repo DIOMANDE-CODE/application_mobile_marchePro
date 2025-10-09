@@ -1,7 +1,7 @@
 import { COLORS, stylesCss } from "@/styles/styles";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import {
   Image,
   Pressable,
@@ -12,27 +12,39 @@ import {
 } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
+import Menu from "@/components/menu";
+
+
+const imgPoisson=require("@/assets/produits/viande.jpg");
+const imgViande=require("@/assets/produits/poisson.jpg");
+
 export default function TableauBord() {
   const [menuVisible, setMenuVisible] = useState(false);
+
+  const VoirPlusVente = useCallback(() => router.push("/(tabs)/ventes"), []);
+  const voirPlusProduit = useCallback(
+    () => router.push("/(tabs)/produits"),
+    []
+  );
 
   const toggleMenu = () => {
     setMenuVisible(!menuVisible);
   };
 
-  const handleProfile = () => {
+  const handleProfile = useCallback(() => {
     setMenuVisible(false);
     router.push("/profil");
-  };
+  }, [setMenuVisible]);
 
-  const handleInfo = () => {
+  const handleInfo = useCallback(() => {
     setMenuVisible(false);
     router.replace("/(pages)/info");
-  };
+  }, [setMenuVisible]);
 
-  const handleLogout = () => {
+  const handleLogout = useCallback(() => {
     setMenuVisible(false);
     router.replace("/login");
-  };
+  }, [setMenuVisible]);
 
   return (
     <SafeAreaProvider>
@@ -53,42 +65,14 @@ export default function TableauBord() {
               </View>
             </View>
             {menuVisible && (
-              <View style={stylesCss.menu}>
-                <Pressable style={stylesCss.menuItem} onPress={handleProfile}>
-                  <Ionicons
-                    name="person-circle-outline"
-                    size={20}
-                    color={COLORS.primary}
-                    style={{ marginRight: 8 }}
-                  />
-                  <Text style={stylesCss.menuText}>Mon profil</Text>
-                </Pressable>
-
-                <Pressable style={stylesCss.menuItem} onPress={handleInfo}>
-                  <Ionicons
-                    name="information-circle-outline"
-                    size={20}
-                    color={COLORS.primary}
-                    style={{ marginRight: 8 }}
-                  />
-                  <Text style={stylesCss.menuText}>Info</Text>
-                </Pressable>
-
-                <Pressable style={stylesCss.menuItem} onPress={handleLogout}>
-                  <Ionicons
-                    name="log-out-outline"
-                    size={20}
-                    color={COLORS.danger}
-                    style={{ marginRight: 8 }}
-                  />
-                  <Text style={[stylesCss.menuText, { color: COLORS.danger }]}>
-                    Déconnexion
-                  </Text>
-                </Pressable>
-              </View>
+              <Menu
+                onProfile={handleProfile}
+                onInfo={handleInfo}
+                onLogout={handleLogout}
+              />
             )}
 
-            <ScrollView style={styles.content}>
+            <ScrollView style={styles.content} removeClippedSubviews={true}>
               {/* Section Aujourd'hui */}
               <View style={styles.section}>
                 <Text style={styles.sectionTitle}>{"Aujourd'hui"}</Text>
@@ -116,10 +100,10 @@ export default function TableauBord() {
 
                 <View style={styles.quickActions}>
                   <Pressable
-                    style={[styles.btn, styles.btnPrimary]}
-                    onPress={() => router.push("/(tabs)/ventes")}
+                    style={[styles.btn, styles.btnSecondary]}
+                    onPress={() => router.push("/(tabs)/rapports")}
                   >
-                    <Text style={styles.btnText}>Ventes du</Text>
+                    <Text style={styles.btnText}>Voir le Rapport</Text>
                   </Pressable>
                   <Pressable style={[styles.btn, styles.btnOutline]}>
                     <Text
@@ -151,10 +135,7 @@ export default function TableauBord() {
                 <View style={styles.cardHeader}>
                   <Text style={styles.cardTitle}>Produits récents</Text>
                   <Pressable>
-                    <Text
-                      style={styles.btnSmall}
-                      onPress={() => router.push("/(tabs)/produits")}
-                    >
+                    <Text style={styles.btnSmall} onPress={voirPlusProduit}>
                       Voir tout
                     </Text>
                   </Pressable>
@@ -163,7 +144,7 @@ export default function TableauBord() {
                 <View style={styles.productCard}>
                   <Image
                     style={styles.productImage}
-                    source={require("@/assets/produits/poisson.jpg")}
+                    source={imgViande}
                   />
                   <View style={styles.productInfo}>
                     <Text style={styles.productName}>Saumon frais</Text>
@@ -180,7 +161,7 @@ export default function TableauBord() {
                 <View style={styles.productCard}>
                   <Image
                     style={styles.productImage}
-                    source={require("@/assets/produits/viande.jpg")}
+                    source={imgPoisson}
                   />
                   <View style={styles.productInfo}>
                     <Text style={styles.productName}>Filet de bœuf</Text>
@@ -200,10 +181,7 @@ export default function TableauBord() {
                 <View style={styles.cardHeader}>
                   <Text style={styles.cardTitle}>Ventes récentes</Text>
                   <Pressable>
-                    <Text
-                      style={styles.btnSmall}
-                      onPress={() => router.push("/(tabs)/ventes")}
-                    >
+                    <Text style={styles.btnSmall} onPress={VoirPlusVente}>
                       Voir tout
                     </Text>
                   </Pressable>

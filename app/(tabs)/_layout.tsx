@@ -17,7 +17,7 @@ export default function TabLayout() {
         options={{
           tabBarIcon: () => (
             <Ionicons
-              size={23}
+              size={30}
               name={pathname === "/" ? "home" : "home-outline"}
               color={COLORS.primary}
             />
@@ -31,7 +31,7 @@ export default function TabLayout() {
           title: "Produits",
           tabBarIcon: () => (
             <Ionicons
-              size={23}
+              size={30}
               name={pathname === "/produits" ? "clipboard" : "clipboard-outline"}
               color={COLORS.primary}
             />
@@ -45,7 +45,7 @@ export default function TabLayout() {
           title: "Ventes",
           tabBarIcon: () => (
             <Ionicons
-              size={23}
+              size={30}
               name={pathname === "/ventes" ? "cart" : "cart-outline"}
               color={COLORS.primary}
             />
@@ -59,7 +59,7 @@ export default function TabLayout() {
           title: "Clients",
           tabBarIcon: () => (
             <Ionicons
-              size={23}
+              size={30}
               name={pathname === "/clients" ? "people" : "people-outline"}
               color={COLORS.primary}
             />
@@ -73,7 +73,7 @@ export default function TabLayout() {
           title: "Rapports",
           tabBarIcon: () => (
             <Ionicons
-              size={23}
+              size={30}
               name={pathname === "/rapports" ? "bar-chart" : "bar-chart-outline"}
               color={COLORS.primary}
             />

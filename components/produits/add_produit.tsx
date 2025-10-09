@@ -2,6 +2,7 @@ import { COLORS, stylesCss } from "@/styles/styles";
 import { Ionicons } from "@expo/vector-icons";
 import { Picker } from "@react-native-picker/picker";
 import {
+    Button,
     Modal,
     ScrollView,
     Text,
@@ -38,6 +39,9 @@ export default function AjoutNouveauProduit({
                 </Text>
 
                 <ScrollView style={styles.modalBody}>
+                    <Text style={styles.label}>Image du produit</Text>
+                    <Button title="Choisir une image" />
+
                   <Text style={styles.label}>Nom du produit</Text>
                   <TextInput
                     style={styles.input}
@@ -81,16 +85,19 @@ export default function AjoutNouveauProduit({
                 </ScrollView>
 
                 <View style={styles.modalFooter}>
-                  <TouchableOpacity
-                    style={[styles.btn]}
-                    onPress={onEditClose}
-                  >
-                    <Ionicons name="close-circle" size={40} color={COLORS.danger}/>
-
+                  <TouchableOpacity style={[styles.btn]} onPress={onEditClose}>
+                    <Ionicons
+                      name="close-circle"
+                      size={40}
+                      color={COLORS.danger}
+                    />
                   </TouchableOpacity>
                   <TouchableOpacity style={[styles.btn]}>
-                    <Ionicons name="add-circle" size={40} color={COLORS.primary}/>
-                    
+                    <Ionicons
+                      name="add-circle"
+                      size={40}
+                      color={COLORS.primary}
+                    />
                   </TouchableOpacity>
                 </View>
               </View>

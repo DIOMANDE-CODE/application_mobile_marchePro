@@ -2,11 +2,14 @@
 import { StyleSheet } from "react-native";
 
 export const COLORS = {
-  primary: "#2c7873",
+  // primary: "#2c7873",
+  primary: "#002f55",
   primaryDark: "#1e5651",
   primaryLight: "#4fa19b",
-  secondary: "#ff7b54",
+  // secondary: "#ff7b54",
+  secondary: "#e7423e",
   secondaryDark: "#e05a3a",
+  // third:"#fff5e8",
   light: "#f8f9fa",
   dark: "#343a40",
   gray: "#6c757d",
@@ -148,8 +151,8 @@ export const stylesCss = StyleSheet.create({
   btnSecondary: {
     backgroundColor: COLORS.secondary,
   },
-  btnSuccess : {
-    backgroundColor : COLORS.success
+  btnSuccess: {
+    backgroundColor: COLORS.success
   },
   btnOutline: {
     backgroundColor: "transparent",
@@ -406,9 +409,11 @@ export const stylesCss = StyleSheet.create({
     textAlign: "center",
   },
   filterBtnActive: {
-    backgroundColor: "#2c7873", // var(--primary)
+    // backgroundColor: "#2c7873", // var(--primary)
+    backgroundColor: "#e7423e",
     color: "white",
-    borderColor: "#2c7873",
+    // borderColor: "#2c7873",
+    borderColor: "#e7423e",
   },
 
   // Clients
@@ -435,17 +440,20 @@ export const stylesCss = StyleSheet.create({
   activeNav: { color: "#2c7873" },
 
   // Couleurs texte
-  textPrimary : {
-    color:COLORS.primary,
+  textPrimary: {
+    color: COLORS.primary,
   },
-  textLight : {
-    color:COLORS.light,
+  textLight: {
+    color: COLORS.light,
   },
-  textDark : {
-    color:COLORS.dark,
+  textDark: {
+    color: COLORS.dark,
   },
-  textSuccess : {
-    color:COLORS.success
+  textSuccess: {
+    color: COLORS.success
+  },
+  textSecondary: {
+    color: COLORS.secondary
   },
 
   // Modal ajouter vente
@@ -528,5 +536,82 @@ export const stylesCss = StyleSheet.create({
   inputGroup: {
     marginBottom: 20,
   },
+
+  // Detail de la vente
+  icon: {
+    color: '#fff',
+    fontSize: 18,
+  },
+  receipt: {
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    padding: 20,
+    marginBottom: 20,
+    borderWidth: 1,
+    borderColor: '#e9ecef',
+  },
+  receiptHeader: {
+    borderBottomWidth: 2,
+    borderBottomColor: '#2c7873',
+    marginBottom: 16,
+    alignItems: 'center',
+  },
+  receiptTitle: {
+    fontSize: 22,
+    fontWeight: '700',
+    color: '#1e5651',
+  },
+  receiptSubtitle: {
+    color: '#6c757d',
+    fontSize: 14,
+  },
+  infoRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 16,
+  },
+  infoLabel: {
+    fontWeight: '600',
+    color: '#1e5651',
+  },
+  infoValue: {
+    color: '#343a40',
+  },
+  summary: {
+    borderTopWidth: 2,
+    borderTopColor: '#2c7873',
+    paddingTop: 10,
+  },
+  summaryLabel: {
+    fontWeight: '500',
+  },
+  summaryValue: {
+    fontWeight: '600',
+  },
+  actions: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 16,
+    gap: 8,
+  },
+  title: { fontSize: 22, fontWeight: "bold" },
+  infoContainer: { flexDirection: "row", justifyContent: "space-between", marginVertical: 12 },
+  table: { borderTopWidth: 1, borderColor: "#ccc", marginTop: 12 },
+  tableRow: { flexDirection: "row", justifyContent: "space-between", paddingVertical: 6, borderBottomWidth: 1, borderColor: "#eee" },
+  cell: { flex: 1, textAlign: "right" },
+  modalButtons: { flexDirection: "row", justifyContent: "space-between" },
+  notification: {
+    position: "absolute",
+    bottom: 30,
+    left: 0,
+    right: 0,
+    alignItems: "center",
+    backgroundColor: "#d4edda",
+    padding: 10,
+    marginHorizontal: 20,
+    borderRadius: 6,
+  },
+  productCategory: { color: "#777", fontSize: 12 },
+
 
 });

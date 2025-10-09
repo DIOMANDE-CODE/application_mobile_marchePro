@@ -2,7 +2,7 @@ import { COLORS, stylesCss } from "@/styles/styles";
 import { Link, router } from "expo-router";
 import { Image, Text, TextInput, TouchableOpacity, View } from "react-native";
 
-export default function PageConnexion() {
+export default function PageInscription() {
   return (
     <View style={stylesCss.loginContainer}>
       {/* HEADER */}
@@ -35,32 +35,32 @@ export default function PageConnexion() {
           />
         </View>
 
-        {/* Bouton connexion */}
+        {/* Bouton inscription */}
         <TouchableOpacity
-          style={[styles.btn, styles.btnPrimary, styles.btnFull]}
+          style={[styles.btn, styles.btnSecondary, styles.btnFull]}
           onPress={() => router.push("/(tabs)")}
         >
-          <Text style={{ color: "white" }}>Se connecter</Text>
+          <Text style={{ color: "white" }}>{"S'inscrire"}</Text>
         </TouchableOpacity>
       </View>
 
-      {/* Lien vers l'inscription */}
+      {/* Lien vers la connexion */}
       <Text style={{ textAlign: "center" }}>
-        Aucun compte ?{" "}
+        Vous avez un compte ?{" "}
         <Link
-          href="/register"
+          href="/login"
           style={{
             fontWeight: "bold",
             color: COLORS.primaryDark,
             textDecorationLine: "underline",
           }}
         >
-          créez un compte
+          Connectez-vous
         </Link>
       </Text>
     </View>
   );
 }
 
-// Code CSS
+// Styles
 const styles = stylesCss;
