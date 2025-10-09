@@ -1,4 +1,5 @@
-import { stylesCss } from "@/styles/styles";
+import { COLORS, stylesCss } from "@/styles/styles";
+import { Ionicons } from "@expo/vector-icons";
 import { useEffect } from "react";
 import {
     Modal,
@@ -35,7 +36,7 @@ export default function EditClient({
         >
           <View style={styles.modalOverlay}>
             <View style={styles.modalContent}>
-              <Text style={styles.modalTitle}>Ajouter un nouveau produit</Text>
+              <Text style={styles.modalTitle}>Detail du client</Text>
 
               <ScrollView style={styles.modalBody}>
                 <Text style={styles.label}>Nom complet</Text>
@@ -67,18 +68,18 @@ export default function EditClient({
               </ScrollView>
 
               <View style={styles.modalFooter}>
-                <TouchableOpacity
-                  style={[styles.btn, styles.btnSecondary]}
-                  onPress={onEditClose}
-                >
-                  <Text style={[styles.btnText, styles.textLight]}>Fermer</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={[styles.btn, styles.btnPrimary]}>
-                  <Text style={[styles.btnText, { color: "#fff" }]}>
-                    Enregistrer
-                  </Text>
-                </TouchableOpacity>
-              </View>
+                  <TouchableOpacity
+                    style={[styles.btn]}
+                    onPress={onEditClose}
+                  >
+                    <Ionicons name="close-circle" size={40} color={COLORS.danger}/>
+
+                  </TouchableOpacity>
+                  <TouchableOpacity style={[styles.btn]}>
+                    <Ionicons name="add-circle" size={40} color={COLORS.primary}/>
+                    
+                  </TouchableOpacity>
+                </View>
             </View>
           </View>
         </Modal>

@@ -2,6 +2,7 @@ import { COLORS, stylesCss } from "@/styles/styles";
 import { Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
 import {
+    Image,
     Pressable,
     ScrollView,
     Text,
@@ -17,7 +18,7 @@ import EditProduit from "@/components/produits/edit_produit";
 export default function Produits() {
   const [isVisible, setIsVisible] = useState(false);
   const [editVisible, setEditVisible] = useState(false);
-  const [idProduit,setIdProduit] = useState<number|null>(null)
+  const [idProduit, setIdProduit] = useState<number | null>(null);
 
   //   Fonction modifier profil
   const modifierProfil = (index: number) => {
@@ -73,7 +74,7 @@ export default function Produits() {
             {/* Produits */}
             {[
               {
-                emoji: "🐟",
+                image: require("@/assets/produits/poisson.jpg"),
                 name: "Saumon frais",
                 details: "Poissonnerie • Réf: P001",
                 price: "32.50€/kg",
@@ -81,7 +82,7 @@ export default function Produits() {
                 stockStyle: styles.badgeWarning,
               },
               {
-                emoji: "🥩",
+                image: require("@/assets/produits/viande.jpg"),
                 name: "Filet de bœuf",
                 details: "Boucherie • Réf: B005",
                 price: "24.90€/kg",
@@ -89,7 +90,7 @@ export default function Produits() {
                 stockStyle: styles.badgeSuccess,
               },
               {
-                emoji: "🦐",
+                image: require("@/assets/produits/poisson.jpg"),
                 name: "Crevettes roses",
                 details: "Poissonnerie • Réf: P012",
                 price: "18.75€/kg",
@@ -97,7 +98,7 @@ export default function Produits() {
                 stockStyle: styles.badgeSuccess,
               },
               {
-                emoji: "🍗",
+                image: require("@/assets/produits/viande.jpg"),
                 name: "Poulet fermier",
                 details: "Boucherie • Réf: B008",
                 price: "12.50€/kg",
@@ -105,7 +106,7 @@ export default function Produits() {
                 stockStyle: styles.badgeWarning,
               },
               {
-                emoji: "🐠",
+                image: require("@/assets/produits/poisson.jpg"),
                 name: "Truite arc-en-ciel",
                 details: "Poissonnerie • Réf: P007",
                 price: "14.20€/kg",
@@ -113,7 +114,7 @@ export default function Produits() {
                 stockStyle: styles.badgeSuccess,
               },
               {
-                emoji: "🐠",
+                image: require("@/assets/produits/poisson.jpg"),
                 name: "Truite arc-en-ciel",
                 details: "Poissonnerie • Réf: P007",
                 price: "14.20€/kg",
@@ -121,8 +122,7 @@ export default function Produits() {
                 stockStyle: styles.badgeSuccess,
               },
               {
-                emoji: "🐠",
-                name: "Truite arc-en-ciel",
+                image: require("@/assets/produits/viande.jpg"),
                 details: "Poissonnerie • Réf: P007",
                 price: "14.20€/kg",
                 stock: "12 kg",
@@ -134,7 +134,7 @@ export default function Produits() {
                 style={styles.productCard}
                 onPress={() => modifierProfil(index)}
               >
-                <Text style={styles.productImage}>{product.emoji}</Text>
+                <Image style={styles.productImage} source={product.image} />
                 <View style={styles.productInfo}>
                   <Text style={styles.productName}>{product.name}</Text>
                   <Text style={styles.productDetails}>{product.details}</Text>

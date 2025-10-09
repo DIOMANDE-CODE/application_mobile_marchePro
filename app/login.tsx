@@ -42,7 +42,7 @@ export default function PageConnexion() {
         <TouchableOpacity
           style={[styles.btn, styles.btnPrimary, styles.btnFull]}
         >
-          <Text style={{ color: "white" }} onPress={() => router.push('/(tabs)')}>
+          <Text style={{ color: "white" }} onPress={() => router.push("/(tabs)")}>
             Se connecter
           </Text>
         </TouchableOpacity>

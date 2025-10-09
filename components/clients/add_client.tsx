@@ -1,4 +1,5 @@
-import { stylesCss } from "@/styles/styles";
+import { COLORS, stylesCss } from "@/styles/styles";
+import { Ionicons } from "@expo/vector-icons";
 import {
     Modal,
     ScrollView,
@@ -29,7 +30,7 @@ export default function AjoutNouveauClient({
         >
           <View style={styles.modalOverlay}>
             <View style={styles.modalContent}>
-              <Text style={styles.modalTitle}>Ajouter un nouveau produit</Text>
+              <Text style={styles.modalTitle}>Nouveau client</Text>
 
               <ScrollView style={styles.modalBody}>
                 <Text style={styles.label}>Nom complet</Text>
@@ -61,18 +62,18 @@ export default function AjoutNouveauClient({
               </ScrollView>
 
               <View style={styles.modalFooter}>
-                <TouchableOpacity
-                  style={[styles.btn, styles.btnSecondary]}
-                  onPress={onClose}
-                >
-                  <Text style={[styles.btnText, styles.textLight]}>Fermer</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={[styles.btn, styles.btnPrimary]}>
-                  <Text style={[styles.btnText, { color: "#fff" }]}>
-                    Enregistrer
-                  </Text>
-                </TouchableOpacity>
-              </View>
+                  <TouchableOpacity
+                    style={[styles.btn]}
+                    onPress={onClose}
+                  >
+                    <Ionicons name="close-circle" size={40} color={COLORS.danger}/>
+
+                  </TouchableOpacity>
+                  <TouchableOpacity style={[styles.btn]}>
+                    <Ionicons name="add-circle" size={40} color={COLORS.primary}/>
+                    
+                  </TouchableOpacity>
+                </View>
             </View>
           </View>
         </Modal>

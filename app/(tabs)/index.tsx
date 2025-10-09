@@ -3,6 +3,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useState } from "react";
 import {
+  Image,
   Pressable,
   ScrollView,
   Text,
@@ -20,12 +21,17 @@ export default function TableauBord() {
 
   const handleProfile = () => {
     setMenuVisible(false);
-    router.push("/profil"); 
+    router.push("/profil");
+  };
+
+  const handleInfo = () => {
+    setMenuVisible(false);
+    router.replace("/(pages)/info");
   };
 
   const handleLogout = () => {
     setMenuVisible(false);
-    router.replace("/(pages)/profil");
+    router.replace("/login");
   };
 
   return (
@@ -38,43 +44,49 @@ export default function TableauBord() {
               <Text style={styles.headerTitle}>Tableau de bord</Text>
               <View style={styles.headerActions}>
                 <Pressable style={styles.iconBtn} onPress={toggleMenu}>
-                  <Ionicons name="person-circle" size={35} color={COLORS.light} />
-                </Pressable>  
+                  <Ionicons
+                    name="person-circle"
+                    size={35}
+                    color={COLORS.light}
+                  />
+                </Pressable>
               </View>
             </View>
             {menuVisible && (
-                  <View style={stylesCss.menu}>
-                    <Pressable
-                      style={stylesCss.menuItem}
-                      onPress={handleProfile}
-                    >
-                      <Ionicons
-                        name="person-circle-outline"
-                        size={20}
-                        color={COLORS.primary}
-                        style={{ marginRight: 8 }}
-                      />
-                      <Text style={stylesCss.menuText}>Mon profil</Text>
-                    </Pressable>
+              <View style={stylesCss.menu}>
+                <Pressable style={stylesCss.menuItem} onPress={handleProfile}>
+                  <Ionicons
+                    name="person-circle-outline"
+                    size={20}
+                    color={COLORS.primary}
+                    style={{ marginRight: 8 }}
+                  />
+                  <Text style={stylesCss.menuText}>Mon profil</Text>
+                </Pressable>
 
-                    <Pressable
-                      style={stylesCss.menuItem}
-                      onPress={handleLogout}
-                    >
-                      <Ionicons
-                        name="log-out-outline"
-                        size={20}
-                        color={COLORS.danger}
-                        style={{ marginRight: 8 }}
-                      />
-                      <Text
-                        style={[stylesCss.menuText, { color: COLORS.danger }]}
-                      >
-                        Déconnexion
-                      </Text>
-                    </Pressable>
-                  </View>
-                )}
+                <Pressable style={stylesCss.menuItem} onPress={handleInfo}>
+                  <Ionicons
+                    name="information-circle-outline"
+                    size={20}
+                    color={COLORS.primary}
+                    style={{ marginRight: 8 }}
+                  />
+                  <Text style={stylesCss.menuText}>Info</Text>
+                </Pressable>
+
+                <Pressable style={stylesCss.menuItem} onPress={handleLogout}>
+                  <Ionicons
+                    name="log-out-outline"
+                    size={20}
+                    color={COLORS.danger}
+                    style={{ marginRight: 8 }}
+                  />
+                  <Text style={[stylesCss.menuText, { color: COLORS.danger }]}>
+                    Déconnexion
+                  </Text>
+                </Pressable>
+              </View>
+            )}
 
             <ScrollView style={styles.content}>
               {/* Section Aujourd'hui */}
@@ -149,7 +161,10 @@ export default function TableauBord() {
                 </View>
 
                 <View style={styles.productCard}>
-                  <Text style={styles.productImage}></Text>
+                  <Image
+                    style={styles.productImage}
+                    source={require("@/assets/produits/poisson.jpg")}
+                  />
                   <View style={styles.productInfo}>
                     <Text style={styles.productName}>Saumon frais</Text>
                     <Text style={styles.productDetails}>
@@ -163,7 +178,10 @@ export default function TableauBord() {
                 </View>
 
                 <View style={styles.productCard}>
-                  <Text style={styles.productImage}></Text>
+                  <Image
+                    style={styles.productImage}
+                    source={require("@/assets/produits/viande.jpg")}
+                  />
                   <View style={styles.productInfo}>
                     <Text style={styles.productName}>Filet de bœuf</Text>
                     <Text style={styles.productDetails}>

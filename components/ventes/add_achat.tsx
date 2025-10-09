@@ -1,7 +1,14 @@
 import { COLORS, stylesCss } from "@/styles/styles";
 import { Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import {
+    Image,
+    Pressable,
+    ScrollView,
+    Text,
+    TouchableOpacity,
+    View
+} from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
 type NouveauAchatProps = {
@@ -20,8 +27,8 @@ export default function AjoutNouveauAchat({
   ]);
 
   const products = [
-    { name: "Saumon frais", details: "32.50€/kg • 3 kg restants" },
-    { name: "Filet de bœuf", details: "24.90€/kg • 15 kg restants" },
+    { image: require("@/assets/produits/poisson.jpg") ,name: "Saumon frais", details: "32.50€/kg • 3 kg restants" },
+    { image: require("@/assets/produits/viande.jpg") , name: "Filet de bœuf", details: "24.90€/kg • 15 kg restants" },
   ];
 
   const increaseQty = (index: number) => {
@@ -44,13 +51,12 @@ export default function AjoutNouveauAchat({
       <SafeAreaView style={{ flex: 1 }}>
         <View style={styles.container}>
           {/* Header */}
-          <View style={styles.header}>
+          <View style={[styles.header, { backgroundColor: COLORS.primary }]}>
+            <Pressable onPress={onClose}>
+              <Ionicons name="arrow-back" size={25} color={COLORS.light} />
+            </Pressable>
             <Text style={styles.headerTitle}>Nouvelle vente</Text>
-            <View style={styles.headerActions}>
-              <TouchableOpacity style={styles.iconBtn} onPress={onClose}>
-                <Ionicons name="arrow-forward" size={25} color={COLORS.light} />
-              </TouchableOpacity>
-            </View>
+            <View style={{ width: 25 }} />
           </View>
 
           <ScrollView style={styles.content}>
@@ -121,13 +127,13 @@ export default function AjoutNouveauAchat({
 
               {products.map((prod, idx) => (
                 <View key={idx} style={styles.productCard}>
-                  <View style={styles.productImage}></View>
+                  <Image style={styles.productImage} source={prod.image} />
                   <View style={styles.productInfo}>
                     <Text style={styles.productName}>{prod.name}</Text>
                     <Text style={styles.productDetails}>{prod.details}</Text>
                   </View>
-                  <TouchableOpacity style={[styles.btn, styles.btnOutline]}>
-                    <Text>Ajouter</Text>
+                  <TouchableOpacity style={[styles.btn]}>
+                    <Ionicons name="add-circle" size={30} color={COLORS.primaryDark}/>
                   </TouchableOpacity>
                 </View>
               ))}
