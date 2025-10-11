@@ -3,12 +3,12 @@ import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import React from "react";
 import {
-    Image,
-    Pressable,
-    ScrollView,
-    Text,
-    TextInput,
-    View,
+  Image,
+  Pressable,
+  ScrollView,
+  Text,
+  TextInput,
+  View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -45,7 +45,7 @@ export default function InfoApplication() {
         {/* Formulaire */}
         <View style={styles.inputGroup}>
           <Text style={styles.label}>Entreprise</Text>
-          <TextInput style={styles.input} value="MarchéPro" />
+          <TextInput style={styles.input} value="MarchéPro" editable={false} />
         </View>
 
         <View style={styles.inputGroup}>

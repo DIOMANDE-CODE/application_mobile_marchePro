@@ -358,7 +358,7 @@ export const stylesCss = StyleSheet.create({
     backgroundColor: "#fff",
     borderRadius: 8,
     width: "90%",
-    maxHeight: "90%",
+    maxHeight: "80%",
     padding: 16,
   },
   modalHeader: {
@@ -462,6 +462,7 @@ export const stylesCss = StyleSheet.create({
     backgroundColor: "rgba(0,0,0,0.5)",
     justifyContent: "center",
     padding: 16,
+    alignItems:"center"
   },
   modalTitle: {
     fontSize: 20,

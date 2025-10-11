@@ -53,10 +53,10 @@ export default function DetailVente({isVisible,onClose}:DetailVenteProps) {
         {/* Produits */}
         <View style={styles.table}>
           {[
-            { produit: "Saumon frais", categorie: "Poissonnerie", qte: "1.2 kg", prix: "32,50€", total: "39,00€" },
-            { produit: "Filet de bœuf", categorie: "Boucherie", qte: "0.8 kg", prix: "24,90€", total: "19,92€" },
-            { produit: "Crevettes roses", categorie: "Poissonnerie", qte: "1.5 kg", prix: "18,75€", total: "28,13€" },
-            { produit: "Poulet fermier", categorie: "Boucherie", qte: "2.0 kg", prix: "12,50€", total: "25,00€" },
+            { produit: "Saumon frais", categorie: "Poissonnerie", qte: "1.2 kg", prix: "32,50FCFA", total: "39,00FCFA" },
+            { produit: "Filet de bœuf", categorie: "Boucherie", qte: "0.8 kg", prix: "24,90FCFA", total: "19,92FCFA" },
+            { produit: "Crevettes roses", categorie: "Poissonnerie", qte: "1.5 kg", prix: "18,75FCFA", total: "28,13FCFA" },
+            { produit: "Poulet fermier", categorie: "Boucherie", qte: "2.0 kg", prix: "12,50FCFA", total: "25,00FCFA" },
           ].map((item, i) => (
             <View key={i} style={styles.tableRow}>
               <View style={{ flex: 2 }}>
@@ -74,19 +74,19 @@ export default function DetailVente({isVisible,onClose}:DetailVenteProps) {
         <View style={styles.summary}>
           <View style={styles.summaryRow}>
             <Text>Sous-total:</Text>
-            <Text>111,05€</Text>
+            <Text>111,05FCFA</Text>
           </View>
           <View style={styles.summaryRow}>
             <Text>TVA (5,5%):</Text>
-            <Text>6,11€</Text>
+            <Text>6,11FCFA</Text>
           </View>
           <View style={styles.summaryRow}>
             <Text>Remise fidélité:</Text>
-            <Text>-5,00€</Text>
+            <Text>-5,00FCFA</Text>
           </View>
           <View style={[styles.summaryRow, styles.summaryTotal]}>
             <Text>TOTAL:</Text>
-            <Text>112,16€</Text>
+            <Text>112,16FCFA</Text>
           </View>
         </View>
 

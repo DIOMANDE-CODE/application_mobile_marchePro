@@ -1,12 +1,13 @@
 import { COLORS, stylesCss } from "@/styles/styles";
 import { Ionicons } from "@expo/vector-icons";
 import { useCallback, useState } from "react";
-import { FlatList, Pressable, Text, View } from "react-native";
+import { Pressable, Text, View } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
 // import des composants
 import AjoutNouveauAchat from "@/components/ventes/add_achat";
 import DetailVente from "@/components/ventes/detail_achat";
+import ListVentes from "@/components/ventes/list_achat";
 
 export default function Ventes() {
   const [showBill, setShowBill] = useState(false);
@@ -121,27 +122,7 @@ export default function Ventes() {
                 </Pressable>
               </View>
             </View>
-            <FlatList
-              style={styles.content}
-              data={ventes}
-              keyExtractor={(item) => item.id}
-              ListHeaderComponent={
-                <Text style={styles.sectionTitle}>{"Ventes du jour"}</Text>
-              }
-              renderItem={({ item }) => (
-                <Pressable onPress={afficherDetail}>
-                  <View style={styles.saleItem}>
-                    <View style={styles.saleInfo}>
-                      <Text style={styles.saleClient}>{item.client}</Text>
-                      <Text style={styles.saleDetails}>{item.details}</Text>
-                    </View>
-                    <Text style={styles.saleAmount}>
-                      {item.amount.toFixed(2)}€
-                    </Text>
-                  </View>
-                </Pressable>
-              )}
-            />
+            <ListVentes data={ventes} onSelectedId={afficherDetail} />
           </View>
         )}
       </SafeAreaView>

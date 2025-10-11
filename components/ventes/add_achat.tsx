@@ -2,12 +2,12 @@ import { COLORS, stylesCss } from "@/styles/styles";
 import { Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
 import {
-    Image,
-    Pressable,
-    ScrollView,
-    Text,
-    TouchableOpacity,
-    View
+  Image,
+  Pressable,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View
 } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
@@ -27,8 +27,8 @@ export default function AjoutNouveauAchat({
   ]);
 
   const products = [
-    { image: require("@/assets/produits/poisson.jpg") ,name: "Saumon frais", details: "32.50€/kg • 3 kg restants" },
-    { image: require("@/assets/produits/viande.jpg") , name: "Filet de bœuf", details: "24.90€/kg • 15 kg restants" },
+    { image: require("@/assets/produits/poisson.jpg") ,name: "Saumon frais", details: "32.50FCFA/kg • 3 kg restants" },
+    { image: require("@/assets/produits/viande.jpg") , name: "Filet de bœuf", details: "24.90FCFA/kg • 15 kg restants" },
   ];
 
   const increaseQty = (index: number) => {
@@ -71,7 +71,7 @@ export default function AjoutNouveauAchat({
                 <View key={index} style={styles.cartItem}>
                   <View style={styles.cartItemInfo}>
                     <Text style={styles.cartItemName}>{item.name}</Text>
-                    <Text style={styles.cartItemDetails}>{item.price}€/kg</Text>
+                    <Text style={styles.cartItemDetails}>{item.price}FCFA/kg</Text>
                   </View>
                   <View style={styles.cartItemActions}>
                     <View style={styles.quantityControl}>
@@ -92,7 +92,7 @@ export default function AjoutNouveauAchat({
                       </TouchableOpacity>
                     </View>
                     <Text style={styles.saleAmount}>
-                      {(item.price * item.qty).toFixed(2)}€
+                      {(item.price * item.qty).toFixed(2)}FCFA
                     </Text>
                   </View>
                 </View>
@@ -103,15 +103,15 @@ export default function AjoutNouveauAchat({
             <View style={styles.cartSummary}>
               <View style={styles.summaryRow}>
                 <Text>Sous-total:</Text>
-                <Text>{subtotal.toFixed(2)}€</Text>
+                <Text>{subtotal.toFixed(2)}FCFA</Text>
               </View>
               <View style={styles.summaryRow}>
                 <Text>TVA (10%):</Text>
-                <Text>{tax.toFixed(2)}€</Text>
+                <Text>{tax.toFixed(2)}FCFA</Text>
               </View>
               <View style={[styles.summaryRow, styles.summaryTotal]}>
                 <Text>Total:</Text>
-                <Text>{total.toFixed(2)}€</Text>
+                <Text>{total.toFixed(2)}FCFA</Text>
               </View>
 
               <TouchableOpacity style={[styles.btn, styles.btnSuccess]}>

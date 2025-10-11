@@ -32,7 +32,7 @@ export default function ProfilUtilisateur() {
         <Pressable onPress={() => router.back()}>
           <Ionicons name="arrow-back" size={25} color={COLORS.light} />
         </Pressable>
-        <Text style={styles.headerTitle}>Profil utilisateur</Text>
+        <Text style={styles.headerTitle}>Profil</Text>
         <View style={{ width: 25 }} />
       </View>
 

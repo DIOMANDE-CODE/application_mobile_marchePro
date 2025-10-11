@@ -3,15 +3,17 @@ import { Ionicons } from "@expo/vector-icons";
 import { Picker } from "@react-native-picker/picker";
 import { useEffect } from "react";
 import {
-    Modal,
-    ScrollView,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    TouchableWithoutFeedback,
-    View,
+  Alert,
+  Modal,
+  ScrollView,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  View
 } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+
 
 type EditProduitProps = {
   identifiant: number | null;
@@ -24,24 +26,25 @@ export default function EditProduit({
   editVisible,
   onEditClose,
 }: EditProduitProps) {
+  const modifierProduit = () => {
+    Alert.alert("SUCCESS","Produit modifié")
+  }
   useEffect(() => {
     console.log("identifiant cliqué ", identifiant);
   });
   return (
     <SafeAreaProvider>
       <SafeAreaView style={{ flex: 1 }}>
-        <TouchableWithoutFeedback>
-          <Modal
-            animationType="slide"
-            visible={editVisible}
-            onRequestClose={onEditClose}
-            transparent={true}
-          >
+        <Modal
+          animationType="slide"
+          visible={editVisible}
+          onRequestClose={onEditClose}
+          transparent={true}
+        >
+          <TouchableWithoutFeedback onPress={onEditClose}>
             <View style={styles.modalOverlay}>
               <View style={styles.modalContent}>
-                <Text style={styles.modalTitle}>
-                  Detail du produit
-                </Text>
+                <Text style={styles.modalTitle}>Detail du produit</Text>
 
                 <ScrollView style={styles.modalBody}>
                   <Text style={styles.label}>Nom du produit</Text>
@@ -57,7 +60,7 @@ export default function EditProduit({
                     <Picker.Item label="Boucherie" value="boucherie" />
                   </Picker>
 
-                  <Text style={styles.label}>Prix (€)</Text>
+                  <Text style={styles.label}>Prix (FCFA)</Text>
                   <TextInput
                     style={styles.input}
                     placeholder="Ex: 32.50"
@@ -87,22 +90,32 @@ export default function EditProduit({
                 </ScrollView>
 
                 <View style={styles.modalFooter}>
-                  <TouchableOpacity
-                    style={[styles.btn]}
-                    onPress={onEditClose}
-                  >
-                    <Ionicons name="close-circle" size={40} color={COLORS.danger}/>
-
+                  <TouchableOpacity style={[styles.btn]} onPress={onEditClose}>
+                    <Ionicons
+                      name="close-circle"
+                      size={30}
+                      color={COLORS.danger}
+                    />
                   </TouchableOpacity>
-                  <TouchableOpacity style={[styles.btn]}>
-                    <Ionicons name="add-circle" size={40} color={COLORS.primary}/>
-                    
+                  <TouchableOpacity style={[styles.btn]} onPress={modifierProduit}>
+                    <Ionicons
+                      name="trash"
+                      size={30}
+                      color={COLORS.danger}
+                    />
+                  </TouchableOpacity>
+                  <TouchableOpacity style={[styles.btn]} onPress={modifierProduit}>
+                    <Ionicons
+                      name="checkmark-circle"
+                      size={30}
+                      color={COLORS.primary}
+                    />
                   </TouchableOpacity>
                 </View>
               </View>
             </View>
-          </Modal>
-        </TouchableWithoutFeedback>
+          </TouchableWithoutFeedback>
+        </Modal>
       </SafeAreaView>
     </SafeAreaProvider>
   );

@@ -8,16 +8,16 @@ export default function Rapports() {
   const [filter, setFilter] = useState("Aujourd'hui");
 
   const stats = [
-    { label: "Chiffre d'affaires", value: "1,250€" },
+    { label: "Chiffre d'affaires", value: "1,250FCFA" },
     { label: "Clients", value: "18" },
     { label: "Produits vendus", value: "42" },
-    { label: "Panier moyen", value: "29.80€" },
+    { label: "Panier moyen", value: "29.80FCFA" },
   ];
 
   const topProducts = [
-    { name: "Saumon frais", category: "Poissonnerie", sales: "420.50€" },
-    { name: "Filet de bœuf", category: "Boucherie", sales: "398.75€" },
-    { name: "Crevettes roses", category: "Poissonnerie", sales: "225.30€" },
+    { name: "Saumon frais", category: "Poissonnerie", sales: "420.50FCFA" },
+    { name: "Filet de bœuf", category: "Boucherie", sales: "398.75FCFA" },
+    { name: "Crevettes roses", category: "Poissonnerie", sales: "225.30FCFA" },
   ];
 
   const filters = ["Aujourd'hui", "Semaine", "Mois", "Année"];
@@ -59,7 +59,7 @@ export default function Rapports() {
             {/* Statistiques */}
             <View style={styles.statsContainer}>
               <View style={styles.statCard}>
-                <Text style={styles.statValue}>1,250€</Text>
+                <Text style={styles.statValue}>1,250FCFA</Text>
                 <Text style={styles.statLabel}>{"Chiffre d'affaire"}</Text>
               </View>
               <View style={styles.statCard}>

@@ -1,12 +1,13 @@
 import { COLORS, stylesCss } from "@/styles/styles";
 import { Ionicons } from "@expo/vector-icons";
 import { useCallback, useState } from "react";
-import { FlatList, Image, Pressable, Text, TouchableOpacity, View } from "react-native";
+import { Pressable, Text, View } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
 // import des composants
 import AjoutNouveauProduit from "@/components/produits/add_produit";
 import EditProduit from "@/components/produits/edit_produit";
+import ListProduits from "@/components/produits/list_produit";
 
 export default function Produits() {
   const [isVisible, setIsVisible] = useState(false);
@@ -18,7 +19,7 @@ export default function Produits() {
       image: require("@/assets/produits/poisson.jpg"),
       name: "Saumon frais",
       details: "Poissonnerie • Réf: P001",
-      price: "32.50€/kg",
+      price: "32.50FCFA/kg",
       stock: "3 kg",
       stockStyle: styles.badgeWarning,
     },
@@ -26,7 +27,7 @@ export default function Produits() {
       image: require("@/assets/produits/viande.jpg"),
       name: "Filet de bœuf",
       details: "Boucherie • Réf: B005",
-      price: "24.90€/kg",
+      price: "24.90FCFA/kg",
       stock: "15 kg",
       stockStyle: styles.badgeSuccess,
     },
@@ -34,7 +35,7 @@ export default function Produits() {
       image: require("@/assets/produits/poisson.jpg"),
       name: "Crevettes roses",
       details: "Poissonnerie • Réf: P012",
-      price: "18.75€/kg",
+      price: "18.75FCFA/kg",
       stock: "8 kg",
       stockStyle: styles.badgeSuccess,
     },
@@ -42,7 +43,7 @@ export default function Produits() {
       image: require("@/assets/produits/viande.jpg"),
       name: "Poulet fermier",
       details: "Boucherie • Réf: B008",
-      price: "12.50€/kg",
+      price: "12.50FCFA/kg",
       stock: "2 kg",
       stockStyle: styles.badgeWarning,
     },
@@ -50,7 +51,7 @@ export default function Produits() {
       image: require("@/assets/produits/poisson.jpg"),
       name: "Truite arc-en-ciel",
       details: "Poissonnerie • Réf: P007",
-      price: "14.20€/kg",
+      price: "14.20FCFA/kg",
       stock: "12 kg",
       stockStyle: styles.badgeSuccess,
     },
@@ -58,7 +59,7 @@ export default function Produits() {
       image: require("@/assets/produits/poisson.jpg"),
       name: "Truite arc-en-ciel",
       details: "Poissonnerie • Réf: P007",
-      price: "14.20€/kg",
+      price: "14.20FCFA/kg",
       stock: "12 kg",
       stockStyle: styles.badgeSuccess,
     },
@@ -66,17 +67,18 @@ export default function Produits() {
       image: require("@/assets/produits/viande.jpg"),
       name: "Côte de porc",
       details: "Poissonnerie • Réf: P007",
-      price: "14.20€/kg",
+      price: "14.20FCFA/kg",
       stock: "12 kg",
       stockStyle: styles.badgeSuccess,
     },
   ];
 
   //   Fonction modifier profil
-  const modifierProfil = useCallback((index: number) => {
+  const modifierProduit = useCallback((index: number) => {
     setEditVisible(true);
     setIdProduit(index);
-  },[]);
+  }, []);
+
   return (
     <SafeAreaProvider>
       <SafeAreaView style={{ flex: 1 }}>
@@ -106,44 +108,7 @@ export default function Produits() {
             onEditClose={() => setEditVisible(false)}
           />
           {/* Contenu principal */}
-          <FlatList
-            style={styles.content}
-            data={Produits}
-            keyExtractor={(item, index) => index.toString()}
-            ListHeaderComponent={
-              <View style={styles.filters}>
-                <Pressable style={[styles.filterBtn, styles.filterBtnActive]}>
-                  <Text style={styles.textLight}>Tous</Text>
-                </Pressable>
-                <Pressable style={styles.filterBtn}>
-                  <Text>Poissonnerie</Text>
-                </Pressable>
-                <Pressable style={styles.filterBtn}>
-                  <Text>Boucherie</Text>
-                </Pressable>
-                <Pressable style={styles.filterBtn}>
-                  <Text>Stocks faibles</Text>
-                </Pressable>
-              </View>
-            }
-            renderItem={({ item, index }) => (
-              <TouchableOpacity
-                key={index}
-                style={styles.productCard}
-                onPress={() => modifierProfil(index)}
-              >
-                <Image style={styles.productImage} source={item.image} />
-                <View style={styles.productInfo}>
-                  <Text style={styles.productName}>{item.name}</Text>
-                  <Text style={styles.productDetails}>{item.details}</Text>
-                  <Text style={styles.productPrice}>{item.price}</Text>
-                </View>
-                <Text style={[styles.productStock, item.stockStyle]}>
-                  {item.stock}
-                </Text>
-              </TouchableOpacity>
-            )}
-          />
+          <ListProduits data={Produits} onSelectProduit={modifierProduit} />
         </View>
       </SafeAreaView>
     </SafeAreaProvider>

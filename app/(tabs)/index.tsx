@@ -79,7 +79,7 @@ export default function TableauBord() {
 
                 <View style={styles.statsContainer}>
                   <View style={styles.statCard}>
-                    <Text style={styles.statValue}>1,250€</Text>
+                    <Text style={styles.statValue}>1,250FCFA</Text>
                     <Text style={styles.statLabel}>Ventes</Text>
                   </View>
                   <View style={styles.statCard}>
@@ -149,9 +149,9 @@ export default function TableauBord() {
                   <View style={styles.productInfo}>
                     <Text style={styles.productName}>Saumon frais</Text>
                     <Text style={styles.productDetails}>
-                      Poissonnerie • 32.50€/kg
+                      Poissonnerie • 32.50FCFA/kg
                     </Text>
-                    <Text style={styles.productPrice}>32.50€/kg</Text>
+                    <Text style={styles.productPrice}>32.50FCFA/kg</Text>
                   </View>
                   <Text style={[styles.productStock, styles.badgeWarning]}>
                     Stock faible
@@ -166,9 +166,9 @@ export default function TableauBord() {
                   <View style={styles.productInfo}>
                     <Text style={styles.productName}>Filet de bœuf</Text>
                     <Text style={styles.productDetails}>
-                      Boucherie • 24.90€/kg
+                      Boucherie • 24.90FCFA/kg
                     </Text>
-                    <Text style={styles.productPrice}>24.90€/kg</Text>
+                    <Text style={styles.productPrice}>24.90FCFA/kg</Text>
                   </View>
                   <Text style={[styles.productStock, styles.badgeSuccess]}>
                     En stock
@@ -192,7 +192,7 @@ export default function TableauBord() {
                     <Text style={styles.saleClient}>Martin Dupont</Text>
                     <Text style={styles.saleDetails}>2 produits • 10:24</Text>
                   </View>
-                  <Text style={styles.saleAmount}>45.80€</Text>
+                  <Text style={styles.saleAmount}>45.80FCFA</Text>
                 </View>
 
                 <View style={styles.saleItem}>
@@ -200,7 +200,7 @@ export default function TableauBord() {
                     <Text style={styles.saleClient}>Sophie Leroy</Text>
                     <Text style={styles.saleDetails}>3 produits • 09:15</Text>
                   </View>
-                  <Text style={styles.saleAmount}>67.20€</Text>
+                  <Text style={styles.saleAmount}>67.20FCFA</Text>
                 </View>
               </View>
             </ScrollView>

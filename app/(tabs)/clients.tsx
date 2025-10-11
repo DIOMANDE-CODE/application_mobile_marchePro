@@ -1,20 +1,15 @@
 import { COLORS, stylesCss } from "@/styles/styles";
 import { Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
-import {
-  FlatList,
-  Pressable,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Pressable, Text, View } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
 // Import des composants
 import AjoutNouveauClient from "@/components/clients/add_client";
 import EditClient from "@/components/clients/edit_client";
+import ListeDesClients from "@/components/clients/list_client";
 
-export default function Clients() {
+export default function ListClients() {
   const [isVisible, setIsVisible] = useState(false);
   const [editVisible, setEditVisible] = useState(false);
   const [idClient, setIdClient] = useState<number | null>(null);
@@ -92,48 +87,7 @@ export default function Clients() {
             onEditClose={() => setEditVisible(false)}
           />
         )}
-        <FlatList
-          style={styles.content}
-          data={clients}
-          keyExtractor={(item) => item.id.toString()}
-          ListHeaderComponent={
-            <View style={styles.filters}>
-              <TouchableOpacity
-                style={[styles.filterBtn, styles.filterBtnActive]}
-              >
-                <Text style={styles.textLight}>Tous</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.filterBtn}>
-                <Text>Fidèles</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.filterBtn}>
-                <Text>Nouveaux</Text>
-              </TouchableOpacity>
-            </View>
-          }
-          renderItem={({ item }) => (
-            <TouchableOpacity
-              key={item.id}
-              style={styles.listItem}
-              onPress={() => modifierClient(item.id)}
-            >
-              <View style={styles.listItemContent}>
-                <Text style={styles.listItemTitle}>{item.name}</Text>
-                <Text style={styles.listItemSubtitle}>
-                  {item.email} • {item.phone}
-                </Text>
-                <Text style={styles.listItemSubtitle}>
-                  {item.purchases} achats • {item.total.toFixed(2)}€ total
-                </Text>
-              </View>
-              {item.badge && (
-                <TouchableOpacity style={[styles.badge, styles.badgePrimary]}>
-                  <Text style={styles.badgeText}>{item.badge}</Text>
-                </TouchableOpacity>
-              )}
-            </TouchableOpacity>
-          )}
-        />
+        <ListeDesClients data={clients} onSelectedId={modifierClient} />
       </SafeAreaView>
     </SafeAreaProvider>
   );
