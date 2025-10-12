@@ -1,32 +1,59 @@
+import api from "@/services/api";
 import { COLORS, stylesCss } from "@/styles/styles";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
+import * as SecureStore from "expo-secure-store";
 import React, { useState } from "react";
 import {
+  ActivityIndicator,
+  Alert,
   Image,
   Pressable,
   ScrollView,
   Text,
   TextInput,
-  View,
+  View
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+
+
 
 export default function ProfilUtilisateur() {
   const [nom, setNom] = useState("Martin Dupont");
   const [email, setEmail] = useState("martin.dupont@example.com");
   const [telephone, setTelephone] = useState("+33 6 45 78 90 12");
+  const [loading, setLoading] = useState(false)
 
   const handleSave = () => {
     alert("Profil mis à jour avec succès !");
   };
 
-  const handleLogout = () => {
-    router.replace("/login");
+  const deconnexion = async () => {
+    console.log("Deconnexion");
+    
+    setLoading(true)
+    try {
+      const response = await api.post("/authentification/logout/")
+      if (response.status === 200 || response.status === 201){
+        Alert.alert("Succès","Deconnexion réussie")
+        await SecureStore.deleteItemAsync("auth_token")
+        delete api.defaults.headers.common["Authorization"]
+        // router.replace("/login");
+      }
+    }
+    catch {
+      Alert.alert("Erreur","Echec de la deconnexion")
+    }
+    finally {
+      setLoading(false)
+    }
+  
   };
-
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.light }}>
+      {
+        loading && <View style={{flex:1,alignItems:"center",justifyContent:"center"}}><ActivityIndicator size="large" color={COLORS.primary}/></View>
+      }
       {/* ===== HEADER ===== */}
       <View style={[styles.header, { backgroundColor: COLORS.primary }]}>
         <Pressable onPress={() => router.back()}>
@@ -94,7 +121,7 @@ export default function ProfilUtilisateur() {
 
         <Pressable
           style={[styles.btn, styles.btnDanger, { marginTop: 10 }]}
-          onPress={handleLogout}
+          onPress={deconnexion}
         >
           <Text style={[styles.btnText, styles.textLight]}>Déconnexion</Text>
         </Pressable>

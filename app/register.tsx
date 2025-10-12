@@ -74,10 +74,10 @@ export default function PageInscription() {
     setLoading(true);
     try {
       const response = await api.post("/utilisateurs/create/", {
-        email_utilisateur: email,
-        nom_utilisateur: nom,
-        password: password,
-        numero_telephone_utilisateur:numero,
+        email_utilisateur: email.trim(),
+        nom_utilisateur: nom.trim(),
+        password: password.trim(),
+        numero_telephone_utilisateur:numero.trim(),
       });
       if (response.status === 200 || response.status === 201) {
         Alert.alert(
@@ -99,6 +99,9 @@ export default function PageInscription() {
         const message = error.response.data;
         if (status === 400) {
           Alert.alert("Erreur 400", message?.errors || "Erreur survenue");
+        }
+        else if (status === 404){
+          Alert.alert("Erreur",message?.errors || "Aucun compte associé à ce compte")
         }
         else if (status === 500) {
           Alert.alert("Erreur 500", message?.errors || "Erreur survenue au niveau du serveur");
