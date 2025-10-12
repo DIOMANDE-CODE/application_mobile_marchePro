@@ -12,6 +12,7 @@ import {
   View,
 } from "react-native";
 
+import CONFIG from "@/constants/config";
 import * as SecureStore from "expo-secure-store";
 
 export default function PageConnexion() {
@@ -28,6 +29,8 @@ export default function PageConnexion() {
   };
 
   const Connexion_utilisateur = async () => {
+    console.log("Connexion.....", CONFIG.API_IMAGE_BASE_URL);
+    
     // Verification des champs saisi
     let hasError = false;
     if (!password.trim()) {

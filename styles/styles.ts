@@ -151,6 +151,9 @@ export const stylesCss = StyleSheet.create({
   btnSecondary: {
     backgroundColor: COLORS.secondary,
   },
+  btnThird: {
+    backgroundColor: COLORS.dark,
+  },
   btnSuccess: {
     backgroundColor: COLORS.success
   },
