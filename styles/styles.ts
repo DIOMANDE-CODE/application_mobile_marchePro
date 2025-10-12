@@ -455,6 +455,9 @@ export const stylesCss = StyleSheet.create({
   textSecondary: {
     color: COLORS.secondary
   },
+  textDanger: {
+    color: COLORS.danger
+  },
 
   // Modal ajouter vente
   modalOverlay: {

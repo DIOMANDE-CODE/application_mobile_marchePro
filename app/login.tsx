@@ -19,7 +19,7 @@ export default function PageConnexion() {
       {/* FORMULAIRE */}
       <View style={styles.loginForm}>
         <View style={styles.formGroup}>
-          <Text style={styles.formLabel}>{"Nom d'utilisateur"}</Text>
+          <Text style={styles.formLabel}>{"Email du vendeur"}</Text>
           <TextInput
             style={styles.formControl}
             placeholder="Entrez votre nom d'utilisateur"
