@@ -61,7 +61,6 @@ export default function PageConnexion() {
           await SecureStore.setItemAsync("auth_token", token);
           await attachTokenToApi();
           router.replace("/(tabs)");
-          Alert.alert("Succès", "Connexion réussie");
         }
 
         setEmail("");

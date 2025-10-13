@@ -6,18 +6,14 @@ import { FlatList, Text, TouchableOpacity, View } from "react-native";
 
 // Declaration des types
 type Client = {
-  id: number;
-  name: string;
-  email: string;
-  phone: string;
-  purchases: number;
-  total: number;
-  badge?: string;
+  identifiant_client:string;
+  nom_client:string,
+  numero_telephone_client:string
 };
 
 type ListeDesClientsProps = {
   data: Client[];
-  onSelectedId: (id: number) => void;
+  onSelectedId: (id: string) => void;
 };
 
 const ListeDesClients = ({ data, onSelectedId }: ListeDesClientsProps) => {
@@ -25,7 +21,12 @@ const ListeDesClients = ({ data, onSelectedId }: ListeDesClientsProps) => {
     <FlatList
       style={styles.content}
       data={data}
-      keyExtractor={(item) => item.id.toString()}
+      keyExtractor={(item) => item.identifiant_client.toString()}
+      ListEmptyComponent={
+        <View style={{ alignItems: "center", paddingVertical: 40 }}>
+          <Text style={{ color: "#888", fontSize: 16 }}>Aucun client trouvé</Text>
+        </View>
+      }
       ListHeaderComponent={
         <View style={styles.filters}>
           <TouchableOpacity style={[styles.filterBtn, styles.filterBtnActive]}>
@@ -41,24 +42,24 @@ const ListeDesClients = ({ data, onSelectedId }: ListeDesClientsProps) => {
       }
       renderItem={({ item }) => (
         <TouchableOpacity
-          key={item.id}
+          key={item.identifiant_client}
           style={styles.productCard}
-          onPress={() => onSelectedId(item.id)}
+          onPress={() => onSelectedId(item.identifiant_client)}
         >
           <View style={styles.listItemContent}>
-            <Text style={styles.listItemTitle}>{item.name}</Text>
-            <Text style={styles.listItemSubtitle}>
-              {item.email} • {item.phone}
+            <Text style={styles.listItemTitle}>Nom & Prénoms: </Text><Text style={[styles.listItemTitle, { fontWeight: "bold" }]}>{item.nom_client}</Text>
+            <Text style={styles.listItemTitle}>Numéro: </Text><Text style={[styles.listItemTitle, { fontWeight: "bold" }]}>
+              {item.numero_telephone_client}
             </Text>
-            <Text style={styles.listItemSubtitle}>
+            {/* <Text style={styles.listItemSubtitle}>
               {item.purchases} achats • {item.total.toFixed(2)}€ total
-            </Text>
+            </Text> */}
           </View>
-          {item.badge && (
+          {/* {item.badge && (
             <TouchableOpacity style={[styles.badge, styles.badgePrimary]}>
               <Text style={styles.badgeText}>{item.badge}</Text>
             </TouchableOpacity>
-          )}
+          )} */}
         </TouchableOpacity>
       )}
     />

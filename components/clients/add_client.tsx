@@ -1,6 +1,10 @@
+import api from "@/services/api";
 import { COLORS, stylesCss } from "@/styles/styles";
 import { Ionicons } from "@expo/vector-icons";
+import { useState } from "react";
 import {
+  ActivityIndicator,
+  Alert,
   Modal,
   ScrollView,
   Text,
@@ -20,6 +24,66 @@ export default function AjoutNouveauClient({
   visible,
   onClose,
 }: NouveauClientProps) {
+  const [nom, setNom] = useState("");
+  const [numero, setNumero] = useState("");
+  const [erreurNom, setErreurNom] = useState("");
+  const [erreurNumero, setErreurNumero] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  // Fonction de validation du numero
+  const validationNumeroCI = (numero: string) => {
+    const regex = /^(?:\+225|00225)?(01|05|07|25|27)\d{8}$/;
+    return regex.test(numero);
+  };
+
+  const ajouterNouveauClient = async () => {
+    setErreurNom("");
+    setErreurNumero("");
+    // Verifier les champs
+    let hasError = false;
+    if (!nom.trim()) {
+      setErreurNom("Ce champs est obligatoire");
+      hasError = true;
+    }
+    if (!numero.trim()) {
+      setErreurNumero("Ce champs est obligatoire");
+      hasError = true;
+    } else if (!validationNumeroCI(numero)) {
+      setErreurNumero("Numero invalide");
+      hasError=true
+    }
+    if (hasError) return;
+
+    // Appel API
+    setLoading(true);
+    try {
+      const response = await api.post("/clients/create/",{
+        nom_client:nom,
+        numero_telephone_client:numero
+      });
+      if (response.status === 200 || response.status === 201) {
+        Alert.alert("Succès", "Nouveau client ajouté");
+        onClose();
+      }
+    } catch (error: any) {
+      if (error.response) {
+        const status = error.response.status;
+        const message = error.response.data;
+
+        if (status === 400) {
+          Alert.alert("", message.errors || "Erreur de saisie");
+        } else if (status === 500) {
+          Alert.alert("Erreur 500", "Erreur survenue au serveur");
+        } else if (status === 401) {
+          Alert.alert("", "Mot de passe incorrecte");
+        } else {
+          Alert.alert("Erreur", error.message || "Erreur survenue");
+        }
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <SafeAreaProvider>
       <SafeAreaView style={{ flex: 1 }}>
@@ -36,30 +100,26 @@ export default function AjoutNouveauClient({
 
                 <ScrollView style={styles.modalBody}>
                   <Text style={styles.label}>Nom complet</Text>
+                  {erreurNom && (
+                    <Text style={styles.textDanger}>{erreurNom}</Text>
+                  )}
                   <TextInput
                     style={styles.input}
-                    placeholder="Ex: Martin Dupont"
-                  />
-
-                  <Text style={styles.label}>Email</Text>
-                  <TextInput
-                    style={styles.input}
-                    placeholder="Ex: martin.dupont@email.com"
-                    keyboardType="email-address"
+                    placeholder="Ex: Konan Marcel"
+                    value={nom}
+                    onChangeText={setNom}
                   />
 
                   <Text style={styles.label}>Téléphone</Text>
+                  {erreurNumero && (
+                    <Text style={styles.textDanger}>{erreurNumero}</Text>
+                  )}
                   <TextInput
                     style={styles.input}
-                    placeholder="Ex: 06 12 34 56 78"
+                    placeholder="Ex: XX XX XX XX XX"
                     keyboardType="phone-pad"
-                  />
-
-                  <Text style={styles.label}>Adresse</Text>
-                  <TextInput
-                    style={[styles.input, styles.textArea]}
-                    placeholder="Adresse complète"
-                    multiline
+                    value={numero}
+                    onChangeText={setNumero}
                   />
                 </ScrollView>
 
@@ -71,13 +131,20 @@ export default function AjoutNouveauClient({
                       color={COLORS.danger}
                     />
                   </TouchableOpacity>
-                  <TouchableOpacity style={[styles.btn]}>
-                    <Ionicons
-                      name="add-circle"
-                      size={30}
-                      color={COLORS.primary}
-                    />
-                  </TouchableOpacity>
+                  {loading ? (
+                    <ActivityIndicator color={COLORS.primary} />
+                  ) : (
+                    <TouchableOpacity
+                      style={[styles.btn]}
+                      onPress={ajouterNouveauClient}
+                    >
+                      <Ionicons
+                        name="add-circle"
+                        size={30}
+                        color={COLORS.primary}
+                      />
+                    </TouchableOpacity>
+                  )}
                 </View>
               </View>
             </View>
