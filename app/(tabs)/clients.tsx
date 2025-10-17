@@ -2,8 +2,9 @@ import api from "@/services/api";
 import { COLORS, stylesCss } from "@/styles/styles";
 import { Ionicons } from "@expo/vector-icons";
 import { useEffect, useState } from "react";
-import { Alert, Pressable, Text, View } from "react-native";
+import { ActivityIndicator, Alert, Pressable, Text, View } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+
 
 // Import des composants
 import AjoutNouveauClient from "@/components/clients/add_client";
@@ -11,19 +12,20 @@ import EditClient from "@/components/clients/edit_client";
 import ListeDesClients from "@/components/clients/list_client";
 
 interface Tache {
-  identifiant_client:string;
-  nom_client:string,
-  numero_telephone_client:string
+  identifiant_client: string;
+  nom_client: string;
+  numero_telephone_client: string;
 }
 
 export default function ListClients() {
   const [isVisible, setIsVisible] = useState(false);
   const [editVisible, setEditVisible] = useState(false);
   const [idClient, setIdClient] = useState<string | null>(null);
-  const [client,setClient]  = useState<Tache[]>([])
+  const [client, setClient] = useState<Tache[]>([]);
+  const [loading, setLoading] = useState(false);
 
   //   Fonction modifier client
-  const modifierClient = (id:string ) => {
+  const modifierClient = (id: string) => {
     setIdClient(id);
     setEditVisible(true);
   };
@@ -34,8 +36,7 @@ export default function ListClients() {
       const response = await api.get("/clients/list/");
       if (response.status === 200) {
         const data = response.data;
-        console.log(data.data);
-        setClient(data.data)
+        setClient(data.data);
       }
     } catch (error: any) {
       if (error.response) {
@@ -55,11 +56,19 @@ export default function ListClients() {
     }
   };
 
+  // Foncton rafraichir la page
+  const refreshPage = () => {
+    setLoading(true);
+    listeClient();
+    setLoading(false);
+  }
+
   // Pre-chargement
   useEffect(() => {
-    listeClient()
-  },[isVisible,editVisible,idClient])
+    listeClient();
+  }, [isVisible, editVisible, idClient]);
 
+  if (loading) return (<ActivityIndicator size="large" color={COLORS.primary} style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}/>);
   return (
     <SafeAreaProvider>
       <SafeAreaView style={{ flex: 1 }}>
@@ -67,14 +76,14 @@ export default function ListClients() {
         <View style={styles.header}>
           <Text style={styles.headerTitle}>Gestion des clients</Text>
           <View style={styles.headerActions}>
-            <Pressable
+            {/* <Pressable
               style={styles.iconBtn}
               onPress={() => setIsVisible(!isVisible)}
             >
               <Ionicons name="add-circle" size={25} color={COLORS.light} />
-            </Pressable>
-            <Pressable style={styles.iconBtn}>
-              <Ionicons name="search" size={25} color={COLORS.light} />
+            </Pressable> */}
+            <Pressable style={styles.iconBtn} onPress={refreshPage}>
+              <Ionicons name="reload-circle" size={25} color={COLORS.light} />
             </Pressable>
           </View>
         </View>

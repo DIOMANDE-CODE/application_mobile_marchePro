@@ -6,6 +6,7 @@ export default function PagesLayout() {
     <Stack>
       <Stack.Screen name="profil" options={{ headerShown: false }} />
       <Stack.Screen name="info" options={{ headerShown: false }} />
+      <Stack.Screen name="facture" options={{ headerShown: false }} />
     </Stack>
   );
 }

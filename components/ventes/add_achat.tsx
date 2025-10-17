@@ -1,13 +1,19 @@
+import CONFIG from "@/constants/config";
+import api from "@/services/api";
 import { COLORS, stylesCss } from "@/styles/styles";
+import { formatMoneyFR } from "@/utils/moneyFormat";
 import { Ionicons } from "@expo/vector-icons";
-import { useState } from "react";
+import { router } from "expo-router";
+import { useEffect, useState } from "react";
 import {
+  Alert,
   Image,
   Pressable,
   ScrollView,
   Text,
+  TextInput,
   TouchableOpacity,
-  View
+  View,
 } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
@@ -16,36 +22,208 @@ type NouveauAchatProps = {
   onClose: () => void;
 };
 
+type Categorie = {
+  identifiant_categorie: string;
+  nom_categorie: string;
+};
+type Produit = {
+  identifiant_produit: string;
+  image_produit: string;
+  nom_produit: string;
+  prix_unitaire_produit: number;
+  quantite_produit_disponible: number;
+  seuil_alerte_produit: number;
+  categorie_produit: Categorie;
+};
+
+type Cart = {
+  identifiant_produit: string;
+  nom_produit: string;
+  prix_unitaire_produit: number;
+  quantite_produit_disponible: number;
+  quantite_total_produit?: number;
+};
+
 export default function AjoutNouveauAchat({
   visible,
   onClose,
 }: NouveauAchatProps) {
-  const [cart, setCart] = useState([
-    { name: "Saumon frais", price: 32.5, qty: 1.2 },
-    { name: "Filet de bœuf", price: 24.9, qty: 0.8 },
-    { name: "Crevettes roses", price: 18.75, qty: 1.5 },
-  ]);
+  const [produits, setProduits] = useState<Produit[]>([]);
+  const [cart, setCart] = useState<Cart[]>([]);
+  const [voirPanier, setVoirPanier] = useState(true);
+  const [nom, setNom] = useState("");
+  const [numero, setNumero] = useState("");
+  const [erreurNom, setErreurNom] = useState("");
+  const [erreurNumero, setErreurNumero] = useState("");
 
-  const products = [
-    { image: require("@/assets/produits/poisson.jpg") ,name: "Saumon frais", details: "32.50FCFA/kg • 3 kg restants" },
-    { image: require("@/assets/produits/viande.jpg") , name: "Filet de bœuf", details: "24.90FCFA/kg • 15 kg restants" },
-  ];
-
-  const increaseQty = (index: number) => {
-    const newCart = [...cart];
-    newCart[index].qty += 0.1;
-    setCart(newCart);
+  // fonction validation numero
+    // Fonction de validation du numero
+  const validationNumeroCI = (numero: string) => {
+    const regex = /^(?:\+225|00225)?(01|05|07|25|27)\d{8}$/;
+    return regex.test(numero);
   };
 
-  const decreaseQty = (index: number) => {
-    const newCart = [...cart];
-    newCart[index].qty = Math.max(newCart[index].qty - 0.1, 0);
-    setCart(newCart);
+  // Voir resumé de la vente
+  const ValiderVente = () => {
+    if (!cart.length) {
+      Alert.alert("", "Aucun article dans le panier");
+      return;
+    } else {
+      // Verifier les champs
+      let hasError = false;
+      if (!nom.trim()) {
+        setErreurNom("Ce champs est obligatoire");
+        hasError = true;
+      }
+      if (!numero.trim()) {
+        setErreurNumero("Ce champs est obligatoire");
+        hasError = true;
+      } else if (!validationNumeroCI(numero)) {
+        setErreurNumero("Numero invalide (respecter le Format CI)");
+        hasError = true;
+      }
+      if (hasError) return;
+      const facture = {
+        client: {
+          nom_client: nom,
+          numero_telephone_client: numero,
+        },
+        items: cart,
+        total_ht: subtotal.toFixed(2),
+        tva: tax.toFixed(2),
+        total_ttc: total.toFixed(2),
+      };
+      router.push({
+        pathname: "/(pages)/facture",
+        params: { facture: JSON.stringify(facture) },
+      });
+      // setShowFacture(true);
+      // onClose();
+    }
   };
 
-  const subtotal = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+  // fonction toggle panier
+  const togglePanier = () => {
+    setVoirPanier(!voirPanier);
+  };
+  // Fonction des produits disponibles
+  const listeProduitDisponible = async () => {
+    try {
+      const response = await api.get("/produits/list/");
+      if (response.status === 200) {
+        const data = response.data;
+        setProduits(data.data);
+      }
+    } catch (error: any) {
+      if (error.response) {
+        const status = error.response.status;
+        const message = error.response.data;
+
+        if (status === 400) {
+          Alert.alert("", message.errors || "Erreur de saisie");
+        } else if (status === 500) {
+          Alert.alert("Erreur 500", "Erreur survenue au serveur");
+        } else if (status === 401) {
+          Alert.alert("", "Mot de passe incorrecte");
+        } else {
+          Alert.alert("Erreur", error.message || "Erreur survenue");
+        }
+      }
+    }
+  };
+
+  // Ajouter un produit au panier
+  const ajouterProduit = (id: string) => {
+    const produit = produits.find((p) => p.identifiant_produit === id);
+    if (produit) {
+      const produitPresent = cart.find((p) => p.identifiant_produit === id);
+      if (produitPresent) {
+        Alert.alert("", "Article déjà ajouté au panier");
+        return;
+      } else {
+        setCart([
+          ...cart,
+          {
+            ...produit,
+            quantite_total_produit: produit.quantite_produit_disponible,
+            quantite_produit_disponible: 1,
+          },
+        ]);
+        produit.quantite_produit_disponible -= 1;
+      }
+    }
+  };
+
+  // Retirer un produit du panier
+  const retirerProduit = (id: string) => {
+    const produit = produits.find((p) => p.identifiant_produit === id);
+    if (produit) {
+      const produitPresent = cart.find((p) => p.identifiant_produit === id);
+      if (!produitPresent) {
+        Alert.alert("", "Article non présent dans le panier");
+        return;
+      } else {
+        produit.quantite_produit_disponible =
+          produitPresent.quantite_total_produit ||
+          produit.quantite_produit_disponible;
+        const newCart = cart.filter((p) => p.identifiant_produit !== id);
+        setCart(newCart);
+      }
+    }
+  };
+
+  const increaseQty = (index: number, id: string) => {
+    const produit = produits.find((p) => p.identifiant_produit === id);
+    if (produit) {
+      if (produit.quantite_produit_disponible === 0) {
+        Alert.alert("", `Stock de ${produit.nom_produit} Epuisé`);
+        return;
+      } else if (produit.quantite_produit_disponible > 0) {
+        const newCart = [...cart];
+        newCart[index].quantite_produit_disponible += 1;
+        setCart(newCart);
+        produit.quantite_produit_disponible -= 1;
+        setProduits([...produits]);
+      }
+    }
+  };
+
+  const decreaseQty = (index: number, id: string) => {
+    const produit = produits.find((p) => p.identifiant_produit === id);
+    if (produit) {
+      if (cart[index].quantite_produit_disponible === 1) {
+        Alert.alert("", `Quantité minimale de ${produit.nom_produit} atteinte`);
+        return;
+      } else if (
+        cart[index].quantite_produit_disponible >
+        cart[index].quantite_total_produit
+      ) {
+        Alert.alert("", `Quantité maximale de ${produit.nom_produit} atteinte`);
+        return;
+      } else {
+        produit.quantite_produit_disponible += 1;
+        setProduits([...produits]);
+        const newCart = [...cart];
+        newCart[index].quantite_produit_disponible = Math.max(
+          newCart[index].quantite_produit_disponible - 1,
+          0
+        );
+        setCart(newCart);
+      }
+    }
+  };
+
+  const subtotal = cart.reduce(
+    (sum, item) =>
+      sum + item.prix_unitaire_produit * item.quantite_produit_disponible,
+    0
+  );
   const tax = subtotal * 0.1;
   const total = subtotal + tax;
+
+  useEffect(() => {
+    listeProduitDisponible();
+  }, [visible]);
   return (
     <SafeAreaProvider>
       <SafeAreaView style={{ flex: 1 }}>
@@ -60,64 +238,123 @@ export default function AjoutNouveauAchat({
           </View>
 
           <ScrollView style={styles.content}>
-            {/* Panier */}
-            <View style={styles.card}>
-              <View style={styles.cardHeader}>
-                <Text style={styles.cardTitle}>Panier</Text>
-                <Text style={styles.badge}>{cart.length} articles</Text>
-              </View>
+            {/* Icône d’affichage */}
+            <TouchableOpacity style={styles.toggleBtn} onPress={togglePanier}>
+              <Ionicons
+                name={voirPanier ? "chevron-up-circle" : "chevron-down-circle"}
+                size={30}
+                color={COLORS.dark}
+              />
+              <Text style={styles.toggleText}>
+                {voirPanier ? "Masquer le panier" : "Afficher le panier"}
+              </Text>
+            </TouchableOpacity>
 
-              {cart.map((item, index) => (
-                <View key={index} style={styles.cartItem}>
-                  <View style={styles.cartItemInfo}>
-                    <Text style={styles.cartItemName}>{item.name}</Text>
-                    <Text style={styles.cartItemDetails}>{item.price}FCFA/kg</Text>
+            {voirPanier && (
+              <>
+                {/* CLIENT */}
+                <View style={styles.card}>
+                  <View style={styles.cardHeader}>
+                    <Text style={styles.cardTitle}>Client</Text>
                   </View>
-                  <View style={styles.cartItemActions}>
-                    <View style={styles.quantityControl}>
-                      <TouchableOpacity
-                        style={styles.quantityBtn}
-                        onPress={() => decreaseQty(index)}
-                      >
-                        <Text>-</Text>
-                      </TouchableOpacity>
-                      <Text style={styles.quantityValue}>
-                        {item.qty.toFixed(1)}
-                      </Text>
-                      <TouchableOpacity
-                        style={styles.quantityBtn}
-                        onPress={() => increaseQty(index)}
-                      >
-                        <Text>+</Text>
-                      </TouchableOpacity>
-                    </View>
-                    <Text style={styles.saleAmount}>
-                      {(item.price * item.qty).toFixed(2)}FCFA
-                    </Text>
-                  </View>
+                  <Text style={styles.label}>Nom complet</Text>
+                  {erreurNom && (
+                    <Text style={styles.textDanger}>{erreurNom}</Text>
+                  )}
+                  <TextInput
+                    style={styles.input}
+                    placeholder="Ex: Konan Marcel"
+                    value={nom}
+                    onChangeText={setNom}
+                  />
+
+                  <Text style={styles.label}>Téléphone</Text>
+                  {erreurNumero && (
+                    <Text style={styles.textDanger}>{erreurNumero}</Text>
+                  )}
+                  <TextInput
+                    style={styles.input}
+                    placeholder="Ex: XXXXXXXXXX"
+                    keyboardType="phone-pad"
+                    value={numero}
+                    onChangeText={setNumero}
+                  />
                 </View>
-              ))}
-            </View>
 
-            {/* Résumé */}
-            <View style={styles.cartSummary}>
-              <View style={styles.summaryRow}>
-                <Text>Sous-total:</Text>
-                <Text>{subtotal.toFixed(2)}FCFA</Text>
-              </View>
-              <View style={styles.summaryRow}>
-                <Text>TVA (10%):</Text>
-                <Text>{tax.toFixed(2)}FCFA</Text>
-              </View>
-              <View style={[styles.summaryRow, styles.summaryTotal]}>
-                <Text>Total:</Text>
-                <Text>{total.toFixed(2)}FCFA</Text>
-              </View>
+                {/* Panier */}
+                <View style={styles.card}>
+                  <View style={styles.cardHeader}>
+                    <Text style={styles.cardTitle}>Panier</Text>
+                    <Text style={styles.badge}>{cart.length} articles</Text>
+                  </View>
 
-              <TouchableOpacity style={[styles.btn, styles.btnSuccess]}>
-                <Text style={[styles.btnText]}>Finaliser la vente</Text>
-              </TouchableOpacity>
-            </View>
+                  {cart.map((item, index) => (
+                    <View key={index} style={styles.cartItem}>
+                      <View style={styles.cartItemInfo}>
+                        <Text style={styles.cartItemName}>
+                          {item.nom_produit}
+                        </Text>
+                        <Text style={styles.cartItemDetails}>
+                          {formatMoneyFR(item.prix_unitaire_produit)} XOF/unité
+                        </Text>
+                      </View>
+                      <View style={styles.cartItemActions}>
+                        <View style={styles.quantityControl}>
+                          <TouchableOpacity
+                            style={styles.quantityBtn}
+                            onPress={() =>
+                              decreaseQty(index, item.identifiant_produit)
+                            }
+                          >
+                            <Text>-</Text>
+                          </TouchableOpacity>
+                          <Text style={styles.quantityValue}>
+                            {item.quantite_produit_disponible.toFixed(1)}
+                          </Text>
+                          <TouchableOpacity
+                            style={styles.quantityBtn}
+                            onPress={() =>
+                              increaseQty(index, item.identifiant_produit)
+                            }
+                          >
+                            <Text>+</Text>
+                          </TouchableOpacity>
+                        </View>
+                        <Text style={styles.saleAmount}>
+                          {formatMoneyFR((
+                            item.prix_unitaire_produit *
+                            item.quantite_produit_disponible
+                          ).toFixed(2))} XOF
+                          
+                        </Text>
+                      </View>
+                    </View>
+                  ))}
+                </View>
+                {/* Résumé */}
+                <View style={styles.cartSummary}>
+                  <View style={styles.summaryRow}>
+                    <Text>Sous-total:</Text>
+                    <Text>{formatMoneyFR(subtotal.toFixed(2))}XOF</Text>
+                  </View>
+                  <View style={styles.summaryRow}>
+                    <Text>TVA (10%):</Text>
+                    <Text>{formatMoneyFR(tax.toFixed(2))}XOF</Text>
+                  </View>
+                  <View style={[styles.summaryRow, styles.summaryTotal]}>
+                    <Text>Total:</Text>
+                    <Text>{formatMoneyFR(total.toFixed(2))}XOF</Text>
+                  </View>
+
+                  <TouchableOpacity
+                    style={[styles.btn, styles.btnSuccess]}
+                    onPress={ValiderVente}
+                  >
+                    <Text style={[styles.btnText]}>Finaliser la vente</Text>
+                  </TouchableOpacity>
+                </View>
+              </>
+            )}
 
             {/* Produits disponibles */}
             <View style={styles.card}>
@@ -125,15 +362,46 @@ export default function AjoutNouveauAchat({
                 <Text style={styles.cardTitle}>Produits disponibles</Text>
               </View>
 
-              {products.map((prod, idx) => (
-                <View key={idx} style={styles.productCard}>
-                  <Image style={styles.productImage} source={prod.image} />
+              {produits.map((prod, idx) => (
+                <View key={prod.identifiant_produit} style={styles.productCard}>
+                  <Image
+                    style={styles.productImage}
+                    source={{
+                      uri: `${CONFIG.API_IMAGE_BASE_URL}${prod.image_produit}`,
+                    }}
+                  />
                   <View style={styles.productInfo}>
-                    <Text style={styles.productName}>{prod.name}</Text>
-                    <Text style={styles.productDetails}>{prod.details}</Text>
+                    <Text style={styles.productName}>{prod.nom_produit}</Text>
+                    <Text style={styles.productDetails}>
+                      Prix unitaire : {formatMoneyFR(prod.prix_unitaire_produit)}
+                    </Text>
+                    <Text style={styles.productDetails}>
+                      Quantité : {prod.quantite_produit_disponible}
+                    </Text>
                   </View>
-                  <TouchableOpacity style={[styles.btn]}>
-                    <Ionicons name="add-circle" size={30} color={COLORS.primaryDark}/>
+                  <TouchableOpacity
+                    style={[styles.btn, { paddingRight: 1 }]}
+                    onPress={() => {
+                      ajouterProduit(prod.identifiant_produit);
+                    }}
+                  >
+                    <Ionicons
+                      name="add-circle"
+                      size={30}
+                      color={COLORS.primaryDark}
+                    />
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[styles.btn]}
+                    onPress={() => {
+                      retirerProduit(prod.identifiant_produit);
+                    }}
+                  >
+                    <Ionicons
+                      name="remove-circle"
+                      size={30}
+                      color={COLORS.danger}
+                    />
                   </TouchableOpacity>
                 </View>
               ))}

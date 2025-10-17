@@ -2,6 +2,8 @@ import CONFIG from "@/constants/config";
 import api from "@/services/api";
 import { COLORS, stylesCss } from "@/styles/styles";
 import { Ionicons } from "@expo/vector-icons";
+import { Image } from "expo-image";
+import * as ImageManipulator from "expo-image-manipulator";
 import * as ImagePicker from "expo-image-picker";
 import { router } from "expo-router";
 import * as SecureStore from "expo-secure-store";
@@ -9,7 +11,6 @@ import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
-  Image,
   Pressable,
   ScrollView,
   Text,
@@ -19,12 +20,23 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function ProfilUtilisateur() {
-  const [nom, setNom] = useState("Martin Dupont");
-  const [email, setEmail] = useState("martin.dupont@example.com");
-  const [numero, setNumero] = useState("+33 6 45 78 90 12");
+  const [nom, setNom] = useState("");
+  const [email, setEmail] = useState("");
+  const [numero, setNumero] = useState("");
   const [photo, setPhoto] = useState("");
   const [image, setImage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  // Fonction de redimensionnement de l'image
+const resizeAndCompressImage = async (uri: string) => {
+  const result = await ImageManipulator.manipulateAsync(
+    uri, 
+    [{ resize: { width: 800 } }], // tableau d'actions
+    { compress: 0.7, format: ImageManipulator.SaveFormat.JPEG } // options de sauvegarde
+  );
+
+  return result.uri;
+};
 
   // Fonction de recupération des info de l'utilisateur connecté
   const Info_utilisateur = async () => {
@@ -57,7 +69,6 @@ export default function ProfilUtilisateur() {
 
   // Changer Photo de Profil
   const changePhotoProfil = async () => {
-    console.log("Photo de profil");
     const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (permission.status !== "granted") {
       Alert.alert(
@@ -74,7 +85,8 @@ export default function ProfilUtilisateur() {
     });
 
     if (!new_image.canceled) {
-      setImage(new_image.assets[0].uri);
+      const resizedUri = await resizeAndCompressImage(new_image.assets[0].uri);
+      setImage(resizedUri);
     }
   };
 
@@ -91,13 +103,13 @@ export default function ProfilUtilisateur() {
       if (ext === "png") mimeType = "image/png";
       else if (ext === "jpg" || ext === "jpeg") mimeType = "image/jpeg";
 
+
       formData.append("photo_profil_utilisateur", {
         uri: image,
         name: fileName || "profil.jpg",
         type: mimeType,
       } as any);
     }
-    console.log("Modification.....");
     setLoading(true);
     try {
       const response = await api.put("/utilisateurs/detail/", formData, {
@@ -119,17 +131,28 @@ export default function ProfilUtilisateur() {
     } catch (error: any) {
       if (error.response) {
         const status = error.response.status;
-        const message = error.response.data;
+        const data = error.response.data.errors;
+
+        // On transforme le message en texte
+        let message = "";
+
+        if (typeof data === "string") {
+          message = data;
+        } else if (typeof data === "object") {
+          message = JSON.stringify(data);
+        } else {
+          message = "Erreur inattendue";
+        }
 
         if (status === 400) {
-          Alert.alert("", message.errors || "Erreur de saisie");
+          Alert.alert("", message);
         } else if (status === 500) {
           Alert.alert("Erreur 500", "Erreur survenue au serveur");
-        } else if (status === 401) {
-          Alert.alert("", "Mot de passe incorrecte");
         } else {
-          Alert.alert("Erreur", error.message || "Erreur survenue");
+          Alert.alert("Erreur", message);
         }
+      } else {
+        Alert.alert("Erreur", error.message || "Erreur réseau");
       }
     } finally {
       setLoading(false);
@@ -137,7 +160,6 @@ export default function ProfilUtilisateur() {
   };
 
   const deconnexion = async () => {
-    console.log("Deconnexion");
     try {
       const response = await api.post("/authentification/logout/");
       if (response.status === 200 || response.status === 201) {
@@ -171,6 +193,7 @@ export default function ProfilUtilisateur() {
         <View style={{ alignItems: "center", marginBottom: 25 }}>
           {image ? (
             <Image
+              cachePolicy="disk"
               source={{
                 uri: `${image}`,
               }}
@@ -180,9 +203,11 @@ export default function ProfilUtilisateur() {
                 borderRadius: 50,
                 marginBottom: 10,
               }}
+             
             />
           ) : (
             <Image
+              cachePolicy="disk"
               source={{
                 uri: `${CONFIG.API_IMAGE_BASE_URL}${photo}`,
               }}

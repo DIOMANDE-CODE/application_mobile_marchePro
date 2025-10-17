@@ -11,10 +11,9 @@ import {
   TextInput,
   TouchableOpacity,
   TouchableWithoutFeedback,
-  View
+  View,
 } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
-
 
 type EditClientProps = {
   identifiant: string | null;
@@ -164,23 +163,20 @@ export default function EditClient({
                       color={COLORS.danger}
                     />
                   </TouchableOpacity>
-                  {
-                    loading ? (
-                      <ActivityIndicator color={COLORS.primary} />
-                    ):(
-                       <TouchableOpacity
-                    style={[styles.btn]}
-                    onPress={modifierClient}
-                  >
-                    <Ionicons
-                      name="checkmark-circle"
-                      size={30}
-                      color={COLORS.primary}
-                    />
-                  </TouchableOpacity>
-                    )
-                  }
-                 
+                  {loading ? (
+                    <ActivityIndicator color={COLORS.primary} />
+                  ) : (
+                    <TouchableOpacity
+                      style={[styles.btn]}
+                      onPress={modifierClient}
+                    >
+                      <Ionicons
+                        name="checkmark-circle"
+                        size={30}
+                        color={COLORS.primary}
+                      />
+                    </TouchableOpacity>
+                  )}
                 </View>
               </View>
             </View>

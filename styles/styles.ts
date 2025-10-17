@@ -306,6 +306,7 @@ export const stylesCss = StyleSheet.create({
     borderRadius: 8,
     ...SHADOW,
     marginBottom: 12,
+    marginLeft:0,
   },
   productImage: {
     width: 60,
@@ -385,8 +386,8 @@ export const stylesCss = StyleSheet.create({
   btnText: { color: '#fff' },
   alertIcon: { fontSize: 20, marginRight: 8 },
   btnSmall: { color: '#007bff' },
-  productStock: { paddingHorizontal: 6, paddingVertical: 2, borderRadius: 4, fontSize: 12 },
-  badgeWarning: { backgroundColor: '#ffc107', color: '#fff' },
+  productStock: { paddingHorizontal: 6, paddingVertical: 2, borderRadius: 4, fontSize: 20 },
+  badgeWarning: { backgroundColor: '#dc3545', color: '#fff' },
   badgeSuccess: { backgroundColor: '#28a745', color: '#fff' },
   saleItem: { flexDirection: 'row', justifyContent: 'space-between', padding: 12, backgroundColor: '#fff', borderRadius: 8, marginBottom: 8 },
   saleInfo: {},
@@ -619,6 +620,18 @@ export const stylesCss = StyleSheet.create({
     borderRadius: 6,
   },
   productCategory: { color: "#777", fontSize: 12 },
+  
+  // Voir Panier
+  toggleBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 10,
+  },
+  toggleText: {
+    marginLeft: 8,
+    fontSize: 16,
+    color: COLORS.dark,
+  },
 
 
 });

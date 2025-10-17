@@ -50,19 +50,21 @@ export default function AjoutNouveauClient({
       hasError = true;
     } else if (!validationNumeroCI(numero)) {
       setErreurNumero("Numero invalide");
-      hasError=true
+      hasError = true;
     }
     if (hasError) return;
 
     // Appel API
     setLoading(true);
     try {
-      const response = await api.post("/clients/create/",{
-        nom_client:nom,
-        numero_telephone_client:numero
+      const response = await api.post("/clients/create/", {
+        nom_client: nom,
+        numero_telephone_client: numero,
       });
       if (response.status === 200 || response.status === 201) {
         Alert.alert("Succès", "Nouveau client ajouté");
+        setNom("");
+        setNumero("");
         onClose();
       }
     } catch (error: any) {
@@ -93,7 +95,7 @@ export default function AjoutNouveauClient({
           onRequestClose={onClose}
           transparent={true}
         >
-          <TouchableWithoutFeedback onPress={onClose}>
+          <TouchableWithoutFeedback>
             <View style={styles.modalOverlay}>
               <View style={styles.modalContent}>
                 <Text style={styles.modalTitle}>Nouveau client</Text>

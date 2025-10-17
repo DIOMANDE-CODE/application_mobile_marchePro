@@ -30,7 +30,7 @@ export default function PageConnexion() {
 
   const Connexion_utilisateur = async () => {
     console.log("Connexion.....", CONFIG.API_IMAGE_BASE_URL);
-    
+
     // Verification des champs saisi
     let hasError = false;
     if (!password.trim()) {
@@ -50,18 +50,24 @@ export default function PageConnexion() {
     // Connexion via api
     setLoading(true);
     try {
+      console.log("API");
+
       const response = await api.post("/authentification/login/", {
         email_utilisateur: email.trim(),
         password: password.trim(),
       });
 
       if (response.status === 200 || response.status === 201) {
+        console.log("API");
+
         const token = response.data.token;
-        if (token){
+        if (token) {
           await SecureStore.setItemAsync("auth_token", token);
           await attachTokenToApi();
           router.replace("/(tabs)");
+          Alert.alert("Succès", "Connexion réussie");
         }
+        // Renitialisation des champs
 
         setEmail("");
         setPassword("");
@@ -71,17 +77,32 @@ export default function PageConnexion() {
     } catch (error: any) {
       if (error.response) {
         const status = error.response.status;
-        const message = error.response.data;
+        const data = error.response.data.errors;
+
+        // On transforme le message en texte
+        let message = "";
+
+        if (typeof data === "string") {
+          message = data;
+        } else if (typeof data === "object") {
+          message = JSON.stringify(data);
+        } else {
+          message = "Erreur inattendue";
+        }
 
         if (status === 400) {
-          Alert.alert("", message.errors || "Erreur de saisie");
+          Alert.alert("", message);
         } else if (status === 500) {
           Alert.alert("Erreur 500", "Erreur survenue au serveur");
         } else if (status === 401) {
-          Alert.alert("", "Mot de passe incorrecte");
+          Alert.alert("", "Email ou mot de passe incorrect");
+        } else if (status === 404) {
+          Alert.alert("", "Compte inexistant");
         } else {
-          Alert.alert("Erreur", error.message || "Erreur survenue");
+          Alert.alert("Erreur", message);
         }
+      } else {
+        Alert.alert("Erreur", error.message || "Erreur réseau");
       }
     } finally {
       setLoading(false);
@@ -127,7 +148,7 @@ export default function PageConnexion() {
             placeholder="Entrez votre mot de passe"
             value={password}
             onChangeText={setPassword}
-            secureTextEntry
+            // secureTextEntry
           />
         </View>
 

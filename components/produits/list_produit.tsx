@@ -1,66 +1,104 @@
+import CONFIG from "@/constants/config";
 import { stylesCss } from "@/styles/styles";
+import { formatMoneyFR } from "@/utils/moneyFormat";
+import { Image } from "expo-image";
 import { memo } from "react";
-import {
-  FlatList,
-  Image,
-  Pressable,
-  Text,
-  View
-} from "react-native";
+import { FlatList, Text, TouchableOpacity, View } from "react-native";
 
 // Declaration des types
+
+type Categorie = {
+  identifiant_categorie: string;
+  nom_categorie: string;
+};
 type Produit = {
-  image: any;
-  name: string;
-  details: string;
-  price: string;
-  stock: string;
-  stockStyle: object;
+  identifiant_produit: string;
+  image_produit: string;
+  nom_produit: string;
+  prix_unitaire_produit: number;
+  quantite_produit_disponible: number;
+  seuil_alerte_produit: number;
+  categorie_produit: Categorie;
 };
 
 type ListProduitsProps = {
   data: Produit[];
-  onSelectProduit: (index: number) => void;
+  onSelectProduit: (index: string) => void;
 };
 
 const ListProduits = ({ data, onSelectProduit }: ListProduitsProps) => {
+  // Verifier le seuil
   return (
     <FlatList
       style={styles.content}
+      keyExtractor={(item) => item.identifiant_produit}
       data={data}
-      keyExtractor={(item, index) => index.toString()}
-      ListHeaderComponent={
-        <View style={styles.filters}>
-          <Pressable style={[styles.filterBtn, styles.filterBtnActive]}>
-            <Text style={styles.textLight}>Tous</Text>
-          </Pressable>
-          <Pressable style={styles.filterBtn}>
-            <Text>Poissonnerie</Text>
-          </Pressable>
-          <Pressable style={styles.filterBtn}>
-            <Text>Boucherie</Text>
-          </Pressable>
-          <Pressable style={styles.filterBtn}>
-            <Text>Stocks faibles</Text>
-          </Pressable>
+      initialNumToRender={10} // évite de tout charger d’un coup
+      windowSize={5} // limite le nombre d’éléments gardés en mémoire
+      removeClippedSubviews={true} // nettoie les vues invisibles
+      ListEmptyComponent={
+        <View style={{ alignItems: "center", paddingVertical: 40 }}>
+          <Text style={{ color: "#888", fontSize: 16 }}>
+            Aucun produit trouvé
+          </Text>
         </View>
       }
+      ListHeaderComponent={
+        <>
+          <Text style={styles.sectionTitle}>{"Liste des articles"}</Text>
+          {/* <View style={styles.filters}>
+            <TouchableOpacity
+              style={[styles.filterBtn, styles.filterBtnActive]}
+            >
+              <Text style={styles.textLight}>Tous</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.filterBtn}>
+              <Text>Fidèles</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.filterBtn}>
+              <Text>Nouveaux</Text>
+            </TouchableOpacity>
+          </View> */}
+        </>
+      }
       renderItem={({ item, index }) => (
-        <Pressable
-          key={index}
+        <TouchableOpacity
           style={styles.productCard}
-          onPress={() => onSelectProduit(index)}
+          onPress={() => onSelectProduit(item.identifiant_produit)}
         >
-          <Image style={styles.productImage} source={item.image} />
+          <Image
+            cachePolicy="disk"
+            style={styles.productImage}
+            source={{
+              uri: `${CONFIG.API_IMAGE_BASE_URL}${item.image_produit}`,
+            }}
+          />
           <View style={styles.productInfo}>
-            <Text style={styles.productName}>{item.name}</Text>
-            <Text style={styles.productDetails}>{item.details}</Text>
-            <Text style={styles.productPrice}>{item.price}</Text>
+            <Text>Nom: </Text>
+            <Text style={[styles.productName, { fontWeight: "bold" }]}>
+              {item.nom_produit}
+            </Text>
+
+            <Text>Prix unitaire: </Text>
+            <Text style={[styles.productPrice, { fontWeight: "bold" }]}>
+              {formatMoneyFR(item.prix_unitaire_produit)} XOF
+            </Text>
+
+            <Text>Catégorie: </Text>
+            <Text style={[styles.productName, { fontWeight: "bold" }]}>
+              {item.categorie_produit.nom_categorie}
+            </Text>
           </View>
-          <Text style={[styles.productStock, item.stockStyle]}>
-            {item.stock}
-          </Text>
-        </Pressable>
+          {item.quantite_produit_disponible <= item.seuil_alerte_produit ? (
+            <Text style={[styles.productStock, styles.badgeWarning]}>
+              {item.quantite_produit_disponible}
+            </Text>
+          ) : (
+            <Text style={[styles.productStock, styles.badgeSuccess]}>
+              {item.quantite_produit_disponible}
+            </Text>
+          )}
+        </TouchableOpacity>
       )}
     />
   );

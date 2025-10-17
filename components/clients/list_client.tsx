@@ -6,9 +6,9 @@ import { FlatList, Text, TouchableOpacity, View } from "react-native";
 
 // Declaration des types
 type Client = {
-  identifiant_client:string;
-  nom_client:string,
-  numero_telephone_client:string
+  identifiant_client: string;
+  nom_client: string;
+  numero_telephone_client: string;
 };
 
 type ListeDesClientsProps = {
@@ -21,24 +21,34 @@ const ListeDesClients = ({ data, onSelectedId }: ListeDesClientsProps) => {
     <FlatList
       style={styles.content}
       data={data}
+      initialNumToRender={10} // évite de tout charger d’un coup
+      windowSize={5} // limite le nombre d’éléments gardés en mémoire
+      removeClippedSubviews={true} // nettoie les vues invisibles
       keyExtractor={(item) => item.identifiant_client.toString()}
       ListEmptyComponent={
         <View style={{ alignItems: "center", paddingVertical: 40 }}>
-          <Text style={{ color: "#888", fontSize: 16 }}>Aucun client trouvé</Text>
+          <Text style={{ color: "#888", fontSize: 16 }}>
+            Aucun client trouvé
+          </Text>
         </View>
       }
       ListHeaderComponent={
-        <View style={styles.filters}>
-          <TouchableOpacity style={[styles.filterBtn, styles.filterBtnActive]}>
-            <Text style={styles.textLight}>Tous</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.filterBtn}>
-            <Text>Fidèles</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.filterBtn}>
-            <Text>Nouveaux</Text>
-          </TouchableOpacity>
-        </View>
+        <>
+          <Text style={styles.sectionTitle}>{"Clients du jour"}</Text>
+          {/* <View style={styles.filters}>
+            <TouchableOpacity
+              style={[styles.filterBtn, styles.filterBtnActive]}
+            >
+              <Text style={styles.textLight}>Tous</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.filterBtn}>
+              <Text>Fidèles</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.filterBtn}>
+              <Text>Nouveaux</Text>
+            </TouchableOpacity>
+          </View> */}
+        </>
       }
       renderItem={({ item }) => (
         <TouchableOpacity
@@ -47,8 +57,12 @@ const ListeDesClients = ({ data, onSelectedId }: ListeDesClientsProps) => {
           onPress={() => onSelectedId(item.identifiant_client)}
         >
           <View style={styles.listItemContent}>
-            <Text style={styles.listItemTitle}>Nom & Prénoms: </Text><Text style={[styles.listItemTitle, { fontWeight: "bold" }]}>{item.nom_client}</Text>
-            <Text style={styles.listItemTitle}>Numéro: </Text><Text style={[styles.listItemTitle, { fontWeight: "bold" }]}>
+            <Text style={styles.listItemTitle}>Nom & Prénoms: </Text>
+            <Text style={[styles.listItemTitle, { fontWeight: "bold" }]}>
+              {item.nom_client}
+            </Text>
+            <Text style={styles.listItemTitle}>Numéro: </Text>
+            <Text style={[styles.listItemTitle, { fontWeight: "bold" }]}>
               {item.numero_telephone_client}
             </Text>
             {/* <Text style={styles.listItemSubtitle}>

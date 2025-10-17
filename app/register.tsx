@@ -1,6 +1,6 @@
 import api from "@/services/api";
 import { COLORS, stylesCss } from "@/styles/styles";
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
 import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -16,10 +16,10 @@ export default function PageInscription() {
   const [nom, setNom] = useState("");
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
-  const [numero,setNumero] = useState("")
+  const [numero, setNumero] = useState("");
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
-  const [errorNumero,setErrorNumero] = useState("")
+  const [errorNumero, setErrorNumero] = useState("");
   const [nomError, setNomError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -30,10 +30,10 @@ export default function PageInscription() {
   };
 
   // Fonction de validation du numero
-  const validationNumeroCI = (numero:string) => {
-  const regex = /^(?:\+225|00225)?(01|05|07|25|27)\d{8}$/;
-  return regex.test(numero);
-}
+  const validationNumeroCI = (numero: string) => {
+    const regex = /^(?:\+225|00225)?(01|05|07|25|27)\d{8}$/;
+    return regex.test(numero);
+  };
 
   const Inscription = async () => {
     setEmailError("");
@@ -59,16 +59,14 @@ export default function PageInscription() {
       hasError = true;
     }
 
-    if (!numero.trim()){
-      setErrorNumero("Ce champs est obligatoire")
-    }
-    else if (!validationNumeroCI(numero)){
-      setErrorNumero("Numero invalide (ex: +2250102030405 ou 0102030405)")
+    if (!numero.trim()) {
+      setErrorNumero("Ce champs est obligatoire");
+    } else if (!validationNumeroCI(numero)) {
+      setErrorNumero("Numero invalide (respecter le format des numeros ivoiriens)");
     }
 
     if (hasError) return;
 
-    console.log("inscription...");
 
     // Appel API Inscription
     setLoading(true);
@@ -77,37 +75,51 @@ export default function PageInscription() {
         email_utilisateur: email.trim(),
         nom_utilisateur: nom.trim(),
         password: password.trim(),
-        numero_telephone_utilisateur:numero.trim(),
+        numero_telephone_utilisateur: numero.trim(),
       });
       if (response.status === 200 || response.status === 201) {
         Alert.alert(
           "Succès",
           "Nouveau compte crée, connectez-vous avec votre compte"
         );
+        router.replace("/login");
+        // Renitialisation des champs
         setEmail("");
         setNom("");
         setPassword("");
-        setNumero("")
+        setNumero("");
         setEmailError("");
         setNomError("");
         setPasswordError("");
-        setErrorNumero("")
+        setErrorNumero("");
       }
     } catch (error: any) {
       if (error.response) {
         const status = error.response.status;
-        const message = error.response.data;
-        if (status === 400) {
-          Alert.alert("Erreur 400", message?.errors || "Erreur survenue");
-        }
-        else if (status === 404){
-          Alert.alert("Erreur",message?.errors || "Aucun compte associé à ce compte")
-        }
-        else if (status === 500) {
-          Alert.alert("Erreur 500", message?.errors || "Erreur survenue au niveau du serveur");
+        const data = error.response.data.errors;
+
+        // On transforme le message en texte
+        let message = "";
+
+        if (typeof data === "string") {
+          message = data;
+        } else if (typeof data === "object") {
+          message = JSON.stringify(data);
         } else {
-          Alert.alert("Echec", "Une erreur est survenue");
+          message = "Erreur inattendue";
         }
+
+        if (status === 400) {
+          Alert.alert("", message);
+        } else if (status === 500) {
+          Alert.alert("Erreur 500", "Erreur survenue au niveau du serveur");
+        } else if (status === 409) {
+          Alert.alert("", message);
+        } else {
+          Alert.alert("Erreur", message);
+        }
+      } else {
+        Alert.alert("Erreur", error.message || "Erreur réseau");
       }
     } finally {
       setLoading(false);
@@ -190,7 +202,7 @@ export default function PageInscription() {
           <TextInput
             style={styles.formControl}
             placeholder="Entrez votre mot de passe"
-            secureTextEntry
+            // secureTextEntry
             value={password}
             onChangeText={setPassword}
           />
