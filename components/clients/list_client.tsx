@@ -1,4 +1,5 @@
 import { stylesCss } from "@/styles/styles";
+import { formatDateHeureFR } from "@/utils/dateFormat";
 import { memo } from "react";
 import { FlatList, Text, TouchableOpacity, View } from "react-native";
 
@@ -9,6 +10,7 @@ type Client = {
   identifiant_client: string;
   nom_client: string;
   numero_telephone_client: string;
+  date_creation:string;
 };
 
 type ListeDesClientsProps = {
@@ -64,6 +66,10 @@ const ListeDesClients = ({ data, onSelectedId }: ListeDesClientsProps) => {
             <Text style={styles.listItemTitle}>Numéro: </Text>
             <Text style={[styles.listItemTitle, { fontWeight: "bold" }]}>
               {item.numero_telephone_client}
+            </Text>
+            <Text style={styles.listItemTitle}>{"Date et heure d'inscription :"} </Text>
+            <Text style={[styles.listItemTitle, { fontWeight: "bold" }]}>
+              {formatDateHeureFR(item.date_creation)}
             </Text>
             {/* <Text style={styles.listItemSubtitle}>
               {item.purchases} achats • {item.total.toFixed(2)}€ total

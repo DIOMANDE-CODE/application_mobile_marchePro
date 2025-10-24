@@ -98,7 +98,7 @@ export default function TableauBord() {
   };
 
   const voirPlusProduit = useCallback(
-    () => router.push("/(tabs)/produits"),
+    () => router.push("/(admin)/produits"),
     [router]
   );
 
@@ -310,14 +310,14 @@ export default function TableauBord() {
                   <View style={styles.quickActions}>
                     <Pressable
                       style={[styles.btn, styles.btnSecondary]}
-                      onPress={() => router.push("/admin/rapports")}
+                      onPress={() => router.push("/(admin)/rapports")}
                     >
                       <Text style={styles.btnText}>Voir le Rapport</Text>
                     </Pressable>
                     <Pressable style={[styles.btn, styles.btnOutline]}>
                       <Text
                         style={[styles.btnText, styles.textPrimary]}
-                        onPress={() => router.push("/(tabs)/ventes")}
+                        onPress={() => router.push("/(admin)/ventes")}
                       >
                         Voir les ventes
                       </Text>
@@ -388,34 +388,6 @@ export default function TableauBord() {
                     ))}
                   </View>
                 )}
-
-                {/* Section Ventes récentes */}
-                {/* <View style={styles.section}>
-                  <View style={styles.cardHeader}>
-                    <Text style={styles.cardTitle}>Ventes récentes</Text>
-                    <Pressable>
-                      <Text style={styles.btnSmall} onPress={VoirPlusVente}>
-                        Voir tout
-                      </Text>
-                    </Pressable>
-                  </View>
-
-                  <View style={styles.saleItem}>
-                    <View style={styles.saleInfo}>
-                      <Text style={styles.saleClient}>Martin Dupont</Text>
-                      <Text style={styles.saleDetails}>2 produits • 10:24</Text>
-                    </View>
-                    <Text style={styles.saleAmount}>45.80XOF</Text>
-                  </View>
-
-                  <View style={styles.saleItem}>
-                    <View style={styles.saleInfo}>
-                      <Text style={styles.saleClient}>Sophie Leroy</Text>
-                      <Text style={styles.saleDetails}>3 produits • 09:15</Text>
-                    </View>
-                    <Text style={styles.saleAmount}>67.20XOF</Text>
-                  </View>
-                </View> */}
               </ScrollView>
             </View>
           </ScrollView>

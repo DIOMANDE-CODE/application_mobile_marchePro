@@ -9,8 +9,9 @@ import {
   Pressable,
   ScrollView,
   Text,
+  TouchableOpacity,
   TouchableWithoutFeedback,
-  View,
+  View
 } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
@@ -162,13 +163,13 @@ export default function TableauBord() {
               <View style={styles.header}>
                 <Text style={styles.headerTitle}>Tableau de bord</Text>
                 <View style={styles.headerActions}>
-                  <Pressable style={styles.iconBtn} onPress={refreshPage}>
+                  <TouchableOpacity style={styles.iconBtn} onPress={refreshPage}>
                     <Ionicons
                       name="reload-circle"
                       size={35}
                       color={COLORS.light}
                     />
-                  </Pressable>
+                  </TouchableOpacity>
                   <Pressable style={styles.iconBtn} onPress={toggleMenu}>
                     <Ionicons
                       name="person-circle"

@@ -36,6 +36,7 @@ export default function ListClients() {
       const response = await api.get("/clients/list/");
       if (response.status === 200) {
         const data = response.data;
+        console.log("Liste des clients :",data.data);
         setClient(data.data);
       }
     } catch (error: any) {
@@ -76,12 +77,6 @@ export default function ListClients() {
         <View style={styles.header}>
           <Text style={styles.headerTitle}>Gestion des clients</Text>
           <View style={styles.headerActions}>
-            {/* <Pressable
-              style={styles.iconBtn}
-              onPress={() => setIsVisible(!isVisible)}
-            >
-              <Ionicons name="add-circle" size={25} color={COLORS.light} />
-            </Pressable> */}
             <Pressable style={styles.iconBtn} onPress={refreshPage}>
               <Ionicons name="reload-circle" size={35} color={COLORS.light} />
             </Pressable>

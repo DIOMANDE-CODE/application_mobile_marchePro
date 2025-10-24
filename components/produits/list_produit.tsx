@@ -3,7 +3,7 @@ import { stylesCss } from "@/styles/styles";
 import { formatMoneyFR } from "@/utils/moneyFormat";
 import { Image } from "expo-image";
 import { memo } from "react";
-import { FlatList, Text, TouchableOpacity, View } from "react-native";
+import { FlatList, Pressable, Text, View } from "react-native";
 
 // Declaration des types
 
@@ -62,7 +62,7 @@ const ListProduits = ({ data, onSelectProduit }: ListProduitsProps) => {
         </>
       }
       renderItem={({ item, index }) => (
-        <TouchableOpacity
+        <Pressable
           style={styles.productCard}
           onPress={() => onSelectProduit(item.identifiant_produit)}
         >
@@ -98,7 +98,7 @@ const ListProduits = ({ data, onSelectProduit }: ListProduitsProps) => {
               {item.quantite_produit_disponible}
             </Text>
           )}
-        </TouchableOpacity>
+        </Pressable>
       )}
     />
   );
