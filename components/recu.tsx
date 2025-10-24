@@ -143,10 +143,10 @@ export default function RecuVente({
             <Text style={stylesCss.headerTitle}>FACTURE</Text>
             <View style={stylesCss.headerActions}>
               <TouchableOpacity onPress={onClose}>
-                <Ionicons name="arrow-back" size={25} color={COLORS.light} />
+                <Ionicons name="arrow-back" size={35} color={COLORS.light} />
               </TouchableOpacity>
               <TouchableOpacity onPress={onClose}>
-                <Ionicons name="download" size={25} color={COLORS.light} onPress={telechargerRecu} />
+                <Ionicons name="download" size={35} color={COLORS.light} onPress={telechargerRecu} />
               </TouchableOpacity>
             </View>
           </View>

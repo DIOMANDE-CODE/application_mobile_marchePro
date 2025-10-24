@@ -1,4 +1,6 @@
+import CONFIG from "@/constants/config";
 import { COLORS, stylesCss } from "@/styles/styles";
+import { formatMoneyFR } from "@/utils/moneyFormat";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import * as SecureStore from "expo-secure-store";
@@ -16,6 +18,7 @@ import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
 import Menu from "@/components/menu";
 import api from "@/services/api";
+import { Image } from "expo-image";
 
 type statsType = {
   total_ventes_aujourd_hui: string;
@@ -27,10 +30,37 @@ type statsType = {
 export default function TableauBord() {
   const [menuVisible, setMenuVisible] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [produits, setProduits] = useState([]);
   const [stockproduitfaible, setStockproduitfaible] = useState([]);
   const [stats, setStats] = useState<statsType>();
 
   const router = useRouter();
+
+  // Afficher les 2 recents ventes et produits
+  const ListProduits = async () => {
+    try {
+      const response = await api.get("/produits/list/");
+      if (response.status === 200) {
+        const data = response.data;
+        setProduits(data.data);
+      }
+    } catch (error: any) {
+      if (error.response) {
+        const status = error.response.status;
+        const message = error.response.data;
+
+        if (status === 400) {
+          Alert.alert("", message.errors || "Erreur de saisie");
+        } else if (status === 500) {
+          Alert.alert("Erreur 500", "Erreur survenue au serveur");
+        } else if (status === 401) {
+          Alert.alert("", "Mot de passe incorrecte");
+        } else {
+          Alert.alert("Erreur", error.message || "Erreur survenue");
+        }
+      }
+    }
+  };
 
   // Lister les produits en stock faible
   const ListProduitsStockFaible = async () => {
@@ -67,6 +97,11 @@ export default function TableauBord() {
     }
   };
 
+  const voirPlusProduit = useCallback(
+    () => router.push("/(tabs)/produits"),
+    [router]
+  );
+
   const toggleMenu = () => {
     setMenuVisible(!menuVisible);
   };
@@ -100,7 +135,7 @@ export default function TableauBord() {
 
   const stats_du_jour = async () => {
     try {
-      const response = await api.get("/statistiques/du_jour/vendeur/");
+      const response = await api.get("/statistiques/du_jour/");
       if (response.status === 200) {
         const data = response.data;
         setStats(data.data);
@@ -127,12 +162,14 @@ export default function TableauBord() {
   const refreshPage = () => {
     setLoading(true);
     stats_du_jour();
+    ListProduits();
     ListProduitsStockFaible();
     setLoading(false);
   };
 
   useEffect(() => {
     stats_du_jour();
+    ListProduits();
     ListProduitsStockFaible();
   }, []);
 
@@ -223,7 +260,7 @@ export default function TableauBord() {
                         <Text style={styles.statValue}>
                           {stats?.total_ventes_aujourd_hui}
                         </Text>
-                        <Text style={styles.statLabel}>Ma caisse</Text>
+                        <Text style={styles.statLabel}>Caisse</Text>
                       </Pressable>
                     </View>
 
@@ -273,9 +310,17 @@ export default function TableauBord() {
                   <View style={styles.quickActions}>
                     <Pressable
                       style={[styles.btn, styles.btnSecondary]}
-                      onPress={() => router.push("/(tabs)/ventes")}
+                      onPress={() => router.push("/admin/rapports")}
                     >
-                      <Text style={styles.btnText}>Voir mes ventes</Text>
+                      <Text style={styles.btnText}>Voir le Rapport</Text>
+                    </Pressable>
+                    <Pressable style={[styles.btn, styles.btnOutline]}>
+                      <Text
+                        style={[styles.btnText, styles.textPrimary]}
+                        onPress={() => router.push("/(tabs)/ventes")}
+                      >
+                        Voir les ventes
+                      </Text>
                     </Pressable>
                   </View>
 
@@ -301,6 +346,76 @@ export default function TableauBord() {
                     </View>
                   )}
                 </View>
+
+                {/* Section Produits récents */}
+                {produits.length >= 2 && (
+                  <View style={styles.section}>
+                    <View style={styles.cardHeader}>
+                      <Text style={styles.cardTitle}>Produits récents</Text>
+                      <Pressable>
+                        <Text style={styles.btnSmall} onPress={voirPlusProduit}>
+                          Voir tout
+                        </Text>
+                      </Pressable>
+                    </View>
+
+                    {produits.slice(0, 3).map((produit: any, i) => (
+                      <View style={styles.productCard} key={i}>
+                        <Image
+                          cachePolicy="disk"
+                          style={styles.productImage}
+                          source={{
+                            uri: `${CONFIG.API_IMAGE_BASE_URL}${produit.image_produit}`,
+                          }}
+                        />
+                        <View style={styles.productInfo}>
+                          <Text style={styles.productName}>
+                            {produit.nom_produit}
+                          </Text>
+                          <Text style={styles.productPrice}>
+                            {formatMoneyFR(produit.prix_unitaire_produit)} XOF
+                          </Text>
+                        </View>
+                        {produit.quantite_produit_disponible <=
+                        produit.seuil_alerte_produit ? (
+                          <Text
+                            style={[styles.productStock, styles.badgeWarning]}
+                          >
+                            Stock faible
+                          </Text>
+                        ) : null}
+                      </View>
+                    ))}
+                  </View>
+                )}
+
+                {/* Section Ventes récentes */}
+                {/* <View style={styles.section}>
+                  <View style={styles.cardHeader}>
+                    <Text style={styles.cardTitle}>Ventes récentes</Text>
+                    <Pressable>
+                      <Text style={styles.btnSmall} onPress={VoirPlusVente}>
+                        Voir tout
+                      </Text>
+                    </Pressable>
+                  </View>
+
+                  <View style={styles.saleItem}>
+                    <View style={styles.saleInfo}>
+                      <Text style={styles.saleClient}>Martin Dupont</Text>
+                      <Text style={styles.saleDetails}>2 produits • 10:24</Text>
+                    </View>
+                    <Text style={styles.saleAmount}>45.80XOF</Text>
+                  </View>
+
+                  <View style={styles.saleItem}>
+                    <View style={styles.saleInfo}>
+                      <Text style={styles.saleClient}>Sophie Leroy</Text>
+                      <Text style={styles.saleDetails}>3 produits • 09:15</Text>
+                    </View>
+                    <Text style={styles.saleAmount}>67.20XOF</Text>
+                  </View>
+                </View> */}
               </ScrollView>
             </View>
           </ScrollView>

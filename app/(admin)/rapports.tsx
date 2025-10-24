@@ -204,10 +204,10 @@ export default function Rapports() {
             <Text style={styles.headerTitle}>Rapports</Text>
             <View style={styles.headerActions}>
               <TouchableOpacity style={styles.iconBtn} onPress={()=>{refreshPage}}>
-                <Ionicons name="reload-circle" size={25} color={COLORS.light} />
+                <Ionicons name="reload-circle" size={35} color={COLORS.light} />
               </TouchableOpacity>
               <TouchableOpacity style={styles.iconBtn}>
-                <Ionicons name="download" size={25} color={COLORS.light} />
+                <Ionicons name="download" size={35} color={COLORS.light} />
               </TouchableOpacity>
               
             </View>
@@ -318,7 +318,7 @@ export default function Rapports() {
               </>
             ) : filter === "Semaine" ? (
               <>
-                {/* Statistiques du jour */}
+                {/* Statistiques de la semaine */}
                 <View style={styles.statsContainer}>
                   <View style={styles.statCard}>
                     <Text style={styles.statValue}>
@@ -402,7 +402,7 @@ export default function Rapports() {
               </>
             ) : (
               <>
-                {/* Statistiques du jour */}
+                {/* Statistiques du mois */}
                 <View style={styles.statsContainer}>
                   <View style={styles.statCard}>
                     <Text style={styles.statValue}>

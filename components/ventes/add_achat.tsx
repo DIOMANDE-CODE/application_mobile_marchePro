@@ -13,7 +13,7 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  View,
+  View, ActivityIndicator
 } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
@@ -55,9 +55,10 @@ export default function AjoutNouveauAchat({
   const [numero, setNumero] = useState("");
   const [erreurNom, setErreurNom] = useState("");
   const [erreurNumero, setErreurNumero] = useState("");
+  const  [loading, setLoading] = useState(false);
 
   // fonction validation numero
-    // Fonction de validation du numero
+  // Fonction de validation du numero
   const validationNumeroCI = (numero: string) => {
     const regex = /^(?:\+225|00225)?(01|05|07|25|27)\d{8}$/;
     return regex.test(numero);
@@ -102,6 +103,8 @@ export default function AjoutNouveauAchat({
     }
   };
 
+
+
   // fonction toggle panier
   const togglePanier = () => {
     setVoirPanier(!voirPanier);
@@ -132,10 +135,21 @@ export default function AjoutNouveauAchat({
     }
   };
 
+    // Foncton rafraichir la page
+  const refreshPage = () => {
+    setLoading(true);
+    listeProduitDisponible();
+    setLoading(false);
+  };
+
   // Ajouter un produit au panier
   const ajouterProduit = (id: string) => {
     const produit = produits.find((p) => p.identifiant_produit === id);
     if (produit) {
+      if (produit.quantite_produit_disponible === 0) {
+        Alert.alert("", `Stock de ${produit.nom_produit} Epuisé`);
+        return;
+      }
       const produitPresent = cart.find((p) => p.identifiant_produit === id);
       if (produitPresent) {
         Alert.alert("", "Article déjà ajouté au panier");
@@ -194,12 +208,6 @@ export default function AjoutNouveauAchat({
       if (cart[index].quantite_produit_disponible === 1) {
         Alert.alert("", `Quantité minimale de ${produit.nom_produit} atteinte`);
         return;
-      } else if (
-        cart[index].quantite_produit_disponible >
-        cart[index].quantite_total_produit
-      ) {
-        Alert.alert("", `Quantité maximale de ${produit.nom_produit} atteinte`);
-        return;
       } else {
         produit.quantite_produit_disponible += 1;
         setProduits([...produits]);
@@ -224,6 +232,15 @@ export default function AjoutNouveauAchat({
   useEffect(() => {
     listeProduitDisponible();
   }, [visible]);
+
+  if (loading)
+      return (
+        <ActivityIndicator
+          size="large"
+          color={COLORS.primary}
+          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+        />
+      );
   return (
     <SafeAreaProvider>
       <SafeAreaView style={{ flex: 1 }}>
@@ -234,7 +251,10 @@ export default function AjoutNouveauAchat({
               <Ionicons name="arrow-back" size={25} color={COLORS.light} />
             </Pressable>
             <Text style={styles.headerTitle}>Nouvelle vente</Text>
-            <View style={{ width: 25 }} />
+            {/* <View style={{ width: 25 }} /> */}
+            <Pressable style={styles.iconBtn} onPress={refreshPage}>
+              <Ionicons name="reload-circle" size={35} color={COLORS.light} />
+            </Pressable>
           </View>
 
           <ScrollView style={styles.content}>
@@ -309,7 +329,7 @@ export default function AjoutNouveauAchat({
                             <Text>-</Text>
                           </TouchableOpacity>
                           <Text style={styles.quantityValue}>
-                            {item.quantite_produit_disponible.toFixed(1)}
+                            {item.quantite_produit_disponible}
                           </Text>
                           <TouchableOpacity
                             style={styles.quantityBtn}
@@ -321,11 +341,13 @@ export default function AjoutNouveauAchat({
                           </TouchableOpacity>
                         </View>
                         <Text style={styles.saleAmount}>
-                          {formatMoneyFR((
-                            item.prix_unitaire_produit *
-                            item.quantite_produit_disponible
-                          ).toFixed(2))} XOF
-                          
+                          {formatMoneyFR(
+                            (
+                              item.prix_unitaire_produit *
+                              item.quantite_produit_disponible
+                            ).toFixed(2)
+                          )}{" "}
+                          XOF
                         </Text>
                       </View>
                     </View>
@@ -373,7 +395,8 @@ export default function AjoutNouveauAchat({
                   <View style={styles.productInfo}>
                     <Text style={styles.productName}>{prod.nom_produit}</Text>
                     <Text style={styles.productDetails}>
-                      Prix unitaire : {formatMoneyFR(prod.prix_unitaire_produit)}
+                      Prix unitaire :{" "}
+                      {formatMoneyFR(prod.prix_unitaire_produit)}
                     </Text>
                     <Text style={styles.productDetails}>
                       Quantité : {prod.quantite_produit_disponible}

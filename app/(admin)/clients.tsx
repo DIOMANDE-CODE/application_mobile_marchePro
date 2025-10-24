@@ -83,7 +83,7 @@ export default function ListClients() {
               <Ionicons name="add-circle" size={25} color={COLORS.light} />
             </Pressable> */}
             <Pressable style={styles.iconBtn} onPress={refreshPage}>
-              <Ionicons name="reload-circle" size={25} color={COLORS.light} />
+              <Ionicons name="reload-circle" size={35} color={COLORS.light} />
             </Pressable>
           </View>
         </View>

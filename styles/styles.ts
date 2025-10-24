@@ -431,7 +431,7 @@ export const stylesCss = StyleSheet.create({
   cartItemDetails: { color: "#6c757d", fontSize: 12 },
   cartItemActions: { flexDirection: "row", alignItems: "center", gap: 8 },
   quantityControl: { flexDirection: "row", alignItems: "center", gap: 4 },
-  quantityBtn: { borderWidth: 1, borderColor: "#e9ecef", borderRadius: 15, padding: 4 },
+  quantityBtn: { borderWidth: 3, borderColor: "#e9ecef", borderRadius: 15, padding: 4 },
   quantityValue: { minWidth: 30, textAlign: "center" },
   cartSummary: { backgroundColor: "white", borderRadius: 8, padding: 16, marginBottom: 16, shadowColor: "#000", shadowOpacity: 0.1, shadowRadius: 6, elevation: 3 },
   summaryRow: { flexDirection: "row", justifyContent: "space-between", marginBottom: 8 },

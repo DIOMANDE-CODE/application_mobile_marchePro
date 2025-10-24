@@ -5,7 +5,6 @@ import { useCallback, useEffect, useState } from "react";
 import { ActivityIndicator, Alert, Pressable, Text, View } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
-
 // import des composants
 import AjoutNouveauProduit from "@/components/produits/add_produit";
 import EditProduit from "@/components/produits/edit_produit";
@@ -64,19 +63,26 @@ export default function Produits() {
     setIdProduit(index);
   }, []);
 
-     // Foncton rafraichir la page
+  // Foncton rafraichir la page
   const refreshPage = () => {
     setLoading(true);
     listeProduit();
     setLoading(false);
-  }
+  };
 
   // Pre-chargement
   useEffect(() => {
     listeProduit();
   }, [isVisible, editVisible, idProduit]);
 
-    if (loading) return (<ActivityIndicator size="large" color={COLORS.primary} style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}/>);
+  if (loading)
+    return (
+      <ActivityIndicator
+        size="large"
+        color={COLORS.primary}
+        style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+      />
+    );
   return (
     <SafeAreaProvider>
       <SafeAreaView style={{ flex: 1 }}>
@@ -86,13 +92,13 @@ export default function Produits() {
             <Text style={styles.headerTitle}>Gestion des produits</Text>
             <View style={styles.headerActions}>
               <Pressable style={styles.iconBtn} onPress={refreshPage}>
-                <Ionicons name="reload-circle" size={25} color={COLORS.light} />
+                <Ionicons name="reload-circle" size={35} color={COLORS.light} />
               </Pressable>
               <Pressable
                 style={styles.iconBtn}
                 onPress={() => setIsVisible(true)}
               >
-                <Ionicons name="add-circle" size={25} color={COLORS.light} />
+                <Ionicons name="add-circle" size={35} color={COLORS.light} />
               </Pressable>
             </View>
           </View>

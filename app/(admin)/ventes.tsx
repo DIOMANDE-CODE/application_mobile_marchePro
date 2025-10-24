@@ -1,7 +1,6 @@
 import api from "@/services/api";
 import { COLORS, stylesCss } from "@/styles/styles";
 import { Ionicons } from "@expo/vector-icons";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useCallback, useEffect, useState } from "react";
 import { ActivityIndicator, Alert, Pressable, Text, View } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
@@ -20,51 +19,25 @@ export default function Ventes() {
 
   // Afficher les ventes
   const listeVente = async () => {
-    const role = await AsyncStorage.getItem("user_role");
-    if (role === "admin") {
-      try {
-        const response = await api.get("/ventes/list/");
-        if (response.status === 200) {
-          const data = response.data;
-          setListeVentes(data.data);
-        }
-      } catch (error: any) {
-        if (error.response) {
-          const status = error.response.status;
-          const message = error.response.data;
-
-          if (status === 400) {
-            Alert.alert("", message.errors || "Erreur de saisie");
-          } else if (status === 500) {
-            Alert.alert("Erreur 500", "Erreur survenue au serveur");
-          } else if (status === 401) {
-            Alert.alert("", "Mot de passe incorrecte");
-          } else {
-            Alert.alert("Erreur", error.message || "Erreur survenue");
-          }
-        }
+    try {
+      const response = await api.get("/ventes/list/");
+      if (response.status === 200) {
+        const data = response.data;
+        setListeVentes(data.data);
       }
-    } else {
-      try {
-        const response = await api.get("/ventes/list/vendeur");
-        if (response.status === 200) {
-          const data = response.data;
-          setListeVentes(data.data);
-        }
-      } catch (error: any) {
-        if (error.response) {
-          const status = error.response.status;
-          const message = error.response.data;
+    } catch (error: any) {
+      if (error.response) {
+        const status = error.response.status;
+        const message = error.response.data;
 
-          if (status === 400) {
-            Alert.alert("", message.errors || "Erreur de saisie");
-          } else if (status === 500) {
-            Alert.alert("Erreur 500", "Erreur survenue au serveur");
-          } else if (status === 401) {
-            Alert.alert("", "Mot de passe incorrecte");
-          } else {
-            Alert.alert("Erreur", error.message || "Erreur survenue");
-          }
+        if (status === 400) {
+          Alert.alert("", message.errors || "Erreur de saisie");
+        } else if (status === 500) {
+          Alert.alert("Erreur 500", "Erreur survenue au serveur");
+        } else if (status === 401) {
+          Alert.alert("", "Mot de passe incorrecte");
+        } else {
+          Alert.alert("Erreur", error.message || "Erreur survenue");
         }
       }
     }

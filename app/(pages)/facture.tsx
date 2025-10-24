@@ -50,7 +50,7 @@ export default function DetailVente() {
       const response = await api.post("/ventes/creer/", facture);
 
       if (response.status === 200 || response.status === 201) {
-        Alert.alert("Succès", "Nouvelle vente effectuée");
+        Alert.alert("Succès", "Article vendu avec succès");
         router.replace("/(tabs)/ventes");
       }
     } catch (error: any) {

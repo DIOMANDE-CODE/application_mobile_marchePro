@@ -13,6 +13,7 @@ import {
 } from "react-native";
 
 import CONFIG from "@/constants/config";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as SecureStore from "expo-secure-store";
 
 export default function PageConnexion() {
@@ -58,14 +59,23 @@ export default function PageConnexion() {
       });
 
       if (response.status === 200 || response.status === 201) {
-        console.log("API");
-
+        console.log("LOGIN SUCCESS");
         const token = response.data.token;
         if (token) {
           await SecureStore.setItemAsync("auth_token", token);
+          await AsyncStorage.setItem("user_role",response.data.user.role);        
           await attachTokenToApi();
-          router.replace("/(tabs)");
-          Alert.alert("Succès", "Connexion réussie");
+          const role = await AsyncStorage.getItem("user_role");
+          if (role?.trim().toLowerCase() === "admin"){
+            router.replace("/(admin)")
+            Alert.alert("Succès", "Connexion réussie");
+            return;
+          }
+          else {
+            router.replace("/(tabs)");
+            Alert.alert("Succès", "Connexion réussie");
+            return;
+          }
         }
         // Renitialisation des champs
 
@@ -164,7 +174,6 @@ export default function PageConnexion() {
           </TouchableOpacity>
         )}
       </View>
-
       {/* Lien vers l'inscription */}
       <Text style={{ textAlign: "center" }}>
         Aucun compte ?{" "}
