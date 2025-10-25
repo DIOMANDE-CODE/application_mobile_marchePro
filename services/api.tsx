@@ -17,7 +17,7 @@ export async function attachTokenToApi() {
   }
 }
 
-// Intercepteur global : si 401 -> cleanup et redirect vers login
+// Intercepteur global : si 401 -> cleanup et redirect vers la page login
 api.interceptors.response.use(
   (res) => res,
   async (error) => {
