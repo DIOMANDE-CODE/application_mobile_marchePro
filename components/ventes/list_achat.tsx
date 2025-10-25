@@ -48,7 +48,7 @@ const ListVentes = ({ data, onSelectedId }: ListVentesProps) => {
               <Text style={styles.saleClient}>{item.client.nom_client}</Text>
               <Text style={styles.saleDetails}>{item.details.length} {"produit(s) acheté(s)"}</Text>
             </View>
-            <Text style={styles.saleAmount}>{formatMoneyFR(item.total_ttc)} XOF</Text>
+            <Text style={styles.saleAmount}>{formatMoneyFR(item.total_ttc)} FCFA</Text>
           </View>
         </Pressable>
       )}

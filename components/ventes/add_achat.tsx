@@ -6,6 +6,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import {
+  ActivityIndicator,
   Alert,
   Image,
   Pressable,
@@ -13,7 +14,7 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  View, ActivityIndicator
+  View
 } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
@@ -252,9 +253,9 @@ export default function AjoutNouveauAchat({
             </Pressable>
             <Text style={styles.headerTitle}>Nouvelle vente</Text>
             {/* <View style={{ width: 25 }} /> */}
-            <Pressable style={styles.iconBtn} onPress={refreshPage}>
+            <TouchableOpacity style={styles.iconBtn} onPress={refreshPage}>
               <Ionicons name="reload-circle" size={35} color={COLORS.light} />
-            </Pressable>
+            </TouchableOpacity>
           </View>
 
           <ScrollView style={styles.content}>
@@ -315,7 +316,7 @@ export default function AjoutNouveauAchat({
                           {item.nom_produit}
                         </Text>
                         <Text style={styles.cartItemDetails}>
-                          {formatMoneyFR(item.prix_unitaire_produit)} XOF/unité
+                          {formatMoneyFR(item.prix_unitaire_produit)} FCFA/unité
                         </Text>
                       </View>
                       <View style={styles.cartItemActions}>
@@ -347,7 +348,7 @@ export default function AjoutNouveauAchat({
                               item.quantite_produit_disponible
                             ).toFixed(2)
                           )}{" "}
-                          XOF
+                          FCFA
                         </Text>
                       </View>
                     </View>
@@ -357,15 +358,15 @@ export default function AjoutNouveauAchat({
                 <View style={styles.cartSummary}>
                   <View style={styles.summaryRow}>
                     <Text>Sous-total:</Text>
-                    <Text>{formatMoneyFR(subtotal.toFixed(2))}XOF</Text>
+                    <Text>{formatMoneyFR(subtotal.toFixed(2))}FCFA</Text>
                   </View>
                   <View style={styles.summaryRow}>
                     <Text>TVA (10%):</Text>
-                    <Text>{formatMoneyFR(tax.toFixed(2))}XOF</Text>
+                    <Text>{formatMoneyFR(tax.toFixed(2))}FCFA</Text>
                   </View>
                   <View style={[styles.summaryRow, styles.summaryTotal]}>
                     <Text>Total:</Text>
-                    <Text>{formatMoneyFR(total.toFixed(2))}XOF</Text>
+                    <Text>{formatMoneyFR(total.toFixed(2))}FCFA</Text>
                   </View>
 
                   <TouchableOpacity

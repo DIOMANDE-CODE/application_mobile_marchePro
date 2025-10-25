@@ -3,7 +3,7 @@ import { COLORS, stylesCss } from "@/styles/styles";
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useCallback, useEffect, useState } from "react";
-import { ActivityIndicator, Alert, Pressable, Text, View } from "react-native";
+import { ActivityIndicator, Alert, Pressable, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
 // import des composants
@@ -121,13 +121,13 @@ export default function Ventes() {
             <View style={styles.header}>
               <Text style={styles.headerTitle}>Ventes</Text>
               <View style={styles.headerActions}>
-                <Pressable style={styles.iconBtn} onPress={refreshPage}>
+                <TouchableOpacity style={styles.iconBtn} onPress={refreshPage}>
                   <Ionicons
                     name="reload-circle"
                     size={35}
                     color={COLORS.light}
                   />
-                </Pressable>
+                </TouchableOpacity>
                 <Pressable
                   style={styles.iconBtn}
                   onPress={() => setIsVisible(!isVisible)}

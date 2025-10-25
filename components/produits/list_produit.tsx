@@ -81,7 +81,7 @@ const ListProduits = ({ data, onSelectProduit }: ListProduitsProps) => {
 
             <Text>Prix unitaire: </Text>
             <Text style={[styles.productPrice, { fontWeight: "bold" }]}>
-              {formatMoneyFR(item.prix_unitaire_produit)} XOF
+              {formatMoneyFR(item.prix_unitaire_produit)} FCFA
             </Text>
 
             <Text>Catégorie: </Text>

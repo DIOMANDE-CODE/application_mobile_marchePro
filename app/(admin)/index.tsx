@@ -2,6 +2,7 @@ import CONFIG from "@/constants/config";
 import { COLORS, stylesCss } from "@/styles/styles";
 import { formatMoneyFR } from "@/utils/moneyFormat";
 import { Ionicons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import { useCallback, useEffect, useState } from "react";
@@ -11,6 +12,7 @@ import {
   Pressable,
   ScrollView,
   Text,
+  TouchableOpacity,
   TouchableWithoutFeedback,
   View,
 } from "react-native";
@@ -123,6 +125,8 @@ export default function TableauBord() {
       if (response.status === 200 || response.status === 201) {
         await SecureStore.deleteItemAsync("auth_token");
         delete api.defaults.headers.common["Authorization"];
+        await AsyncStorage.removeItem("user_role");
+
         router.replace("/login");
         Alert.alert("Succès", "Deconnexion réussie");
       }
@@ -199,13 +203,16 @@ export default function TableauBord() {
               <View style={styles.header}>
                 <Text style={styles.headerTitle}>Tableau de bord</Text>
                 <View style={styles.headerActions}>
-                  <Pressable style={styles.iconBtn} onPress={refreshPage}>
+                  <TouchableOpacity
+                    style={styles.iconBtn}
+                    onPress={refreshPage}
+                  >
                     <Ionicons
                       name="reload-circle"
                       size={35}
                       color={COLORS.light}
                     />
-                  </Pressable>
+                  </TouchableOpacity>
                   <Pressable style={styles.iconBtn} onPress={toggleMenu}>
                     <Ionicons
                       name="person-circle"
@@ -301,7 +308,9 @@ export default function TableauBord() {
                           alignItems: "center",
                         }}
                       >
-                        <Text style={styles.statValue}>{stats?.nombre_produits_stocks_faibles}</Text>
+                        <Text style={styles.statValue}>
+                          {stats?.nombre_produits_stocks_faibles}
+                        </Text>
                         <Text style={styles.statLabel}>Stocks faibles</Text>
                       </Pressable>
                     </View>
@@ -373,7 +382,7 @@ export default function TableauBord() {
                             {produit.nom_produit}
                           </Text>
                           <Text style={styles.productPrice}>
-                            {formatMoneyFR(produit.prix_unitaire_produit)} XOF
+                            {formatMoneyFR(produit.prix_unitaire_produit)} FCFA
                           </Text>
                         </View>
                         {produit.quantite_produit_disponible <=

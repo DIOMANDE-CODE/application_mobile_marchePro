@@ -44,7 +44,7 @@ type Details = {
 
 type DetailTache = {
   identifiant_vente: string;
-  date_vente: string;
+  date_vente: string | number | Date;
   total_ht: string;
   tva: string;
   total_ttc: string;
@@ -300,15 +300,15 @@ export default function RecuVente({
     <div class="summary">
       <div class="summary-row">
         <div>Sous-total:</div>
-        <div>${voirDetail?.total_ht} XOF</div>
+        <div>${voirDetail?.total_ht} FCFA</div>
       </div>
       <div class="summary-row">
         <div>TVA (10%):</div>
-        <div>${voirDetail?.tva} XOF</div>
+        <div>${voirDetail?.tva} FCFA</div>
       </div>
       <div class="summary-row total">
         <div>TOTAUX:</div>
-        <div>${voirDetail?.total_ttc} XOF</div>
+        <div>${voirDetail?.total_ttc} FCFA</div>
       </div>
     </div>
 
@@ -452,7 +452,7 @@ export default function RecuVente({
             <View style={stylesCss.table}>
               <View style={styles.tableRow}>
                 <View style={{ flex: 2 }}>
-                  <Text style={styles.productName}>Article</Text>
+                  <Text style={styles.productName}>{"Article(s)"}</Text>
                 </View>
                 <Text style={styles.cell}>Qte</Text>
                 <Text style={styles.cell}>Prix U</Text>
@@ -478,15 +478,15 @@ export default function RecuVente({
             <View style={stylesCss.summary}>
               <View style={stylesCss.summaryRow}>
                 <Text>Sous-total:</Text>
-                <Text>{formatMoneyFR(voirDetail.total_ht)} XOF</Text>
+                <Text>{formatMoneyFR(voirDetail.total_ht)} FCFA</Text>
               </View>
               <View style={stylesCss.summaryRow}>
                 <Text>TVA (10%):</Text>
-                <Text>{formatMoneyFR(voirDetail.tva)} XOF</Text>
+                <Text>{formatMoneyFR(voirDetail.tva)} FCFA</Text>
               </View>
               <View style={[stylesCss.summaryRow, stylesCss.summaryTotal]}>
                 <Text>TOTAUX:</Text>
-                <Text>{formatMoneyFR(voirDetail.total_ttc)} XOF</Text>
+                <Text>{formatMoneyFR(voirDetail.total_ttc)} FCFA</Text>
               </View>
             </View>
           </ScrollView>

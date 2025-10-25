@@ -41,7 +41,7 @@ export default function PageConnexion() {
     if (!email.trim()) {
       setErrorEmail("Ce champs est obligatoire");
       hasError = true;
-    } else if (!validationEmail) {
+    } else if (!validationEmail(email)) {
       setErrorEmail("Email invalide");
       hasError = true;
     }
@@ -63,15 +63,14 @@ export default function PageConnexion() {
         const token = response.data.token;
         if (token) {
           await SecureStore.setItemAsync("auth_token", token);
-          await AsyncStorage.setItem("user_role",response.data.user.role);        
+          await AsyncStorage.setItem("user_role", response.data.user.role);
           await attachTokenToApi();
           const role = await AsyncStorage.getItem("user_role");
-          if (role?.trim().toLowerCase() === "admin"){
-            router.replace("/(admin)")
+          if (role?.trim().toLowerCase() === "admin") {
+            router.replace("/(admin)");
             Alert.alert("Succès", "Connexion réussie");
             return;
-          }
-          else {
+          } else {
             router.replace("/(tabs)");
             Alert.alert("Succès", "Connexion réussie");
             return;
@@ -118,6 +117,8 @@ export default function PageConnexion() {
       setLoading(false);
     }
   };
+
+  
   return (
     <View style={stylesCss.loginContainer}>
       {/* HEADER */}

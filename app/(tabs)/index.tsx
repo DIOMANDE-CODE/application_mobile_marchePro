@@ -1,5 +1,6 @@
 import { COLORS, stylesCss } from "@/styles/styles";
 import { Ionicons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import { useCallback, useEffect, useState } from "react";
@@ -11,7 +12,7 @@ import {
   Text,
   TouchableOpacity,
   TouchableWithoutFeedback,
-  View
+  View,
 } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
@@ -89,6 +90,7 @@ export default function TableauBord() {
       if (response.status === 200 || response.status === 201) {
         await SecureStore.deleteItemAsync("auth_token");
         delete api.defaults.headers.common["Authorization"];
+        await AsyncStorage.removeItem("user_role");
         router.replace("/login");
         Alert.alert("Succès", "Deconnexion réussie");
       }
@@ -163,7 +165,10 @@ export default function TableauBord() {
               <View style={styles.header}>
                 <Text style={styles.headerTitle}>Tableau de bord</Text>
                 <View style={styles.headerActions}>
-                  <TouchableOpacity style={styles.iconBtn} onPress={refreshPage}>
+                  <TouchableOpacity
+                    style={styles.iconBtn}
+                    onPress={refreshPage}
+                  >
                     <Ionicons
                       name="reload-circle"
                       size={35}
@@ -265,7 +270,9 @@ export default function TableauBord() {
                           alignItems: "center",
                         }}
                       >
-                        <Text style={styles.statValue}>{stats?.nombre_produits_stocks_faibles}</Text>
+                        <Text style={styles.statValue}>
+                          {stats?.nombre_produits_stocks_faibles}
+                        </Text>
                         <Text style={styles.statLabel}>Stocks faibles</Text>
                       </Pressable>
                     </View>

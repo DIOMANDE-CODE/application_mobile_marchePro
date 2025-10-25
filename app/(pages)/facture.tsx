@@ -45,6 +45,7 @@ export default function DetailVente() {
   const [loading, setLoading] = useState(false);
 
   const valider = async () => {
+    const role = 
     setLoading(true);
     try {
       const response = await api.post("/ventes/creer/", facture);
@@ -176,12 +177,12 @@ export default function DetailVente() {
                     {item.quantite_produit_disponible} *
                   </Text>
                   <Text style={styles.cell}>
-                    {formatMoneyFR(item.prix_unitaire_produit)} XOF
+                    {formatMoneyFR(item.prix_unitaire_produit)} FCFA
                   </Text>
                   <Text style={styles.cell}>
                     {item.quantite_produit_disponible *
                       item.prix_unitaire_produit}{" "}
-                    XOF
+                    FCFA
                   </Text>
                 </View>
               ))}
@@ -191,15 +192,15 @@ export default function DetailVente() {
             <View style={styles.summary}>
               <View style={styles.summaryRow}>
                 <Text>Sous-total:</Text>
-                <Text>{formatMoneyFR(facture.total_ht)} XOF</Text>
+                <Text>{formatMoneyFR(facture.total_ht)} FCFA</Text>
               </View>
               <View style={styles.summaryRow}>
                 <Text>TVA:</Text>
-                <Text>{formatMoneyFR(facture.tva)} XOF</Text>
+                <Text>{formatMoneyFR(facture.tva)} FCFA</Text>
               </View>
               <View style={[styles.summaryRow, styles.summaryTotal]}>
                 <Text>TOTAUX:</Text>
-                <Text>{formatMoneyFR(facture.total_ttc)} XOF</Text>
+                <Text>{formatMoneyFR(facture.total_ttc)} FCFA</Text>
               </View>
             </View>
 

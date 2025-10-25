@@ -240,7 +240,7 @@ export default function Rapports() {
                 <View style={styles.statsContainer}>
                   <View style={styles.statCard}>
                     <Text style={styles.statValue}>
-                      {statsDuJour?.total_ventes_aujourd_hui} XOF
+                      {statsDuJour?.total_ventes_aujourd_hui} FCFA
                     </Text>
                     <Text style={styles.statLabel}>{"Caisse"}</Text>
                   </View>
@@ -260,7 +260,7 @@ export default function Rapports() {
                   </View>
                   <View style={styles.statCard}>
                     <Text style={styles.statValue}>
-                      {statsDuJour?.panier_moyen_aujourd_hui}
+                      {Number(statsDuJour?.panier_moyen_aujourd_hui).toFixed(2)}
                     </Text>
                     <Text style={styles.statLabel}>Paniers moyens</Text>
                   </View>
@@ -275,7 +275,7 @@ export default function Rapports() {
                       data={dataJour}
                       width={screenwidth - 100}
                       height={250}
-                      yAxisLabel="" // préfixe si tu veux mettre "XOF" avant le nombre
+                      yAxisLabel="" // préfixe si tu veux mettre "FCFA" avant le nombre
                       yAxisSuffix="" // suffixe obligatoire (même vide "")
                       chartConfig={{
                         backgroundColor: "#fff",
@@ -322,7 +322,7 @@ export default function Rapports() {
                 <View style={styles.statsContainer}>
                   <View style={styles.statCard}>
                     <Text style={styles.statValue}>
-                      {statsDeSemaine?.total_ventes_semaine} XOF
+                      {statsDeSemaine?.total_ventes_semaine} FCFA
                     </Text>
                     <Text style={styles.statLabel}>{"Caisse"}</Text>
                   </View>
@@ -342,7 +342,7 @@ export default function Rapports() {
                   </View>
                   <View style={styles.statCard}>
                     <Text style={styles.statValue}>
-                      {statsDeSemaine?.panier_moyen_semaine}
+                      {Number(statsDeSemaine?.panier_moyen_semaine).toFixed(2)} FCFA
                     </Text>
                     <Text style={styles.statLabel}>Paniers moyens</Text>
                   </View>
@@ -359,7 +359,7 @@ export default function Rapports() {
                       data={dataSemaine}
                       width={screenwidth - 100}
                       height={250}
-                      yAxisLabel="" // préfixe si tu veux mettre "XOF" avant le nombre
+                      yAxisLabel="" // préfixe si tu veux mettre "FCFA" avant le nombre
                       yAxisSuffix="" // suffixe obligatoire (même vide "")
                       chartConfig={{
                         backgroundColor: "#fff",
@@ -406,7 +406,7 @@ export default function Rapports() {
                 <View style={styles.statsContainer}>
                   <View style={styles.statCard}>
                     <Text style={styles.statValue}>
-                      {statsDeMois?.total_ventes_mois} XOF
+                      {statsDeMois?.total_ventes_mois} FCFA
                     </Text>
                     <Text style={styles.statLabel}>{"Caisse"}</Text>
                   </View>
@@ -426,7 +426,7 @@ export default function Rapports() {
                   </View>
                   <View style={styles.statCard}>
                     <Text style={styles.statValue}>
-                      {statsDeMois?.panier_moyen_mois}
+                      {Number(statsDeMois?.panier_moyen_mois).toFixed(2)} FCFA
                     </Text>
                     <Text style={styles.statLabel}>Paniers moyens</Text>
                   </View>
@@ -443,7 +443,7 @@ export default function Rapports() {
                       data={dataMois}
                       width={screenwidth - 100}
                       height={250}
-                      yAxisLabel="" // préfixe si tu veux mettre "XOF" avant le nombre
+                      yAxisLabel="" // préfixe si tu veux mettre "FCFA" avant le nombre
                       yAxisSuffix="" // suffixe obligatoire (même vide "")
                       chartConfig={{
                         backgroundColor: "#fff",

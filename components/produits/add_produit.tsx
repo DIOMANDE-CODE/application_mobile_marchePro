@@ -290,7 +290,7 @@ export default function AjoutNouveauProduit({
                     ))}
                   </Picker>
 
-                  <Text style={styles.label}>Prix unitaire (XOF)</Text>
+                  <Text style={styles.label}>Prix unitaire (FCFA)</Text>
                   {erreurPrix && (
                     <Text style={styles.textDanger}>{erreurPrix}</Text>
                   )}
