@@ -13,9 +13,7 @@ export default function RootLayout() {
   const [loading, setLoading] = useState(true);
 
   const checkToken = async () => {
-    console.log("Vérification du token...");
     const token = await SecureStore.getItemAsync("auth_token");
-    console.log(token);
 
     if (!token) {
       setLoading(false);
@@ -26,12 +24,10 @@ export default function RootLayout() {
       const response = await api.post("/authentification/check_session/", {
         token_key: token,
       });
-      console.log(response.status);
 
       if (response.status === 200) {
         const role = await AsyncStorage.getItem("user_role");
         api.defaults.headers.common["Authorization"] = `Token ${token}`;
-        console.log(role);
 
         if (role === "admin") {
           router.replace("/(admin)");

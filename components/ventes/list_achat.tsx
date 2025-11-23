@@ -20,9 +20,10 @@ type Vente = {
 type ListVentesProps = {
   data: Vente[];
   onSelectedId: (id:string) => void;
+  onEndReached : () => void;
 };
 
-const ListVentes = ({ data, onSelectedId }: ListVentesProps) => {
+const ListVentes = ({ data, onSelectedId,onEndReached }: ListVentesProps) => {
   return (
     <FlatList
       style={styles.content}
@@ -52,6 +53,8 @@ const ListVentes = ({ data, onSelectedId }: ListVentesProps) => {
           </View>
         </Pressable>
       )}
+      onEndReached={onEndReached}
+      onEndReachedThreshold={0.4}
     />
   );
 };

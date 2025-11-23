@@ -2,7 +2,7 @@ import api from "@/services/api";
 import { COLORS, stylesCss } from "@/styles/styles";
 import { Ionicons } from "@expo/vector-icons";
 import { useCallback, useEffect, useState } from "react";
-import { ActivityIndicator, Alert, Pressable, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Pressable, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
 // import des composants
@@ -30,31 +30,48 @@ export default function Produits() {
   const [idProduit, setIdProduit] = useState<string | null>(null);
   const [produit, setProduit] = useState<Produit[]>([]);
   const [loading, setLoading] = useState(false);
+  const [loadingProduit, setLoadingProduit] = useState(false);
+
+  const [offset, setOffset] = useState(0)
+  const [next, setNext] = useState(null)
+  const limit = 7
 
   // Lister les clients
   const listeProduit = async () => {
-    try {
-      const response = await api.get("/produits/list/");
-      if (response.status === 200) {
-        const data = response.data;
-        setProduit(data.data);
-      }
-    } catch (error: any) {
-      if (error.response) {
-        const status = error.response.status;
-        const message = error.response.data;
+    if (loadingProduit) return;
+    setLoadingProduit(true);
 
-        if (status === 400) {
-          Alert.alert("", message.errors || "Erreur de saisie");
-        } else if (status === 500) {
-          Alert.alert("Erreur 500", "Erreur survenue au serveur");
-        } else if (status === 401) {
-          Alert.alert("", "Mot de passe incorrecte");
-        } else {
-          Alert.alert("Erreur", error.message || "Erreur survenue");
-        }
+    try {
+      const response = await api.get("/produits/list/", {
+        params: { limit, offset },
+      });
+
+      if (response.status === 200) {
+        const root = response.data;
+        const pagination = root.data;
+
+        // fusion + suppression des doublons
+        setProduit((prev) => {
+          const merged = [...prev, ...pagination.results];
+
+          const unique = merged.filter(
+            (item, index, self) =>
+              index === self.findIndex(
+                (p) => p.identifiant_produit === item.identifiant_produit
+              )
+          );
+
+          return unique;
+        });
+
+        setOffset((prev) => prev + pagination.results.length);
+        setNext(pagination.next);
       }
+    } catch (error) {
+      console.log(error);
     }
+
+    setLoadingProduit(false);
   };
 
   //   Fonction modifier profil
@@ -66,12 +83,17 @@ export default function Produits() {
   // Foncton rafraichir la page
   const refreshPage = () => {
     setLoading(true);
+    setProduit([]);
+    setOffset(0);
+    setNext(null);
     listeProduit();
     setLoading(false);
   };
 
   // Pre-chargement
   useEffect(() => {
+    setOffset(0)
+    setNext(null)
     listeProduit();
   }, [isVisible, editVisible, idProduit]);
 
@@ -118,7 +140,11 @@ export default function Produits() {
           )}
 
           {/* Contenu principal */}
-          <ListProduits data={produit} onSelectProduit={modifierProduit} />
+          <ListProduits data={produit} onSelectProduit={modifierProduit} onEndReached={() => {
+            if (!loadingProduit && next) {
+              listeProduit();
+            }
+          }} />
         </View>
       </SafeAreaView>
     </SafeAreaProvider>

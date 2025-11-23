@@ -12,7 +12,6 @@ import {
   View,
 } from "react-native";
 
-import CONFIG from "@/constants/config";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as SecureStore from "expo-secure-store";
 
@@ -30,7 +29,6 @@ export default function PageConnexion() {
   };
 
   const Connexion_utilisateur = async () => {
-    console.log("Connexion.....", CONFIG.API_IMAGE_BASE_URL);
 
     // Verification des champs saisi
     let hasError = false;
@@ -51,7 +49,6 @@ export default function PageConnexion() {
     // Connexion via api
     setLoading(true);
     try {
-      console.log("API");
 
       const response = await api.post("/authentification/login/", {
         email_utilisateur: email.trim(),
@@ -59,7 +56,6 @@ export default function PageConnexion() {
       });
 
       if (response.status === 200 || response.status === 201) {
-        console.log("LOGIN SUCCESS");
         const token = response.data.token;
         if (token) {
           await SecureStore.setItemAsync("auth_token", token);

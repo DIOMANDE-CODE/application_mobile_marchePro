@@ -251,7 +251,6 @@ export default function AjoutNouveauProduit({
                   {image && (
                     <View style={{ alignItems: "center", marginVertical: 10 }}>
                       <Image
-                      
                         source={{ uri: image }}
                         style={{ width: 120, height: 120, borderRadius: 10 }}
                       />

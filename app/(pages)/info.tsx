@@ -18,7 +18,7 @@ export default function InfoApplication() {
     <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.light }}>
       {/* ===== HEADER ===== */}
       <View style={[styles.header, { backgroundColor: COLORS.primary }]}>
-        <Pressable onPress={() => router.replace("/(tabs)")}>
+        <Pressable onPress={() => router.back()}>
           <Ionicons name="arrow-back" size={25} color={COLORS.light} />
         </Pressable>
         <Text style={styles.headerTitle}>Information Boutique</Text>

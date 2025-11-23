@@ -16,9 +16,10 @@ type Client = {
 type ListeDesClientsProps = {
   data: Client[];
   onSelectedId: (id: string) => void;
+  onEndReached : () => void;
 };
 
-const ListeDesClients = ({ data, onSelectedId }: ListeDesClientsProps) => {
+const ListeDesClients = ({ data, onSelectedId,onEndReached }: ListeDesClientsProps) => {
   return (
     <FlatList
       style={styles.content}
@@ -82,6 +83,8 @@ const ListeDesClients = ({ data, onSelectedId }: ListeDesClientsProps) => {
           )} */}
         </TouchableOpacity>
       )}
+      onEndReached={onEndReached}
+      onEndReachedThreshold={0.4}
     />
   );
 };

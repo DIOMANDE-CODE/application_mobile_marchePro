@@ -134,7 +134,7 @@ export default function EditProduit({
         const status = error.response.status;
         const data = error.response.data;
 
-        // 🔹 On transforme le message en texte
+        // On transforme le message en texte
         let message = "";
 
         if (typeof data === "string") {
@@ -298,7 +298,9 @@ export default function EditProduit({
                   {image ? (
                     <View style={{ alignItems: "center", marginVertical: 10 }}>
                       <Image
-                        cachePolicy="disk"
+                        cachePolicy="memory-disk"
+                        transition={200}
+                        contentFit="cover"
                         source={{ uri: image }}
                         style={{ width: 120, height: 120, borderRadius: 10 }}
                       />
@@ -306,7 +308,9 @@ export default function EditProduit({
                   ) : (
                     <View style={{ alignItems: "center", marginVertical: 10 }}>
                       <Image
-                        cachePolicy="disk"
+                        cachePolicy="memory-disk"
+                        transition={200}
+                        contentFit="cover"
                         source={{ uri: `${CONFIG.API_IMAGE_BASE_URL}${photo}` }}
                         style={{ width: 120, height: 120, borderRadius: 10 }}
                       />

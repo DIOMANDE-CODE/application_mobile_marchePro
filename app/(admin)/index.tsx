@@ -29,22 +29,56 @@ type statsType = {
   nombre_produits_stocks_faibles: string;
 };
 
+interface Categorie {
+  identifiant_categorie: string;
+  nom_categorie: string;
+}
+interface Produit {
+  identifiant_produit: string;
+  image_produit: string;
+  nom_produit: string;
+  prix_unitaire_produit: number;
+  quantite_produit_disponible: number;
+  seuil_alerte_produit: number;
+  categorie_produit: Categorie;
+}
+
 export default function TableauBord() {
   const [menuVisible, setMenuVisible] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [produits, setProduits] = useState([]);
+  const [produits, setProduits] = useState<Produit[]>([]);
   const [stockproduitfaible, setStockproduitfaible] = useState([]);
   const [stats, setStats] = useState<statsType>();
+  const [next,setNext] = useState(null)
+  const [offset,setOffset] = useState(0)
+  const limit = 7
 
   const router = useRouter();
 
   // Afficher les 2 recents ventes et produits
   const ListProduits = async () => {
     try {
-      const response = await api.get("/produits/list/");
+      const response = await api.get("/produits/list/",{
+        params : {limit,offset}
+      });
       if (response.status === 200) {
-        const data = response.data;
-        setProduits(data.data);
+        const root = response.data;
+        const pagination = root.data
+
+        setProduits((prev) => {
+          const merged = [...prev,...pagination.results];
+
+          const unique = merged.filter(
+              (item, index, self) =>
+              index === self.findIndex(
+                (p) => p.identifiant_produit === item.identifiant_produit
+              )
+          );
+          return unique;
+        })
+
+        setOffset((prev) => prev + pagination.results.length);
+        setNext(pagination.next);
       }
     } catch (error: any) {
       if (error.response) {
@@ -70,7 +104,6 @@ export default function TableauBord() {
       const response = await api.get("/produits/alerte/stock_faible/");
       if (response.status === 200) {
         const data = response.data;
-        console.log(data.data);
         setStockproduitfaible(data.data);
 
         // setProduits(data.data);
@@ -165,6 +198,9 @@ export default function TableauBord() {
   // Foncton rafraichir la page
   const refreshPage = () => {
     setLoading(true);
+    setProduits([])
+    setOffset(0)
+    setNext(null)
     stats_du_jour();
     ListProduits();
     ListProduitsStockFaible();
@@ -172,11 +208,13 @@ export default function TableauBord() {
   };
 
   useEffect(() => {
+    setOffset(0)
+    setNext(null)
     stats_du_jour();
     ListProduits();
     ListProduitsStockFaible();
   }, []);
-
+  if (!next) return;
   if (loading)
     return (
       <ActivityIndicator
@@ -249,7 +287,7 @@ export default function TableauBord() {
                 </TouchableWithoutFeedback>
               )}
 
-              <ScrollView style={styles.content}>
+              <View style={styles.content}>
                 {/* Section Aujourd'hui */}
                 <View style={styles.section}>
                   <Text style={styles.sectionTitle}>
@@ -371,7 +409,9 @@ export default function TableauBord() {
                     {produits.slice(0, 3).map((produit: any, i) => (
                       <View style={styles.productCard} key={i}>
                         <Image
-                          cachePolicy="disk"
+                          cachePolicy="memory-disk"
+                          transition={200}
+                          contentFit="cover"
                           style={styles.productImage}
                           source={{
                             uri: `${CONFIG.API_IMAGE_BASE_URL}${produit.image_produit}`,
@@ -397,7 +437,7 @@ export default function TableauBord() {
                     ))}
                   </View>
                 )}
-              </ScrollView>
+              </View>
             </View>
           </ScrollView>
         </SafeAreaView>

@@ -194,7 +194,7 @@ export default function Rapports() {
     stats_de_mois();
   }, []);
 
-  if (loading) return (<ActivityIndicator size="large" color={COLORS.primary} style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}/>);
+  if (loading) return (<ActivityIndicator size="large" color={COLORS.primary} style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }} />);
   return (
     <SafeAreaProvider>
       <SafeAreaView style={{ flex: 1 }}>
@@ -203,13 +203,13 @@ export default function Rapports() {
           <View style={styles.header}>
             <Text style={styles.headerTitle}>Rapports</Text>
             <View style={styles.headerActions}>
-              <TouchableOpacity style={styles.iconBtn} onPress={()=>{refreshPage}}>
+              <TouchableOpacity style={styles.iconBtn} onPress={() => { refreshPage }}>
                 <Ionicons name="reload-circle" size={35} color={COLORS.light} />
               </TouchableOpacity>
               <TouchableOpacity style={styles.iconBtn}>
                 <Ionicons name="download" size={35} color={COLORS.light} />
               </TouchableOpacity>
-              
+
             </View>
           </View>
 

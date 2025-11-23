@@ -24,6 +24,10 @@ export default function ListClients() {
   const [idClient, setIdClient] = useState<string | null>(null);
   const [client, setClient] = useState<Client[]>([]);
   const [loading, setLoading] = useState(false);
+  const [loadingClient, setLoadingClient] = useState(false);
+  const [offset,setOffset] = useState(0)
+  const [next,setNext] = useState(null)
+  const limit = 10
 
   //   Fonction modifier client
   const modifierClient = (id: string) => {
@@ -33,12 +37,28 @@ export default function ListClients() {
 
   // Lister les clients
   const listeClient = async () => {
+    if (loadingClient) return;
+    setLoadingClient(true)
     try {
-      const response = await api.get("/clients/list/");
+      const response = await api.get("/clients/list/",{
+        params : {
+          limit,offset
+        }
+      });
       if (response.status === 200) {
-        const data = response.data;
-        console.log("Liste des clients :",data.data);
-        setClient(data.data);
+        const root = response.data
+        const pagination = root.data;
+        setClient((prev) => {
+          const merged = [...prev,...pagination.results];
+
+          const unique = merged.filter(
+            (item,index,self) => index === self.findIndex((p) => p.identifiant_client === item.identifiant_client)
+          );
+          return unique;
+        });
+
+        setOffset((prev) => prev + pagination.results.length);
+        setNext(pagination.next)
       }
     } catch (error: any) {
       if (error.response) {
@@ -56,17 +76,23 @@ export default function ListClients() {
         }
       }
     }
+    setLoadingClient(false)
   };
 
   // Foncton rafraichir la page
   const refreshPage = () => {
     setLoading(true);
+    setClient([])
+    setOffset(0)
+    setNext(null)
     listeClient();
     setLoading(false);
   }
 
   // Pre-chargement
   useEffect(() => {
+    setOffset(0)
+    setNext(null)
     listeClient();
   }, [isVisible, editVisible, idClient]);
 
@@ -96,7 +122,11 @@ export default function ListClients() {
             onEditClose={() => setEditVisible(false)}
           />
         )}
-        <ListeDesClients data={client} onSelectedId={modifierClient} />
+        <ListeDesClients data={client} onSelectedId={modifierClient} onEndReached = {() => {
+          if (!loadingClient && next){
+            listeClient()
+          }
+        }} />
       </SafeAreaView>
     </SafeAreaProvider>
   );

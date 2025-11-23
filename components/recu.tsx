@@ -72,7 +72,6 @@ export default function RecuVente({
         quality: 0.8,
       });
 
-      console.log(" URI générée :", uri);
 
       const ligneProduits = voirDetail?.details
         .map(

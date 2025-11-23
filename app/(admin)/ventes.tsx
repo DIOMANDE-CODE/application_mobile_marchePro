@@ -10,20 +10,53 @@ import RecuVente from "@/components/recu";
 import AjoutNouveauAchat from "@/components/ventes/add_achat";
 import ListVentes from "@/components/ventes/list_achat";
 
+
+type Client = {
+  nom_client: string;
+};
+type Vente = {
+  identifiant_vente: string;
+  id: string;
+  client: Client;
+  details: [];
+  total_ttc: number;
+};
+
 export default function Ventes() {
   const [showBill, setShowBill] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
-  const [listeVentes, setListeVentes] = useState([]);
+  const [listeVentes, setListeVentes] = useState<Vente[]>([]);
   const [selectedVenteId, setSelectedVenteId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [loadingVente, setLoadingVente] = useState(false);
+  const [offset,setOffset] = useState(0)
+  const [next,setNext] = useState(null)
+  const limit = 7
 
   // Afficher les ventes
   const listeVente = async () => {
+    if (loadingVente) return;
+    setLoadingVente(true)
     try {
-      const response = await api.get("/ventes/list/");
+      const response = await api.get("/ventes/list/", {
+        params : {limit,offset}
+      });
       if (response.status === 200) {
-        const data = response.data;
-        setListeVentes(data.data);
+        const root = response.data;
+        const pagination = root.data
+        setListeVentes((prev) => {
+          const merged = [...prev,...pagination.results];
+
+          const unique = merged.filter(
+            (item, index, self) =>
+              index === self.findIndex(
+                (p) => p.identifiant_vente === item.identifiant_vente
+              )
+          );
+          return unique;
+        });
+        setOffset((prev) => prev + pagination.results.length);
+        setNext(pagination.next);
       }
     } catch (error: any) {
       if (error.response) {
@@ -58,11 +91,16 @@ export default function Ventes() {
   // Foncton rafraichir la page
   const refreshPage = () => {
     setLoading(true);
+    setListeVentes([])
+    setOffset(0)
+    setNext(null)
     listeVente();
     setLoading(false);
   };
 
   useEffect(() => {
+    setOffset(0)
+    setNext(null)
     listeVente();
   }, [showBill, isVisible]);
 
@@ -109,7 +147,11 @@ export default function Ventes() {
                 </Pressable>
               </View>
             </View>
-            <ListVentes data={listeVentes} onSelectedId={afficherDetail} />
+            <ListVentes data={listeVentes} onSelectedId={afficherDetail} onEndReached = {() => {
+              if (!loadingVente && next){
+                listeVente()
+              } 
+            }} />
           </View>
         )}
       </SafeAreaView>

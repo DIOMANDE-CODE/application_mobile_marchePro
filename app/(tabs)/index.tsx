@@ -40,7 +40,6 @@ export default function TableauBord() {
       const response = await api.get("/produits/alerte/stock_faible/");
       if (response.status === 200) {
         const data = response.data;
-        console.log(data.data);
         setStockproduitfaible(data.data);
 
         // setProduits(data.data);

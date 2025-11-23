@@ -8,9 +8,9 @@ import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
+  FlatList,
   Image,
   Pressable,
-  ScrollView,
   Text,
   TextInput,
   TouchableOpacity,
@@ -56,7 +56,11 @@ export default function AjoutNouveauAchat({
   const [numero, setNumero] = useState("");
   const [erreurNom, setErreurNom] = useState("");
   const [erreurNumero, setErreurNumero] = useState("");
-  const  [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [loadingProduit, setLoadingProduit] = useState(false);
+  const [offset, setOffset] = useState(0)
+  const [next, setNext] = useState(null)
+  const limit = 7
 
   // fonction validation numero
   // Fonction de validation du numero
@@ -113,10 +117,29 @@ export default function AjoutNouveauAchat({
   // Fonction des produits disponibles
   const listeProduitDisponible = async () => {
     try {
-      const response = await api.get("/produits/list/");
+      const response = await api.get("/produits/list/", {
+        params: { limit, offset }
+      });
       if (response.status === 200) {
-        const data = response.data;
-        setProduits(data.data);
+        const root = response.data;
+        const pagination = root.data;
+
+        // fusion + suppression des doublons
+        setProduits((prev) => {
+          const merged = [...prev, ...pagination.results];
+
+          const unique = merged.filter(
+            (item, index, self) =>
+              index === self.findIndex(
+                (p) => p.identifiant_produit === item.identifiant_produit
+              )
+          );
+
+          return unique;
+        });
+
+        setOffset((prev) => prev + pagination.results.length);
+        setNext(pagination.next);
       }
     } catch (error: any) {
       if (error.response) {
@@ -136,7 +159,7 @@ export default function AjoutNouveauAchat({
     }
   };
 
-    // Foncton rafraichir la page
+  // Foncton rafraichir la page
   const refreshPage = () => {
     setLoading(true);
     listeProduitDisponible();
@@ -235,13 +258,13 @@ export default function AjoutNouveauAchat({
   }, [visible]);
 
   if (loading)
-      return (
-        <ActivityIndicator
-          size="large"
-          color={COLORS.primary}
-          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-        />
-      );
+    return (
+      <ActivityIndicator
+        size="large"
+        color={COLORS.primary}
+        style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+      />
+    );
   return (
     <SafeAreaProvider>
       <SafeAreaView style={{ flex: 1 }}>
@@ -252,162 +275,40 @@ export default function AjoutNouveauAchat({
               <Ionicons name="arrow-back" size={25} color={COLORS.light} />
             </Pressable>
             <Text style={styles.headerTitle}>Nouvelle vente</Text>
-            {/* <View style={{ width: 25 }} /> */}
             <TouchableOpacity style={styles.iconBtn} onPress={refreshPage}>
               <Ionicons name="reload-circle" size={35} color={COLORS.light} />
             </TouchableOpacity>
           </View>
-
-          <ScrollView style={styles.content}>
-            {/* Icône d’affichage */}
-            <TouchableOpacity style={styles.toggleBtn} onPress={togglePanier}>
-              <Ionicons
-                name={voirPanier ? "chevron-up-circle" : "chevron-down-circle"}
-                size={30}
-                color={COLORS.dark}
-              />
-              <Text style={styles.toggleText}>
-                {voirPanier ? "Masquer le panier" : "Afficher le panier"}
-              </Text>
-            </TouchableOpacity>
-
-            {voirPanier && (
-              <>
-                {/* CLIENT */}
-                <View style={styles.card}>
-                  <View style={styles.cardHeader}>
-                    <Text style={styles.cardTitle}>Client</Text>
-                  </View>
-                  <Text style={styles.label}>Nom complet</Text>
-                  {erreurNom && (
-                    <Text style={styles.textDanger}>{erreurNom}</Text>
-                  )}
-                  <TextInput
-                    style={styles.input}
-                    placeholder="Ex: Konan Marcel"
-                    value={nom}
-                    onChangeText={setNom}
-                  />
-
-                  <Text style={styles.label}>Téléphone</Text>
-                  {erreurNumero && (
-                    <Text style={styles.textDanger}>{erreurNumero}</Text>
-                  )}
-                  <TextInput
-                    style={styles.input}
-                    placeholder="Ex: XXXXXXXXXX"
-                    keyboardType="phone-pad"
-                    value={numero}
-                    onChangeText={setNumero}
-                  />
-                </View>
-
-                {/* Panier */}
-                <View style={styles.card}>
-                  <View style={styles.cardHeader}>
-                    <Text style={styles.cardTitle}>Panier</Text>
-                    <Text style={styles.badge}>{cart.length} articles</Text>
-                  </View>
-
-                  {cart.map((item, index) => (
-                    <View key={index} style={styles.cartItem}>
-                      <View style={styles.cartItemInfo}>
-                        <Text style={styles.cartItemName}>
-                          {item.nom_produit}
-                        </Text>
-                        <Text style={styles.cartItemDetails}>
-                          {formatMoneyFR(item.prix_unitaire_produit)} FCFA/unité
-                        </Text>
-                      </View>
-                      <View style={styles.cartItemActions}>
-                        <View style={styles.quantityControl}>
-                          <TouchableOpacity
-                            style={styles.quantityBtn}
-                            onPress={() =>
-                              decreaseQty(index, item.identifiant_produit)
-                            }
-                          >
-                            <Text>-</Text>
-                          </TouchableOpacity>
-                          <Text style={styles.quantityValue}>
-                            {item.quantite_produit_disponible}
-                          </Text>
-                          <TouchableOpacity
-                            style={styles.quantityBtn}
-                            onPress={() =>
-                              increaseQty(index, item.identifiant_produit)
-                            }
-                          >
-                            <Text>+</Text>
-                          </TouchableOpacity>
-                        </View>
-                        <Text style={styles.saleAmount}>
-                          {formatMoneyFR(
-                            (
-                              item.prix_unitaire_produit *
-                              item.quantite_produit_disponible
-                            ).toFixed(2)
-                          )}{" "}
-                          FCFA
-                        </Text>
-                      </View>
-                    </View>
-                  ))}
-                </View>
-                {/* Résumé */}
-                <View style={styles.cartSummary}>
-                  <View style={styles.summaryRow}>
-                    <Text>Sous-total:</Text>
-                    <Text>{formatMoneyFR(subtotal.toFixed(2))}FCFA</Text>
-                  </View>
-                  <View style={styles.summaryRow}>
-                    <Text>TVA (10%):</Text>
-                    <Text>{formatMoneyFR(tax.toFixed(2))}FCFA</Text>
-                  </View>
-                  <View style={[styles.summaryRow, styles.summaryTotal]}>
-                    <Text>Total:</Text>
-                    <Text>{formatMoneyFR(total.toFixed(2))}FCFA</Text>
-                  </View>
-
-                  <TouchableOpacity
-                    style={[styles.btn, styles.btnSuccess]}
-                    onPress={ValiderVente}
-                  >
-                    <Text style={[styles.btnText]}>Finaliser la vente</Text>
-                  </TouchableOpacity>
-                </View>
-              </>
-            )}
-
-            {/* Produits disponibles */}
-            <View style={styles.card}>
-              <View style={styles.cardHeader}>
-                <Text style={styles.cardTitle}>Produits disponibles</Text>
-              </View>
-
-              {produits.map((prod, idx) => (
-                <View key={prod.identifiant_produit} style={styles.productCard}>
+          <View>
+            {/* FlatList principale */}
+            <FlatList
+              data={produits}
+              keyExtractor={(item) => item.identifiant_produit}
+              contentContainerStyle={{
+              paddingHorizontal: 16,   // espace gauche/droite
+              paddingBottom: 32,       // espace en bas
+            }}
+              renderItem={({ item }) => (
+                <View style={styles.productCard}>
                   <Image
                     style={styles.productImage}
                     source={{
-                      uri: `${CONFIG.API_IMAGE_BASE_URL}${prod.image_produit}`,
+                      uri: `${CONFIG.API_IMAGE_BASE_URL}${item.image_produit}`,
                     }}
                   />
                   <View style={styles.productInfo}>
-                    <Text style={styles.productName}>{prod.nom_produit}</Text>
+                    <Text style={styles.productName}>{item.nom_produit}</Text>
                     <Text style={styles.productDetails}>
-                      Prix unitaire :{" "}
-                      {formatMoneyFR(prod.prix_unitaire_produit)}
+                      Prix unitaire : {formatMoneyFR(item.prix_unitaire_produit)}
                     </Text>
                     <Text style={styles.productDetails}>
-                      Quantité : {prod.quantite_produit_disponible}
+                      Quantité : {item.quantite_produit_disponible}
                     </Text>
                   </View>
+
                   <TouchableOpacity
                     style={[styles.btn, { paddingRight: 1 }]}
-                    onPress={() => {
-                      ajouterProduit(prod.identifiant_produit);
-                    }}
+                    onPress={() => ajouterProduit(item.identifiant_produit)}
                   >
                     <Ionicons
                       name="add-circle"
@@ -415,11 +316,10 @@ export default function AjoutNouveauAchat({
                       color={COLORS.primaryDark}
                     />
                   </TouchableOpacity>
+
                   <TouchableOpacity
-                    style={[styles.btn]}
-                    onPress={() => {
-                      retirerProduit(prod.identifiant_produit);
-                    }}
+                    style={styles.btn}
+                    onPress={() => retirerProduit(item.identifiant_produit)}
                   >
                     <Ionicons
                       name="remove-circle"
@@ -428,9 +328,140 @@ export default function AjoutNouveauAchat({
                     />
                   </TouchableOpacity>
                 </View>
-              ))}
-            </View>
-          </ScrollView>
+              )}
+              onEndReached={() => {
+                if (!loadingProduit && next) {
+                  listeProduitDisponible();
+                }
+              }}
+              onEndReachedThreshold={0.4}
+              ListHeaderComponent={
+                <>
+                  {/* Toggle Panier */}
+                  <TouchableOpacity style={styles.toggleBtn} onPress={togglePanier}>
+                    <Ionicons
+                      name={voirPanier ? "chevron-up-circle" : "chevron-down-circle"}
+                      size={30}
+                      color={COLORS.dark}
+                    />
+                    <Text style={styles.toggleText}>
+                      {voirPanier ? "Masquer le panier" : "Afficher le panier"}
+                    </Text>
+                  </TouchableOpacity>
+
+                  {voirPanier && (
+                    <>
+                      {/* Client */}
+                      <View style={styles.card}>
+                        <View style={styles.cardHeader}>
+                          <Text style={styles.cardTitle}>Client</Text>
+                        </View>
+                        <Text style={styles.label}>Nom complet</Text>
+                        {erreurNom && (
+                          <Text style={styles.textDanger}>{erreurNom}</Text>
+                        )}
+                        <TextInput
+                          style={styles.input}
+                          placeholder="Ex: Konan Marcel"
+                          value={nom}
+                          onChangeText={setNom}
+                        />
+
+                        <Text style={styles.label}>Téléphone</Text>
+                        {erreurNumero && (
+                          <Text style={styles.textDanger}>{erreurNumero}</Text>
+                        )}
+                        <TextInput
+                          style={styles.input}
+                          placeholder="Ex: XXXXXXXXXX"
+                          keyboardType="phone-pad"
+                          value={numero}
+                          onChangeText={setNumero}
+                        />
+                      </View>
+
+                      {/* Panier */}
+                      <View style={styles.card}>
+                        <View style={styles.cardHeader}>
+                          <Text style={styles.cardTitle}>Panier</Text>
+                          <Text style={styles.badge}>{cart.length} articles</Text>
+                        </View>
+
+                        {cart.map((item, index) => (
+                          <View key={index} style={styles.cartItem}>
+                            <View style={styles.cartItemInfo}>
+                              <Text style={styles.cartItemName}>
+                                {item.nom_produit}
+                              </Text>
+                              <Text style={styles.cartItemDetails}>
+                                {formatMoneyFR(item.prix_unitaire_produit)} FCFA/unité
+                              </Text>
+                            </View>
+                            <View style={styles.cartItemActions}>
+                              <View style={styles.quantityControl}>
+                                <TouchableOpacity
+                                  style={styles.quantityBtn}
+                                  onPress={() =>
+                                    decreaseQty(index, item.identifiant_produit)
+                                  }
+                                >
+                                  <Text>-</Text>
+                                </TouchableOpacity>
+                                <Text style={styles.quantityValue}>
+                                  {item.quantite_produit_disponible}
+                                </Text>
+                                <TouchableOpacity
+                                  style={styles.quantityBtn}
+                                  onPress={() =>
+                                    increaseQty(index, item.identifiant_produit)
+                                  }
+                                >
+                                  <Text>+</Text>
+                                </TouchableOpacity>
+                              </View>
+                              <Text style={styles.saleAmount}>
+                                {formatMoneyFR(
+                                  (
+                                    item.prix_unitaire_produit *
+                                    item.quantite_produit_disponible
+                                  ).toFixed(2)
+                                )}{" "}
+                                FCFA
+                              </Text>
+                            </View>
+                          </View>
+                        ))}
+                      </View>
+
+                      {/* Résumé */}
+                      <View style={styles.cartSummary}>
+                        <View style={styles.summaryRow}>
+                          <Text>Sous-total:</Text>
+                          <Text>{formatMoneyFR(subtotal.toFixed(2))} FCFA</Text>
+                        </View>
+                        <View style={styles.summaryRow}>
+                          <Text>TVA (10%):</Text>
+                          <Text>{formatMoneyFR(tax.toFixed(2))} FCFA</Text>
+                        </View>
+                        <View style={[styles.summaryRow, styles.summaryTotal]}>
+                          <Text>Total:</Text>
+                          <Text>{formatMoneyFR(total.toFixed(2))} FCFA</Text>
+                        </View>
+
+                        <TouchableOpacity
+                          style={[styles.btn, styles.btnSuccess]}
+                          onPress={ValiderVente}
+                        >
+                          <Text style={[styles.btnText]}>Finaliser la vente</Text>
+                        </TouchableOpacity>
+                      </View>
+                    </>
+                  )}
+                </>
+              }
+            />
+          </View>
+
         </View>
       </SafeAreaView>
     </SafeAreaProvider>

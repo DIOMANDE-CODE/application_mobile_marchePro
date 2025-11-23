@@ -24,16 +24,17 @@ type Produit = {
 type ListProduitsProps = {
   data: Produit[];
   onSelectProduit: (index: string) => void;
+  onEndReached: () => void;
 };
 
-const ListProduits = ({ data, onSelectProduit }: ListProduitsProps) => {
+const ListProduits = ({ data, onSelectProduit, onEndReached }: ListProduitsProps) => {
   // Verifier le seuil
   return (
     <FlatList
       style={styles.content}
       keyExtractor={(item) => item.identifiant_produit}
       data={data}
-      initialNumToRender={10} // évite de tout charger d’un coup
+      initialNumToRender={5} // évite de tout charger d’un coup
       windowSize={5} // limite le nombre d’éléments gardés en mémoire
       removeClippedSubviews={true} // nettoie les vues invisibles
       ListEmptyComponent={
@@ -67,7 +68,9 @@ const ListProduits = ({ data, onSelectProduit }: ListProduitsProps) => {
           onPress={() => onSelectProduit(item.identifiant_produit)}
         >
           <Image
-            cachePolicy="disk"
+            cachePolicy="memory-disk"
+            transition={200}
+            contentFit="cover"
             style={styles.productImage}
             source={{
               uri: `${CONFIG.API_IMAGE_BASE_URL}${item.image_produit}`,
@@ -100,6 +103,8 @@ const ListProduits = ({ data, onSelectProduit }: ListProduitsProps) => {
           )}
         </Pressable>
       )}
+      onEndReached={onEndReached}
+      onEndReachedThreshold={0.4}
     />
   );
 };

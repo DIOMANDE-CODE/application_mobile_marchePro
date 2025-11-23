@@ -5,7 +5,8 @@ import React from "react";
 
 export default function TabAdminLayout() {
   const pathname = usePathname()
-  
+
+
   return (
     <Tabs
       screenOptions={{
