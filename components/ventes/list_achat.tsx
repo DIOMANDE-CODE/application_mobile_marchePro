@@ -13,14 +13,14 @@ type Vente = {
   identifiant_vente: string;
   id: string;
   client: Client;
-  details: [];
+  details_ventes: [];
   total_ttc: number;
 };
 
 type ListVentesProps = {
   data: Vente[];
   onSelectedId: (id:string) => void;
-  onEndReached : () => void;
+  onEndReached? : () => void;
 };
 
 const ListVentes = ({ data, onSelectedId,onEndReached }: ListVentesProps) => {
@@ -47,7 +47,8 @@ const ListVentes = ({ data, onSelectedId,onEndReached }: ListVentesProps) => {
           <View style={styles.saleItem}>  
             <View style={styles.saleInfo}>
               <Text style={styles.saleClient}>{item.client.nom_client}</Text>
-              <Text style={styles.saleDetails}>{item.details.length} {"produit(s) acheté(s)"}</Text>
+              <Text style={styles.saleDetails}>{item.details_ventes.length} {"produit(s) acheté(s)"}</Text>
+              <Text style={styles.saleDetails}>Ref : {item.identifiant_vente} </Text>
             </View>
             <Text style={styles.saleAmount}>{formatMoneyFR(item.total_ttc)} FCFA</Text>
           </View>

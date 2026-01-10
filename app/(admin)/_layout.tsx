@@ -16,6 +16,7 @@ export default function TabAdminLayout() {
       <Tabs.Screen
         name="index"
         options={{
+          title:"Acceuil",
           tabBarIcon: () => (
             <Ionicons
               size={30}
@@ -62,6 +63,20 @@ export default function TabAdminLayout() {
             <Ionicons
               size={30}
               name={pathname === "/clients" ? "people" : "people-outline"}
+              color={COLORS.primary}
+            />
+          ),
+          headerShown: false,
+        }}
+      />
+      <Tabs.Screen
+        name="commandes"
+        options={{
+          title: "Commandes",
+          tabBarIcon: () => (
+            <Ionicons
+              size={30}
+              name={pathname === "/commandes" ? "bag" : "bag-outline"}
               color={COLORS.primary}
             />
           ),

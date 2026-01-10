@@ -61,6 +61,8 @@ export default function AjoutNouveauAchat({
   const [offset, setOffset] = useState(0)
   const [next, setNext] = useState(null)
   const limit = 7
+  const [search, setSearch] = useState("")
+  const [searchMessage, setSearchMessage] = useState("")
 
   // fonction validation numero
   // Fonction de validation du numero
@@ -118,7 +120,7 @@ export default function AjoutNouveauAchat({
   const listeProduitDisponible = async () => {
     try {
       const response = await api.get("/produits/list/", {
-        params: { limit, offset }
+        params: { limit, offset, search }
       });
       if (response.status === 200) {
         const root = response.data;
@@ -255,7 +257,7 @@ export default function AjoutNouveauAchat({
 
   useEffect(() => {
     listeProduitDisponible();
-  }, [visible]);
+  }, [visible, search]);
 
   if (loading)
     return (
@@ -285,9 +287,9 @@ export default function AjoutNouveauAchat({
               data={produits}
               keyExtractor={(item) => item.identifiant_produit}
               contentContainerStyle={{
-              paddingHorizontal: 16,   // espace gauche/droite
-              paddingBottom: 32,       // espace en bas
-            }}
+                paddingHorizontal: 16,   // espace gauche/droite
+                paddingBottom: 32,       // espace en bas
+              }}
               renderItem={({ item }) => (
                 <View style={styles.productCard}>
                   <Image
@@ -457,6 +459,46 @@ export default function AjoutNouveauAchat({
                       </View>
                     </>
                   )}
+
+                  {/* Produits disponibles */}
+                  <View style={styles.card}>
+                    <Text style={styles.label}>Recherchez un article</Text>
+                    <TextInput
+                      style={styles.input}
+                      placeholder="Ex: Poisson frais"
+                      value={search}
+                      onChangeText={setSearch}
+                      returnKeyType="search"
+                      onSubmitEditing={(e) => {
+                        const cleanSearch = e.nativeEvent.text.trim();
+                        setOffset(0);
+                        setProduits([]);
+                        api.get("/produits/list/", {
+                          params: { limit: 7, offset: 0, search: cleanSearch }
+                        }).then((response) => {
+                          const root = response.data;
+                          const pagination = root.data;
+                          if (pagination.results.length === 0) (
+                            setSearchMessage("Aucun Article trouvé")
+                          )
+                          else {
+                            setSearchMessage("")
+                            setProduits(pagination.results);
+                            setNext(pagination.next);
+                          }
+
+                        });
+                      }}
+                    />
+                  </View>
+                  {
+                    searchMessage ? (
+                      <View>
+                        <Text style={styles.label}>{searchMessage}</Text>
+                      </View>
+                    ):null
+                  }
+
                 </>
               }
             />

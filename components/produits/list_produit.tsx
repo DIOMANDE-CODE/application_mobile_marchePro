@@ -47,19 +47,6 @@ const ListProduits = ({ data, onSelectProduit, onEndReached }: ListProduitsProps
       ListHeaderComponent={
         <>
           <Text style={styles.sectionTitle}>{"Liste des articles"}</Text>
-          {/* <View style={styles.filters}>
-            <TouchableOpacity
-              style={[styles.filterBtn, styles.filterBtnActive]}
-            >
-              <Text style={styles.textLight}>Tous</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.filterBtn}>
-              <Text>Fidèles</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.filterBtn}>
-              <Text>Nouveaux</Text>
-            </TouchableOpacity>
-          </View> */}
         </>
       }
       renderItem={({ item, index }) => (

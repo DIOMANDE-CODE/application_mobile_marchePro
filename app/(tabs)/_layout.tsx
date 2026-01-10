@@ -40,6 +40,20 @@ export default function TabLayout() {
           headerShown: false,
         }}
       />
+      <Tabs.Screen
+        name="commandes"
+        options={{
+          title: "Commandes",
+          tabBarIcon: () => (
+            <Ionicons
+              size={30}
+              name={pathname === "/commandes" ? "bag" : "bag-outline"}
+              color={COLORS.primary}
+            />
+          ),
+          headerShown: false,
+        }}
+      />
     </Tabs>
   );
 }

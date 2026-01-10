@@ -23,29 +23,31 @@ type top_produits = {
 };
 
 type statsJourType = {
-  total_ventes_aujourd_hui: string;
+  somme_totale_caisse_du_jour: string;
   total_produits_en_stock: string;
   total_clients_aujourd_hui: string;
-  nombre_produits_vendus_aujourd_hui: string;
+  totaux_produits_vendus_du_jour: string;
   panier_moyen_aujourd_hui: string;
-  top_produits_aujourd_hui: top_produits[];
+  top_produits_ventes_aujourd_hui: top_produits[];
 };
 
 type statsSemaineType = {
-  total_ventes_semaine: string;
-  total_produits_en_stock: string;
-  total_clients_semaine: string;
-  nombre_produits_vendus_semaine: string;
+  somme_totale_caisse_semaine:string;
+  total_client_semaine:string;
+  totaux_produits_vendus_semaine:string;
   panier_moyen_semaine: string;
+
+
   top_produits_semaine: top_produits[];
 };
 
 type statsMoisType = {
-  total_ventes_mois: string;
-  total_produits_en_stock: string;
-  total_clients_mois: string;
-  nombre_produits_vendus_mois: string;
-  panier_moyen_mois: string;
+  somme_totale_caisse_mois:string;
+  total_client_mois:string;
+  totaux_produits_vendus_mois:string;
+  panier_moyen_mois:string;
+
+
   top_produits_mois: top_produits[];
 };
 export default function Rapports() {
@@ -142,9 +144,9 @@ export default function Rapports() {
     datasets: [
       {
         data: [
-          parseFloat(statsDuJour?.total_ventes_aujourd_hui || "0"),
+          parseFloat(statsDuJour?.somme_totale_caisse_du_jour || "0"),
           parseFloat(statsDuJour?.total_clients_aujourd_hui || "0"),
-          parseFloat(statsDuJour?.nombre_produits_vendus_aujourd_hui || "0"),
+          parseFloat(statsDuJour?.totaux_produits_vendus_du_jour || "0"),
         ],
       },
     ],
@@ -156,9 +158,9 @@ export default function Rapports() {
     datasets: [
       {
         data: [
-          parseFloat(statsDeSemaine?.total_ventes_semaine || "0"),
-          parseFloat(statsDeSemaine?.total_clients_semaine || "0"),
-          parseFloat(statsDeSemaine?.nombre_produits_vendus_semaine || "0"),
+          parseFloat(statsDeSemaine?.somme_totale_caisse_semaine || "0"),
+          parseFloat(statsDeSemaine?.total_client_semaine || "0"),
+          parseFloat(statsDeSemaine?.totaux_produits_vendus_semaine || "0"),
         ],
       },
     ],
@@ -170,9 +172,9 @@ export default function Rapports() {
     datasets: [
       {
         data: [
-          parseFloat(statsDeMois?.total_ventes_mois || "0"),
-          parseFloat(statsDeMois?.total_clients_mois || "0"),
-          parseFloat(statsDeMois?.nombre_produits_vendus_mois || "0"),
+          parseFloat(statsDeMois?.somme_totale_caisse_mois || "0"),
+          parseFloat(statsDeMois?.total_client_mois || "0"),
+          parseFloat(statsDeMois?.totaux_produits_vendus_mois || "0"),
         ],
       },
     ],
@@ -240,9 +242,9 @@ export default function Rapports() {
                 <View style={styles.statsContainer}>
                   <View style={styles.statCard}>
                     <Text style={styles.statValue}>
-                      {statsDuJour?.total_ventes_aujourd_hui} FCFA
+                      {statsDuJour?.somme_totale_caisse_du_jour}
                     </Text>
-                    <Text style={styles.statLabel}>{"Caisse"}</Text>
+                    <Text style={styles.statLabel}>{"Total Caisse (FCFA)"}</Text>
                   </View>
                   <View style={styles.statCard}>
                     <Text style={styles.statValue}>
@@ -254,9 +256,9 @@ export default function Rapports() {
                 <View style={styles.statsContainer}>
                   <View style={styles.statCard}>
                     <Text style={styles.statValue}>
-                      {statsDuJour?.nombre_produits_vendus_aujourd_hui}
+                      {statsDuJour?.totaux_produits_vendus_du_jour}
                     </Text>
-                    <Text style={styles.statLabel}>Produits vendus</Text>
+                    <Text style={styles.statLabel}>Articles vendus</Text>
                   </View>
                   <View style={styles.statCard}>
                     <Text style={styles.statValue}>
@@ -291,13 +293,13 @@ export default function Rapports() {
                     />
                   </View>
                 </View>
-                {/* Top produits */}
+                {/* Top produits
                 <View style={styles.chartContainer}>
                   <View style={styles.cardHeader}>
                     <Text style={styles.cardTitle}>Top 3 produits vendus</Text>
                   </View>
-                  {statsDuJour?.top_produits_aujourd_hui ? (
-                    statsDuJour?.top_produits_aujourd_hui.map((p, idx) => (
+                  {statsDuJour?.top_produits_ventes_aujourd_hui ? (
+                    statsDuJour?.top_produits_ventes_aujourd_hui.map((p, idx) => (
                       <View key={idx} style={styles.listItem}>
                         <View style={styles.listItemContent}>
                           <Text style={styles.listItemTitle}>
@@ -314,7 +316,7 @@ export default function Rapports() {
                       {"Aucun produit vendu aujourd'hui"}
                     </Text>
                   )}
-                </View>
+                </View> */}
               </>
             ) : filter === "Semaine" ? (
               <>
@@ -322,13 +324,13 @@ export default function Rapports() {
                 <View style={styles.statsContainer}>
                   <View style={styles.statCard}>
                     <Text style={styles.statValue}>
-                      {statsDeSemaine?.total_ventes_semaine} FCFA
+                      {statsDeSemaine?.somme_totale_caisse_semaine}
                     </Text>
-                    <Text style={styles.statLabel}>{"Caisse"}</Text>
+                    <Text style={styles.statLabel}>{"Caisse (FCFA)"}</Text>
                   </View>
                   <View style={styles.statCard}>
                     <Text style={styles.statValue}>
-                      {statsDeSemaine?.total_clients_semaine}
+                      {statsDeSemaine?.total_client_semaine}
                     </Text>
                     <Text style={styles.statLabel}>Clients</Text>
                   </View>
@@ -336,13 +338,13 @@ export default function Rapports() {
                 <View style={styles.statsContainer}>
                   <View style={styles.statCard}>
                     <Text style={styles.statValue}>
-                      {statsDeSemaine?.nombre_produits_vendus_semaine}
+                      {statsDeSemaine?.totaux_produits_vendus_semaine}
                     </Text>
-                    <Text style={styles.statLabel}>Produits vendus</Text>
+                    <Text style={styles.statLabel}>Articles vendus</Text>
                   </View>
                   <View style={styles.statCard}>
                     <Text style={styles.statValue}>
-                      {Number(statsDeSemaine?.panier_moyen_semaine).toFixed(2)} FCFA
+                      {Number(statsDeSemaine?.panier_moyen_semaine).toFixed(2)}
                     </Text>
                     <Text style={styles.statLabel}>Paniers moyens</Text>
                   </View>
@@ -376,7 +378,7 @@ export default function Rapports() {
                   </View>
                 </View>
                 {/* Top produits */}
-                <View style={styles.chartContainer}>
+                {/* <View style={styles.chartContainer}>
                   <View style={styles.cardHeader}>
                     <Text style={styles.cardTitle}>Top 3 produits vendus</Text>
                   </View>
@@ -398,7 +400,7 @@ export default function Rapports() {
                       {"Aucun produit vendu cette semaine"}
                     </Text>
                   )}
-                </View>
+                </View> */}
               </>
             ) : (
               <>
@@ -406,13 +408,13 @@ export default function Rapports() {
                 <View style={styles.statsContainer}>
                   <View style={styles.statCard}>
                     <Text style={styles.statValue}>
-                      {statsDeMois?.total_ventes_mois} FCFA
+                      {statsDeMois?.somme_totale_caisse_mois}
                     </Text>
-                    <Text style={styles.statLabel}>{"Caisse"}</Text>
+                    <Text style={styles.statLabel}>{"Caisse (FCFA)"}</Text>
                   </View>
                   <View style={styles.statCard}>
                     <Text style={styles.statValue}>
-                      {statsDeMois?.total_clients_mois}
+                      {statsDeMois?.total_client_mois}
                     </Text>
                     <Text style={styles.statLabel}>Clients</Text>
                   </View>
@@ -420,13 +422,13 @@ export default function Rapports() {
                 <View style={styles.statsContainer}>
                   <View style={styles.statCard}>
                     <Text style={styles.statValue}>
-                      {statsDeMois?.nombre_produits_vendus_mois}
+                      {statsDeMois?.totaux_produits_vendus_mois}
                     </Text>
-                    <Text style={styles.statLabel}>Produits vendus</Text>
+                    <Text style={styles.statLabel}>Articles vendus</Text>
                   </View>
                   <View style={styles.statCard}>
                     <Text style={styles.statValue}>
-                      {Number(statsDeMois?.panier_moyen_mois).toFixed(2)} FCFA
+                      {Number(statsDeMois?.panier_moyen_mois).toFixed(2)}
                     </Text>
                     <Text style={styles.statLabel}>Paniers moyens</Text>
                   </View>
@@ -460,7 +462,7 @@ export default function Rapports() {
                   </View>
                 </View>
                 {/* Top produits */}
-                <View style={styles.chartContainer}>
+                {/* <View style={styles.chartContainer}>
                   <View style={styles.cardHeader}>
                     <Text style={styles.cardTitle}>Top 3 produits vendus</Text>
                   </View>
@@ -482,7 +484,7 @@ export default function Rapports() {
                       {"Aucun produit vendu cette semaine"}
                     </Text>
                   )}
-                </View>
+                </View> */}
               </>
             )}
           </ScrollView>

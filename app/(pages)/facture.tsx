@@ -15,6 +15,7 @@ import {
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
 import api from "@/services/api";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 type Client = {
   nom_client: string;
@@ -45,14 +46,19 @@ export default function DetailVente() {
   const [loading, setLoading] = useState(false);
 
   const valider = async () => {
-    const role = 
+    const role = await AsyncStorage.getItem("user_role")
     setLoading(true);
     try {
       const response = await api.post("/ventes/creer/", facture);
 
       if (response.status === 200 || response.status === 201) {
         Alert.alert("Succès", "Article vendu avec succès");
-        router.replace("/(tabs)/ventes");
+        if (role === "admin") {
+          router.replace("/(admin)/ventes");
+        }
+        else {
+          router.replace("/(tabs)/ventes");
+        }
       }
     } catch (error: any) {
       if (error.response) {

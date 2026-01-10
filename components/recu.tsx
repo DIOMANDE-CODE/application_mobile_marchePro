@@ -35,7 +35,7 @@ type Utilisateur = {
   nom_utilisateur: string;
 };
 
-type Details = {
+type Details_ventes = {
   produit: string;
   quantite: number;
   prix_unitaire: string;
@@ -50,7 +50,7 @@ type DetailTache = {
   total_ttc: string;
   client: Client;
   utilisateur: Utilisateur;
-  details: Details[];
+  details_ventes: Details_ventes[];
 };
 
 export default function RecuVente({
@@ -73,7 +73,7 @@ export default function RecuVente({
       });
 
 
-      const ligneProduits = voirDetail?.details
+      const ligneProduits = voirDetail?.details_ventes
         .map(
           (item) =>
             `
@@ -377,10 +377,10 @@ export default function RecuVente({
         <View style={stylesCss.container}>
           {/* HEADER */}
           <View style={stylesCss.header}>
-            <Text style={stylesCss.headerTitle}>FACTURE</Text>
+            <Text style={stylesCss.headerTitle}>RECU DE PAIEMENT</Text>
             <View style={stylesCss.headerActions}>
               <TouchableOpacity onPress={telechargerRecu}>
-                <Ionicons name="download" size={35} color={COLORS.light} />
+                <Ionicons name="send" size={30} color={COLORS.light} />
               </TouchableOpacity>
               <TouchableOpacity onPress={onClose}>
                 <Ionicons name="arrow-back" size={35} color={COLORS.light} />
@@ -392,7 +392,7 @@ export default function RecuVente({
           <ScrollView
             style={stylesCss.content}
             collapsable={false}
-            ref={viewRef}
+            ref={viewRef} 
           >
             {/* En-tête du reçu */}
             <View style={stylesCss.receiptHeader}>
@@ -420,7 +420,7 @@ export default function RecuVente({
                   {formatDateHeureFR(voirDetail.date_vente).split("-")[1]}
                 </Text>
 
-                <Text style={stylesCss.infoLabel}>Vendeur</Text>
+                <Text style={stylesCss.infoLabel}>{}{"Vendeur(se)"}</Text>
                 <Text style={stylesCss.infoValue}>
                   {voirDetail.utilisateur.nom_utilisateur}
                 </Text>
@@ -457,7 +457,7 @@ export default function RecuVente({
                 <Text style={styles.cell}>Prix U</Text>
                 <Text style={styles.cell}>Total</Text>
               </View>
-              {voirDetail.details.map((item, i) => (
+              {voirDetail.details_ventes.map((item, i) => (
                 <View key={i} style={stylesCss.tableRow}>
                   <View style={{ flex: 2 }}>
                     <Text style={stylesCss.productName}>{item.produit}</Text>

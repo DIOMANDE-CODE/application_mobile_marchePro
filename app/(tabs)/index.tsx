@@ -20,10 +20,13 @@ import Menu from "@/components/menu";
 import api from "@/services/api";
 
 type statsType = {
-  total_ventes_aujourd_hui: string;
-  total_produits_en_stock: string;
-  total_clients_aujourd_hui: string;
-  nombre_produits_stocks_faibles: string;
+  total_caisse_jour: string;
+  total_commande_aujourd_hui:string;
+  total_commande_attente_aujourd_hui:string;
+  total_commande_valide_aujourd_hui:string;
+  total_commande_livre_aujourd_hui:string;
+  total_ventes_aujourd_hui:string;
+  total_ventes_commandes_aujourd_hui:string;
 };
 
 export default function TableauBord() {
@@ -226,9 +229,9 @@ export default function TableauBord() {
                         }}
                       >
                         <Text style={styles.statValue}>
-                          {stats?.total_ventes_aujourd_hui}
+                          {stats?.total_caisse_jour}
                         </Text>
-                        <Text style={styles.statLabel}>Ma caisse</Text>
+                        <Text style={styles.statLabel}>{"Total caisse (FCFA)"}</Text>
                       </Pressable>
                     </View>
 
@@ -240,10 +243,10 @@ export default function TableauBord() {
                         }}
                       >
                         <Text style={styles.statValue}>
-                          {stats?.total_produits_en_stock}
+                          {stats?.total_commande_aujourd_hui}
                         </Text>
                         <Text style={styles.statLabel}>
-                          {"Produit(s) en stock"}
+                          {"Total Commande"}
                         </Text>
                       </Pressable>
                     </View>
@@ -257,9 +260,9 @@ export default function TableauBord() {
                         }}
                       >
                         <Text style={styles.statValue}>
-                          {stats?.total_clients_aujourd_hui}
+                          {stats?.total_commande_attente_aujourd_hui}
                         </Text>
-                        <Text style={styles.statLabel}>{"Client(s)"}</Text>
+                        <Text style={styles.statLabel}>{"Commandes en attente"}</Text>
                       </Pressable>
                     </View>
                     <View style={styles.statCard}>
@@ -270,19 +273,70 @@ export default function TableauBord() {
                         }}
                       >
                         <Text style={styles.statValue}>
-                          {stats?.nombre_produits_stocks_faibles}
+                          {stats?.total_commande_valide_aujourd_hui}
                         </Text>
-                        <Text style={styles.statLabel}>Stocks faibles</Text>
+                        <Text style={styles.statLabel}>{"Commandes en livraison"}</Text>
+                      </Pressable>
+                    </View>
+                  </View>
+                  <View style={styles.statsContainer}>
+                    <View style={styles.statCard}>
+                      <Pressable
+                        style={{
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                      >
+                        <Text style={styles.statValue}>
+                          {stats?.total_commande_livre_aujourd_hui}
+                        </Text>
+                        <Text style={styles.statLabel}>{"Commandes livrées"}</Text>
+                      </Pressable>
+                    </View>
+                  </View>
+                  <View style={styles.statsContainer}>
+                    <View style={styles.statCard}>
+                      <Pressable
+                        style={{
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                      >
+                        <Text style={styles.statValue}>
+                          {stats?.total_ventes_commandes_aujourd_hui}
+                        </Text>
+                        <Text style={styles.statLabel}>{"Total caisse commandes (FCFA)"}</Text>
+                      </Pressable>
+                    </View>
+                  </View>
+                  <View style={styles.statsContainer}>
+                    <View style={styles.statCard}>
+                      <Pressable
+                        style={{
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                      >
+                        <Text style={styles.statValue}>
+                          {stats?.total_ventes_aujourd_hui}
+                        </Text>
+                        <Text style={styles.statLabel}>{"Total caisse vente (FCFA)"}</Text>
                       </Pressable>
                     </View>
                   </View>
 
                   <View style={styles.quickActions}>
                     <Pressable
-                      style={[styles.btn, styles.btnSecondary]}
+                      style={[styles.btn, styles.btnSuccess]}
                       onPress={() => router.push("/(tabs)/ventes")}
                     >
                       <Text style={styles.btnText}>Voir mes ventes</Text>
+                    </Pressable>
+                    <Pressable
+                      style={[styles.btn, styles.btnPrimary]}
+                      onPress={() => router.push("/(tabs)/commandes")}
+                    >
+                      <Text style={styles.btnText}>Voir mes commandes</Text>
                     </Pressable>
                   </View>
 

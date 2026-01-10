@@ -173,7 +173,7 @@ export default function PageConnexion() {
       </View>
       {/* Lien vers l'inscription */}
       <Text style={{ textAlign: "center" }}>
-        Aucun compte ?{" "}
+        {" "}
         <Link
           href="/register"
           style={{
@@ -182,7 +182,7 @@ export default function PageConnexion() {
             textDecorationLine: "underline",
           }}
         >
-          créez un compte
+          Ajouter nouveau vendeur
         </Link>
       </Text>
     </View>

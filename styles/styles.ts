@@ -177,7 +177,7 @@ export const stylesCss = StyleSheet.create({
   card: {
     backgroundColor: "#fff",
     borderRadius: 8,
-    padding: 16,
+    padding: 10,
     marginBottom: 16,
     ...SHADOW,
   },

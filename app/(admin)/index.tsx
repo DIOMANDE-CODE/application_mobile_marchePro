@@ -1,6 +1,4 @@
-import CONFIG from "@/constants/config";
 import { COLORS, stylesCss } from "@/styles/styles";
-import { formatMoneyFR } from "@/utils/moneyFormat";
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
@@ -20,11 +18,22 @@ import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
 import Menu from "@/components/menu";
 import api from "@/services/api";
-import { Image } from "expo-image";
 
 type statsType = {
-  total_ventes_aujourd_hui: string;
   total_produits_en_stock: string;
+  total_produits_stock_faible: string;
+  total_commandes_du_jour: string;
+  total_ventes_du_jour: string;
+  total_commandes_attente_du_jour: string;
+  total_commandes_valide_du_jour: string;
+  total_commandes_livre_du_jour: string;
+  total_client_du_jour: string;
+  somme_totale_caisse_du_jour: string;
+  somme_totale_commandes_aujourd_hui: string;
+  somme_totale_ventes_du_jour: string;
+
+
+  total_ventes_aujourd_hui: string;
   total_clients_aujourd_hui: string;
   nombre_produits_stocks_faibles: string;
 };
@@ -49,8 +58,8 @@ export default function TableauBord() {
   const [produits, setProduits] = useState<Produit[]>([]);
   const [stockproduitfaible, setStockproduitfaible] = useState([]);
   const [stats, setStats] = useState<statsType>();
-  const [next,setNext] = useState(null)
-  const [offset,setOffset] = useState(0)
+  const [next, setNext] = useState(null)
+  const [offset, setOffset] = useState(0)
   const limit = 7
 
   const router = useRouter();
@@ -58,18 +67,18 @@ export default function TableauBord() {
   // Afficher les 2 recents ventes et produits
   const ListProduits = async () => {
     try {
-      const response = await api.get("/produits/list/",{
-        params : {limit,offset}
+      const response = await api.get("/produits/list/", {
+        params: { limit, offset }
       });
       if (response.status === 200) {
         const root = response.data;
         const pagination = root.data
 
         setProduits((prev) => {
-          const merged = [...prev,...pagination.results];
+          const merged = [...prev, ...pagination.results];
 
           const unique = merged.filter(
-              (item, index, self) =>
+            (item, index, self) =>
               index === self.findIndex(
                 (p) => p.identifiant_produit === item.identifiant_produit
               )
@@ -303,9 +312,9 @@ export default function TableauBord() {
                         }}
                       >
                         <Text style={styles.statValue}>
-                          {stats?.total_ventes_aujourd_hui}
+                          {stats?.total_produits_en_stock}
                         </Text>
-                        <Text style={styles.statLabel}>Caisse</Text>
+                        <Text style={styles.statLabel}>{"Produits en stock"}</Text>
                       </Pressable>
                     </View>
 
@@ -317,10 +326,10 @@ export default function TableauBord() {
                         }}
                       >
                         <Text style={styles.statValue}>
-                          {stats?.total_produits_en_stock}
+                          {stats?.total_produits_stock_faible}
                         </Text>
                         <Text style={styles.statLabel}>
-                          {"Produit(s) en stock"}
+                          {"Produits stock faible"}
                         </Text>
                       </Pressable>
                     </View>
@@ -334,9 +343,9 @@ export default function TableauBord() {
                         }}
                       >
                         <Text style={styles.statValue}>
-                          {stats?.total_clients_aujourd_hui}
+                          {stats?.total_commandes_du_jour}
                         </Text>
-                        <Text style={styles.statLabel}>{"Client(s)"}</Text>
+                        <Text style={styles.statLabel}>{"Total commandes"}</Text>
                       </Pressable>
                     </View>
                     <View style={styles.statCard}>
@@ -347,9 +356,115 @@ export default function TableauBord() {
                         }}
                       >
                         <Text style={styles.statValue}>
-                          {stats?.nombre_produits_stocks_faibles}
+                          {stats?.total_ventes_du_jour}
                         </Text>
-                        <Text style={styles.statLabel}>Stocks faibles</Text>
+                        <Text style={styles.statLabel}>{"Total ventes"}</Text>
+                      </Pressable>
+                    </View>
+                  </View>
+
+                  <View style={styles.statsContainer}>
+                    <View style={styles.statCard}>
+                      <Pressable
+                        style={{
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                      >
+                        <Text style={styles.statValue}>
+                          {stats?.total_commandes_attente_du_jour}
+                        </Text>
+                        <Text style={styles.statLabel}>{"Commandes en attente"}</Text>
+                      </Pressable>
+                    </View>
+                    <View style={styles.statCard}>
+                      <Pressable
+                        style={{
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                      >
+                        <Text style={styles.statValue}>
+                          {stats?.total_commandes_valide_du_jour}
+                        </Text>
+                        <Text style={styles.statLabel}>{"Commandes en livraison"}</Text>
+                      </Pressable>
+                    </View>
+                  </View>
+
+                  <View style={styles.statsContainer}>
+                    <View style={styles.statCard}>
+                      <Pressable
+                        style={{
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                      >
+                        <Text style={styles.statValue}>
+                          {stats?.total_commandes_livre_du_jour}
+                        </Text>
+                        <Text style={styles.statLabel}>{"Commandes livrées"}</Text>
+                      </Pressable>
+                    </View>
+                    <View style={styles.statCard}>
+                      <Pressable
+                        style={{
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                      >
+                        <Text style={styles.statValue}>
+                          {stats?.total_client_du_jour}
+                        </Text>
+                        <Text style={styles.statLabel}>{"Total clients"}</Text>
+                      </Pressable>
+                    </View>
+                  </View>
+
+                  <View style={styles.statsContainer}>
+                    <View style={styles.statCard}>
+                      <Pressable
+                        style={{
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                      >
+                        <Text style={styles.statValue}>
+                          {stats?.somme_totale_caisse_du_jour}
+                        </Text>
+                        <Text style={styles.statLabel}>{"Total caisse (FCFA)"}</Text>
+                      </Pressable>
+                    </View>
+                  </View>
+
+                  <View style={styles.statsContainer}>
+                    <View style={styles.statCard}>
+                      <Pressable
+                        style={{
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                      >
+                        <Text style={styles.statValue}>
+                          {stats?.somme_totale_commandes_aujourd_hui}
+                        </Text>
+                        <Text style={styles.statLabel}>{"Total commandes (FCFA)"}</Text>
+                      </Pressable>
+                    </View>
+                  </View>
+
+                  <View style={styles.statsContainer}>
+                    <View style={styles.statCard}>
+                      <Pressable
+                        style={{
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                      >
+                        <Text style={styles.statValue}>
+                          {stats?.somme_totale_ventes_du_jour}
+                        </Text>
+                        <Text style={styles.statLabel}>{"Total ventes (FCFA)"}</Text>
                       </Pressable>
                     </View>
                   </View>
@@ -393,50 +508,6 @@ export default function TableauBord() {
                     </View>
                   )}
                 </View>
-
-                {/* Section Produits récents */}
-                {produits.length >= 2 && (
-                  <View style={styles.section}>
-                    <View style={styles.cardHeader}>
-                      <Text style={styles.cardTitle}>Produits récents</Text>
-                      <Pressable>
-                        <Text style={styles.btnSmall} onPress={voirPlusProduit}>
-                          Voir tout
-                        </Text>
-                      </Pressable>
-                    </View>
-
-                    {produits.slice(0, 3).map((produit: any, i) => (
-                      <View style={styles.productCard} key={i}>
-                        <Image
-                          cachePolicy="memory-disk"
-                          transition={200}
-                          contentFit="cover"
-                          style={styles.productImage}
-                          source={{
-                            uri: `${CONFIG.API_IMAGE_BASE_URL}${produit.image_produit}`,
-                          }}
-                        />
-                        <View style={styles.productInfo}>
-                          <Text style={styles.productName}>
-                            {produit.nom_produit}
-                          </Text>
-                          <Text style={styles.productPrice}>
-                            {formatMoneyFR(produit.prix_unitaire_produit)} FCFA
-                          </Text>
-                        </View>
-                        {produit.quantite_produit_disponible <=
-                        produit.seuil_alerte_produit ? (
-                          <Text
-                            style={[styles.productStock, styles.badgeWarning]}
-                          >
-                            Stock faible
-                          </Text>
-                        ) : null}
-                      </View>
-                    ))}
-                  </View>
-                )}
               </View>
             </View>
           </ScrollView>
