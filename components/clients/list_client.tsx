@@ -68,7 +68,7 @@ const ListeDesClients = ({ data, onSelectedId,onEndReached }: ListeDesClientsPro
             <Text style={[styles.listItemTitle, { fontWeight: "bold" }]}>
               {item.numero_telephone_client}
             </Text>
-            <Text style={styles.listItemTitle}>{"Date et heure d'inscription :"} </Text>
+            <Text style={styles.listItemTitle}>{"Date et heure d'enregistrement :"} </Text>
             <Text style={[styles.listItemTitle, { fontWeight: "bold" }]}>
               {formatDateHeureFR(item.date_creation)}
             </Text>

@@ -16,6 +16,7 @@ type Commande = {
     details_commandes: [];
     total_ttc: number;
     etat_commande: string;
+    code_livraison:string;
 };
 
 type ListVentesProps = {
@@ -51,6 +52,7 @@ const ListCommandes = ({ data, onSelectedId, onEndReached }: ListVentesProps) =>
                             <Text style={styles.saleDetails}>{item.details_commandes.length} {"produit(s) commandé(s)"}</Text>
                             <Text style={styles.saleDetails}>Total : {formatMoneyFR(item.total_ttc)} FCFA</Text>
                             <Text style={styles.saleDetails}>Ref : {item.identifiant_commande}</Text>
+                            <Text style={styles.saleDetails}>Code : {item.code_livraison}</Text>
                         </View>
                         {
                             item.etat_commande === "en_cours" && (
@@ -70,6 +72,13 @@ const ListCommandes = ({ data, onSelectedId, onEndReached }: ListVentesProps) =>
                             item.etat_commande === "livre" && (
                                 <Text style={[styles.productStock, styles.badgeSuccess]}>
                                     Livrée
+                                </Text>
+                            )
+                        }
+                         {
+                            item.etat_commande === "annule" && (
+                                <Text style={[styles.productStock, styles.badgeGrey]}>
+                                    Annulée
                                 </Text>
                             )
                         }

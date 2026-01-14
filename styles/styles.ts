@@ -272,6 +272,10 @@ export const stylesCss = StyleSheet.create({
     backgroundColor: COLORS.danger,
     color: "#fff",
   },
+  badgeGrey: {
+    backgroundColor: "#6c757d",
+    color: "#fff",
+  },
 
   // === Navigation bas ===
   bottomNav: {

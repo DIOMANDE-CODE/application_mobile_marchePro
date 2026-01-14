@@ -63,7 +63,7 @@ export default function DetailCommande({
     const [voirDetail, setVoirDetail] = React.useState<DetailCommande | null>(null);
     const viewRef = useRef<ScrollView>(null);
     const [loading, setLoading] = useState(false)
-    const[role,setRole] = useState<string|null>(null)
+    const [role, setRole] = useState<string | null>(null)
 
     const refreshPage = () => {
         detailCommande()
@@ -79,6 +79,53 @@ export default function DetailCommande({
 
             if (response.status === 200 || response.status === 201) {
                 Alert.alert("Succès", "Commande validée avec succès");
+                refreshPage()
+            }
+        } catch (error: any) {
+            if (error.response) {
+                const status = error.response.status;
+                const data = error.response.data.errors;
+
+                // On transforme le message en texte
+                let message = "";
+
+                if (typeof data === "string") {
+                    message = data;
+                } else if (typeof data === "object") {
+                    message = JSON.stringify(data);
+                } else {
+                    message = "Erreur inattendue";
+                }
+
+                if (status === 400) {
+                    Alert.alert("Erreur 400", message);
+                } else if (status === 500) {
+                    Alert.alert("Erreur 500", "Erreur survenue au serveur");
+                } else if (status === 409) {
+                    Alert.alert("Erreur 401", message);
+                } else {
+                    Alert.alert("Erreur", message);
+                }
+            } else {
+                Alert.alert("Erreur", error.message || "Erreur réseau");
+            }
+        } finally {
+            setLoading(false);
+        }
+    };
+
+
+    // Validation de commande
+    const annulerCommande = async (identifiant_commande: string) => {
+        setLoading(true);
+        try {
+            const response = await api.put(`/commandes/annuler/${identifiant_commande}/`, {
+                is_active: false,
+                etat_commande: 'annule'
+            });
+
+            if (response.status === 200 || response.status === 201) {
+                Alert.alert("Succès", "Commande annulée");
                 refreshPage()
             }
         } catch (error: any) {
@@ -562,6 +609,13 @@ export default function DetailCommande({
                                         </Text>
                                     )
                                 }
+                                {
+                                    voirDetail.etat_commande === "annule" && (
+                                        <Text style={[stylesCss.badge, stylesCss.badgeGrey]}>
+                                            annulé
+                                        </Text>
+                                    )
+                                }
                             </View>
                         </View>
 
@@ -608,30 +662,57 @@ export default function DetailCommande({
                         </View>
                         {loading ? (
                             <ActivityIndicator color={COLORS.primary} />
-                        ) : role==="vendeur" && voirDetail.etat_commande === 'en_cours' ?(
-                            <TouchableOpacity
-                                style={[styles.btn, styles.btnPrimary, { margin: 50 }]}
-                                onPress={() => validerCommande(voirDetail.identifiant_commande)}
-                            >
-                                <Ionicons
-                                    name="bag-check"
-                                    size={20}
-                                    color={COLORS.light}
-                                />
-                                <Text style={[styles.btnText]}>Valider la commande</Text>
-                            </TouchableOpacity>
-                        ): role==="vendeur" && voirDetail.etat_commande === 'valide' && (
-                            <TouchableOpacity
-                                style={[styles.btn, styles.btnSuccess, { margin: 50 }]}
-                                onPress={() => livrerCommande(voirDetail.identifiant_commande)}
-                            >
-                                <Ionicons
-                                    name="checkmark-done"
-                                    size={20}
-                                    color={COLORS.light}
-                                />
-                                <Text style={[styles.btnText]}>Commmande Livrée</Text>
-                            </TouchableOpacity>
+                        ) : role === "vendeur" && voirDetail.etat_commande === 'en_cours' ? (
+                            <>
+                                <TouchableOpacity
+                                    style={[styles.btn, styles.btnPrimary, { margin: 50 }]}
+                                    onPress={() => validerCommande(voirDetail.identifiant_commande)}
+                                >
+                                    <Ionicons
+                                        name="bag-check"
+                                        size={20}
+                                        color={COLORS.light}
+                                    />
+                                    <Text style={[styles.btnText]}>Valider la commande</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    style={[styles.btn, styles.btnDanger, { margin: 50, top: -80 }]}
+                                    onPress={() => annulerCommande(voirDetail.identifiant_commande)}
+                                >
+                                    <Ionicons
+                                        name="close-circle"
+                                        size={20}
+                                        color={COLORS.light}
+                                    />
+                                    <Text style={[styles.btnText]}>Annuler la commande</Text>
+                                </TouchableOpacity>
+                            </>
+                        ) : role === "vendeur" && voirDetail.etat_commande === 'valide' && (
+                            <>
+                                <TouchableOpacity
+                                    style={[styles.btn, styles.btnSuccess, { margin: 50 }]}
+                                    onPress={() => livrerCommande(voirDetail.identifiant_commande)}
+                                >
+                                    <Ionicons
+                                        name="checkmark-done"
+                                        size={20}
+                                        color={COLORS.light}
+                                    />
+                                    <Text style={[styles.btnText]}>Commmande Livrée</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    style={[styles.btn, styles.btnDanger, { margin: 50, top: -80 }]}
+                                    onPress={() => annulerCommande(voirDetail.identifiant_commande)}
+                                >
+                                    <Ionicons
+                                        name="close-circle"
+                                        size={20}
+                                        color={COLORS.light}
+                                    />
+                                    <Text style={[styles.btnText]}>Annuler la commande</Text>
+                                </TouchableOpacity>
+                            </>
+
                         )}
                     </ScrollView>
                 </View>

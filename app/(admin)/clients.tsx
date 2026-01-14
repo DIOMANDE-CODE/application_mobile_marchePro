@@ -59,6 +59,7 @@ export default function ListClients() {
 
         setOffset((prev) => prev + pagination.results.length);
         setNext(pagination.next)
+        
       }
     } catch (error: any) {
       if (error.response) {

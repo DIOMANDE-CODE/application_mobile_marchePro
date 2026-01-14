@@ -6,13 +6,9 @@ import { FlatList, Pressable, Text, View } from "react-native";
 // import des composants
 
 // Déclaration des types
-type Client = {
-  nom_client: string;
-};
 type Vente = {
   identifiant_vente: string;
   id: string;
-  client: Client;
   details_ventes: [];
   total_ttc: number;
 };
@@ -46,7 +42,6 @@ const ListVentes = ({ data, onSelectedId,onEndReached }: ListVentesProps) => {
         <Pressable onPress={() => onSelectedId(item.identifiant_vente)}>
           <View style={styles.saleItem}>  
             <View style={styles.saleInfo}>
-              <Text style={styles.saleClient}>{item.client.nom_client}</Text>
               <Text style={styles.saleDetails}>{item.details_ventes.length} {"produit(s) acheté(s)"}</Text>
               <Text style={styles.saleDetails}>Ref : {item.identifiant_vente} </Text>
             </View>

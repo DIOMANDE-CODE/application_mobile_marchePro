@@ -3,12 +3,12 @@ import { COLORS, stylesCss } from "@/styles/styles";
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useCallback, useEffect, useState } from "react";
-import { ActivityIndicator, Alert, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Alert, Pressable, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
 // import des composants
+import AjoutNouvelleCommande from "@/components/commandes/add_commande";
 import ListCommandes from "@/components/commandes/list_commande";
-import AjoutNouveauAchat from "@/components/ventes/add_achat";
 import DetailCommande from "../(pages)/detail_commande";
 
 export default function Commandes() {
@@ -111,7 +111,7 @@ export default function Commandes() {
             onClose={closeDetail}
           />
         ) : isVisible ? (
-          <AjoutNouveauAchat
+          <AjoutNouvelleCommande
             visible={isVisible}
             onClose={() => setIsVisible(false)}
           />
@@ -128,6 +128,12 @@ export default function Commandes() {
                     color={COLORS.light}
                   />
                 </TouchableOpacity>
+                <Pressable
+                  style={styles.iconBtn}
+                  onPress={() => setIsVisible(!isVisible)}
+                >
+                  <Ionicons name="add-circle" size={35} color={COLORS.light} />
+                </Pressable>
               </View>
             </View>
             <ListCommandes data={listeCommandes} onSelectedId={afficherDetail} />

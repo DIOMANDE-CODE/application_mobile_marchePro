@@ -1,6 +1,6 @@
 import api, { attachTokenToApi } from "@/services/api";
 import { COLORS, stylesCss } from "@/styles/styles";
-import { Link, router } from "expo-router";
+import { router } from "expo-router";
 import { useState } from "react";
 import {
   ActivityIndicator,
@@ -172,7 +172,7 @@ export default function PageConnexion() {
         )}
       </View>
       {/* Lien vers l'inscription */}
-      <Text style={{ textAlign: "center" }}>
+      {/* <Text style={{ textAlign: "center" }}>
         {" "}
         <Link
           href="/register"
@@ -184,7 +184,7 @@ export default function PageConnexion() {
         >
           Ajouter nouveau vendeur
         </Link>
-      </Text>
+      </Text> */}
     </View>
   );
 }

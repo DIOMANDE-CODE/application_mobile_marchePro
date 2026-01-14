@@ -6,19 +6,19 @@ import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import {
-  ActivityIndicator,
-  Alert,
-  FlatList,
-  Image,
-  Pressable,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View
+    ActivityIndicator,
+    Alert,
+    FlatList,
+    Image,
+    Pressable,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View
 } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
-type NouveauAchatProps = {
+type NouvelleCommandeProps = {
   visible: boolean;
   onClose: () => void;
 };
@@ -45,13 +45,17 @@ type Cart = {
   quantite_total_produit?: number;
 };
 
-export default function AjoutNouveauAchat({
+export default function AjoutNouvelleCommande({
   visible,
   onClose,
-}: NouveauAchatProps) {
+}: NouvelleCommandeProps) {
   const [produits, setProduits] = useState<Produit[]>([]);
   const [cart, setCart] = useState<Cart[]>([]);
   const [voirPanier, setVoirPanier] = useState(true);
+  const [nom, setNom] = useState("");
+  const [numero, setNumero] = useState("");
+  const [erreurNom, setErreurNom] = useState("");
+  const [erreurNumero, setErreurNumero] = useState("");
   const [loading, setLoading] = useState(false);
   const [loadingProduit, setLoadingProduit] = useState(false);
   const [offset, setOffset] = useState(0)
@@ -60,19 +64,37 @@ export default function AjoutNouveauAchat({
   const [search, setSearch] = useState("")
   const [searchMessage, setSearchMessage] = useState("")
 
+  // fonction validation numero
+  // Fonction de validation du numero
+  const validationNumeroCI = (numero: string) => {
+    const regex = /^(?:\+225|00225)?(01|05|07|25|27)\d{8}$/;
+    return regex.test(numero);
+  };
+
   // Voir resumé de la vente
-  const ValiderVente = () => {
+  const ValiderCommande = () => {
     if (!cart.length) {
       Alert.alert("", "Aucun article dans le panier");
       return;
     } else {
       // Verifier les champs
       let hasError = false;
+      if (!nom.trim()) {
+        setErreurNom("Ce champs est obligatoire");
+        hasError = true;
+      }
+      if (!numero.trim()) {
+        setErreurNumero("Ce champs est obligatoire");
+        hasError = true;
+      } else if (!validationNumeroCI(numero)) {
+        setErreurNumero("Numero invalide (respecter le Format CI)");
+        hasError = true;
+      }
       if (hasError) return;
       const facture = {
         client: {
-          nom_client: "",
-          numero_telephone_client: "",
+          nom_client: nom,
+          numero_telephone_client: numero,
         },
         items: cart,
         total_ht: subtotal.toFixed(2),
@@ -254,7 +276,7 @@ export default function AjoutNouveauAchat({
             <Pressable onPress={onClose}>
               <Ionicons name="arrow-back" size={25} color={COLORS.light} />
             </Pressable>
-            <Text style={styles.headerTitle}>Nouvelle vente</Text>
+            <Text style={styles.headerTitle}>Nouvelle Commande</Text>
             <TouchableOpacity style={styles.iconBtn} onPress={refreshPage}>
               <Ionicons name="reload-circle" size={35} color={COLORS.light} />
             </TouchableOpacity>
@@ -331,6 +353,34 @@ export default function AjoutNouveauAchat({
 
                   {voirPanier && (
                     <>
+                      {/* Client */}
+                      <View style={styles.card}>
+                        <View style={styles.cardHeader}>
+                          <Text style={styles.cardTitle}>Information du client</Text>
+                        </View>
+                        <Text style={styles.label}>Nom complet</Text>
+                        {erreurNom && (
+                          <Text style={styles.textDanger}>{erreurNom}</Text>
+                        )}
+                        <TextInput
+                          style={styles.input}
+                          placeholder="Ex: Konan Marcel"
+                          value={nom}
+                          onChangeText={setNom}
+                        />
+
+                        <Text style={styles.label}>Téléphone</Text>
+                        {erreurNumero && (
+                          <Text style={styles.textDanger}>{erreurNumero}</Text>
+                        )}
+                        <TextInput
+                          style={styles.input}
+                          placeholder="Ex: XXXXXXXXXX"
+                          keyboardType="phone-pad"
+                          value={numero}
+                          onChangeText={setNumero}
+                        />
+                      </View>
 
                       {/* Panier */}
                       <View style={styles.card}>
@@ -402,9 +452,9 @@ export default function AjoutNouveauAchat({
 
                         <TouchableOpacity
                           style={[styles.btn, styles.btnSuccess]}
-                          onPress={ValiderVente}
+                          onPress={ValiderCommande}
                         >
-                          <Text style={[styles.btnText]}>Finaliser la vente</Text>
+                          <Text style={[styles.btnText]}>Finaliser la commande</Text>
                         </TouchableOpacity>
                       </View>
                     </>
@@ -446,7 +496,7 @@ export default function AjoutNouveauAchat({
                       <View>
                         <Text style={styles.label}>{searchMessage}</Text>
                       </View>
-                    ) : null
+                    ):null
                   }
 
                 </>

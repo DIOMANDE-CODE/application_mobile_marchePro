@@ -27,6 +27,7 @@ type statsType = {
   total_commande_livre_aujourd_hui:string;
   total_ventes_aujourd_hui:string;
   total_ventes_commandes_aujourd_hui:string;
+  total_commande_annulee_aujourd_hui:string;
 };
 
 export default function TableauBord() {
@@ -229,9 +230,9 @@ export default function TableauBord() {
                         }}
                       >
                         <Text style={styles.statValue}>
-                          {stats?.total_caisse_jour}
+                          {stats?.total_commande_aujourd_hui}
                         </Text>
-                        <Text style={styles.statLabel}>{"Total caisse (FCFA)"}</Text>
+                        <Text style={styles.statLabel}>{"Total des commandes"}</Text>
                       </Pressable>
                     </View>
 
@@ -243,10 +244,10 @@ export default function TableauBord() {
                         }}
                       >
                         <Text style={styles.statValue}>
-                          {stats?.total_commande_aujourd_hui}
+                          {stats?.total_commande_annulee_aujourd_hui}
                         </Text>
                         <Text style={styles.statLabel}>
-                          {"Total Commande"}
+                          {"Commandes annulées"}
                         </Text>
                       </Pressable>
                     </View>
@@ -291,6 +292,21 @@ export default function TableauBord() {
                           {stats?.total_commande_livre_aujourd_hui}
                         </Text>
                         <Text style={styles.statLabel}>{"Commandes livrées"}</Text>
+                      </Pressable>
+                    </View>
+                  </View>
+                  <View style={styles.statsContainer}>
+                    <View style={styles.statCard}>
+                      <Pressable
+                        style={{
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                      >
+                        <Text style={styles.statValue}>
+                          {stats?.total_caisse_jour}
+                        </Text>
+                        <Text style={styles.statLabel}>{"Total Caisse (FCFA)"}</Text>
                       </Pressable>
                     </View>
                   </View>

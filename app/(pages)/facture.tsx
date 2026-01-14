@@ -44,54 +44,116 @@ export default function DetailVente() {
     : null;
 
   const [loading, setLoading] = useState(false);
+  const [printClient, setPrintClient] = useState(true)
+
+  if (facture?.client.nom_client === null || facture?.client.numero_telephone_client === null) {
+    setPrintClient(false)
+  }
 
   const valider = async () => {
     const role = await AsyncStorage.getItem("user_role")
     setLoading(true);
-    try {
-      const response = await api.post("/ventes/creer/", facture);
 
-      if (response.status === 200 || response.status === 201) {
-        Alert.alert("Succès", "Article vendu avec succès");
-        if (role === "admin") {
-          router.replace("/(admin)/ventes");
+    // Fonction de validation de commande
+
+    if (facture?.client.nom_client !== "" || facture?.client.numero_telephone_client !== "") {
+
+      try {
+        const response = await api.post("/commandes/creer/", facture);
+
+        if (response.status === 200 || response.status === 201) {
+          Alert.alert("Succès", "Commande enregistré avec succès");
+          if (role === "admin") {
+            router.replace("/(admin)/ventes");
+          }
+          else {
+            router.replace("/(tabs)/commandes");
+          }
         }
-        else {
-          router.replace("/(tabs)/ventes");
-        }
-      }
-    } catch (error: any) {
-      if (error.response) {
-        const status = error.response.status;
-        const data = error.response.data.errors;
+      } catch (error: any) {
+        if (error.response) {
+          const status = error.response.status;
+          const data = error.response.data.errors;
 
-        // On transforme le message en texte
-        let message = "";
+          // On transforme le message en texte
+          let message = "";
 
-        if (typeof data === "string") {
-          message = data;
-        } else if (typeof data === "object") {
-          message = JSON.stringify(data);
+          if (typeof data === "string") {
+            message = data;
+          } else if (typeof data === "object") {
+            message = JSON.stringify(data);
+          } else {
+            message = "Erreur inattendue";
+          }
+
+          if (status === 400) {
+            Alert.alert("Erreur 400", message);
+          } else if (status === 500) {
+            Alert.alert("Erreur 500", "Erreur survenue au serveur");
+          } else if (status === 409) {
+            Alert.alert("Erreur 401", message);
+          } else {
+            Alert.alert("Erreur", message);
+          }
         } else {
-          message = "Erreur inattendue";
+          Alert.alert("Erreur", error.message || "Erreur réseau");
         }
-
-        if (status === 400) {
-          Alert.alert("Erreur 400", message);
-        } else if (status === 500) {
-          Alert.alert("Erreur 500", "Erreur survenue au serveur");
-        } else if (status === 409) {
-          Alert.alert("Erreur 401", message);
-        } else {
-          Alert.alert("Erreur", message);
-        }
-      } else {
-        Alert.alert("Erreur", error.message || "Erreur réseau");
+      } finally {
+        setLoading(false);
       }
-    } finally {
-      setLoading(false);
     }
-  };
+
+    else {
+      // Fonction de validation de vente
+      try {
+        const response = await api.post("/ventes/creer/", facture);
+
+        if (response.status === 200 || response.status === 201) {
+          Alert.alert("Succès", "Article vendu avec succès");
+          if (role === "admin") {
+            router.replace("/(admin)/ventes");
+          }
+          else {
+            router.replace("/(tabs)/ventes");
+          }
+        }
+      } catch (error: any) {
+        if (error.response) {
+          const status = error.response.status;
+          const data = error.response.data.errors;
+
+          // On transforme le message en texte
+          let message = "";
+
+          if (typeof data === "string") {
+            message = data;
+          } else if (typeof data === "object") {
+            message = JSON.stringify(data);
+          } else {
+            message = "Erreur inattendue";
+          }
+
+          if (status === 400) {
+            Alert.alert("Erreur 400", message);
+          } else if (status === 500) {
+            Alert.alert("Erreur 500", "Erreur survenue au serveur");
+          } else if (status === 409) {
+            Alert.alert("Erreur 401", message);
+          } else {
+            Alert.alert("Erreur", message);
+          }
+        } else {
+          Alert.alert("Erreur", error.message || "Erreur réseau");
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+  }
+
+
+
+
 
   if (!facture) {
     return (
@@ -138,16 +200,20 @@ export default function DetailVente() {
 
             {/* Informations générales */}
             <View style={styles.infoContainer}>
-              <View>
-                <Text style={styles.infoLabel}>Client</Text>
-                <Text style={styles.infoValue}>
-                  {facture.client.nom_client}
-                </Text>
-                <Text style={styles.infoLabel}>Téléphone</Text>
-                <Text style={styles.infoValue}>
-                  {facture.client.numero_telephone_client}
-                </Text>
-              </View>
+              {
+                facture.client.nom_client && (
+                  <View>
+                    <Text style={styles.infoLabel}>Client</Text>
+                    <Text style={styles.infoValue}>
+                      {facture.client.nom_client}
+                    </Text>
+                    <Text style={styles.infoLabel}>Téléphone</Text>
+                    <Text style={styles.infoValue}>
+                      {facture.client.numero_telephone_client}
+                    </Text>
+                  </View>
+                )
+              }
               <View>
                 <Text style={styles.infoLabel}>Date</Text>
                 <Text style={styles.infoValue}>
@@ -234,7 +300,7 @@ export default function DetailVente() {
                     size={20}
                     color={COLORS.light}
                   />
-                  <Text style={styles.textLight}>Valider la vente</Text>
+                  <Text style={styles.textLight}>Valider</Text>
                 </TouchableOpacity>
               )}
             </View>
