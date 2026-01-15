@@ -19,24 +19,63 @@ import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import Menu from "@/components/menu";
 import api from "@/services/api";
 
-type statsType = {
-  total_produits_en_stock: string;
-  total_produits_stock_faible: string;
-  total_commandes_du_jour: string;
-  total_ventes_du_jour: string;
-  total_commandes_attente_du_jour: string;
-  total_commandes_valide_du_jour: string;
-  total_commandes_livre_du_jour: string;
-  total_client_du_jour: string;
-  somme_totale_caisse_du_jour: string;
-  somme_totale_commandes_aujourd_hui: string;
-  somme_totale_ventes_du_jour: string;
 
-
-  total_ventes_aujourd_hui: string;
-  total_clients_aujourd_hui: string;
-  nombre_produits_stocks_faibles: string;
+type TopProduit = {
+  id?: number;
+  produit__nom_produit: string;
+  produit__identifiant_produit: number;
+  total_qty:number;
 };
+
+type VueEnsembleVentes = {
+  chiffre_affaires: number;
+  nombre_ventes: number;
+  produits_plus_vendus: TopProduit[];
+  marge_beneficiaire_estimee: number;
+};
+
+type ComparaisonPeriodePrecedente = {
+  chiffre_affaires_variation: number;
+  nombre_ventes_variation: number;
+  tendance: "hausse" | "baisse" | "stable";
+};
+
+type CommandesEnCours = {
+  total_commande: number;
+  en_cours: number;
+  en_livraison: number;
+  livrees: number;
+  annulees: number;
+  valeur_commande_en_livraison: number,
+  valeur_commande_en_cours: number,
+  valeur_commande_livre:number
+};
+
+type ProduitsStock = {
+  total_stock: number;
+  alerte_faible_stock: number;
+  rupture_stock: number;
+};
+
+type ClientsStats = {
+  total: number;
+  nouveaux_clients: number;
+  actifs: number;
+};
+
+type statsType = {
+  periode: "jour" | "semaine" | "mois";
+  date?: string;
+  date_debut?: string;
+  date_fin?: string;
+  vue_ensemble_ventes: VueEnsembleVentes;
+  comparaison_periode_precedente: ComparaisonPeriodePrecedente;
+  commandes_en_cours: CommandesEnCours;
+  produits_stock: ProduitsStock;
+  clients: ClientsStats;
+};
+
+
 
 interface Categorie {
   identifiant_categorie: string;
@@ -312,7 +351,7 @@ export default function TableauBord() {
                         }}
                       >
                         <Text style={styles.statValue}>
-                          {stats?.total_produits_en_stock}
+                          {stats?.produits_stock.total_stock}
                         </Text>
                         <Text style={styles.statLabel}>{"Produits en stock"}</Text>
                       </Pressable>
@@ -326,7 +365,7 @@ export default function TableauBord() {
                         }}
                       >
                         <Text style={styles.statValue}>
-                          {stats?.total_produits_stock_faible}
+                          {stats?.produits_stock.alerte_faible_stock}
                         </Text>
                         <Text style={styles.statLabel}>
                           {"Produits stock faible"}
@@ -343,7 +382,7 @@ export default function TableauBord() {
                         }}
                       >
                         <Text style={styles.statValue}>
-                          {stats?.total_commandes_du_jour}
+                          {stats?.commandes_en_cours.total_commande}
                         </Text>
                         <Text style={styles.statLabel}>{"Total commandes"}</Text>
                       </Pressable>
@@ -356,7 +395,7 @@ export default function TableauBord() {
                         }}
                       >
                         <Text style={styles.statValue}>
-                          {stats?.total_ventes_du_jour}
+                          {stats?.vue_ensemble_ventes.nombre_ventes}
                         </Text>
                         <Text style={styles.statLabel}>{"Total ventes"}</Text>
                       </Pressable>
@@ -372,7 +411,7 @@ export default function TableauBord() {
                         }}
                       >
                         <Text style={styles.statValue}>
-                          {stats?.total_commandes_attente_du_jour}
+                          {stats?.commandes_en_cours.en_cours}
                         </Text>
                         <Text style={styles.statLabel}>{"Commandes en attente"}</Text>
                       </Pressable>
@@ -385,7 +424,7 @@ export default function TableauBord() {
                         }}
                       >
                         <Text style={styles.statValue}>
-                          {stats?.total_commandes_valide_du_jour}
+                          {stats?.commandes_en_cours.en_livraison}
                         </Text>
                         <Text style={styles.statLabel}>{"Commandes en livraison"}</Text>
                       </Pressable>
@@ -401,7 +440,7 @@ export default function TableauBord() {
                         }}
                       >
                         <Text style={styles.statValue}>
-                          {stats?.total_commandes_livre_du_jour}
+                          {stats?.commandes_en_cours.livrees}
                         </Text>
                         <Text style={styles.statLabel}>{"Commandes livrées"}</Text>
                       </Pressable>
@@ -414,7 +453,7 @@ export default function TableauBord() {
                         }}
                       >
                         <Text style={styles.statValue}>
-                          {stats?.total_client_du_jour}
+                          {stats?.clients.nouveaux_clients}
                         </Text>
                         <Text style={styles.statLabel}>{"Total clients"}</Text>
                       </Pressable>
@@ -430,7 +469,7 @@ export default function TableauBord() {
                         }}
                       >
                         <Text style={styles.statValue}>
-                          {stats?.somme_totale_caisse_du_jour}
+                          {stats?.vue_ensemble_ventes.chiffre_affaires}
                         </Text>
                         <Text style={styles.statLabel}>{"Total caisse (FCFA)"}</Text>
                       </Pressable>
@@ -446,25 +485,9 @@ export default function TableauBord() {
                         }}
                       >
                         <Text style={styles.statValue}>
-                          {stats?.somme_totale_commandes_aujourd_hui}
+                          {stats?.commandes_en_cours.valeur_commande_livre}
                         </Text>
                         <Text style={styles.statLabel}>{"Total commandes (FCFA)"}</Text>
-                      </Pressable>
-                    </View>
-                  </View>
-
-                  <View style={styles.statsContainer}>
-                    <View style={styles.statCard}>
-                      <Pressable
-                        style={{
-                          justifyContent: "center",
-                          alignItems: "center",
-                        }}
-                      >
-                        <Text style={styles.statValue}>
-                          {stats?.somme_totale_ventes_du_jour}
-                        </Text>
-                        <Text style={styles.statLabel}>{"Total ventes (FCFA)"}</Text>
                       </Pressable>
                     </View>
                   </View>
