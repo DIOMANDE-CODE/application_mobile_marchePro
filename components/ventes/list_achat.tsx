@@ -1,7 +1,7 @@
 import { stylesCss } from "@/styles/styles";
 import { formatMoneyFR } from "@/utils/moneyFormat";
 import { memo } from "react";
-import { FlatList, Pressable, Text, View } from "react-native";
+import { FlatList, Pressable, Text, TextInput, View } from "react-native";
 
 // import des composants
 
@@ -15,11 +15,11 @@ type Vente = {
 
 type ListVentesProps = {
   data: Vente[];
-  onSelectedId: (id:string) => void;
-  onEndReached? : () => void;
+  onSelectedId: (id: string) => void;
+  onEndReached?: () => void;
 };
 
-const ListVentes = ({ data, onSelectedId,onEndReached }: ListVentesProps) => {
+const ListVentes = ({ data, onSelectedId, onEndReached }: ListVentesProps) => {
   return (
     <FlatList
       style={styles.content}
@@ -36,11 +36,23 @@ const ListVentes = ({ data, onSelectedId,onEndReached }: ListVentesProps) => {
         </View>
       }
       ListHeaderComponent={
-        <Text style={styles.sectionTitle}>{"Ventes du jour"}</Text>
+        <>
+          <Text style={styles.sectionTitle}>{"Ventes du jour"}</Text>
+          <View style={styles.card}>
+            <Text style={styles.label}>Recherchez une vente</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Ex: MarchéPro-V-"
+
+              returnKeyType="search"
+
+            />
+          </View>
+        </>
       }
       renderItem={({ item }) => (
         <Pressable onPress={() => onSelectedId(item.identifiant_vente)}>
-          <View style={styles.saleItem}>  
+          <View style={styles.saleItem}>
             <View style={styles.saleInfo}>
               <Text style={styles.saleDetails}>{item.details_ventes.length} {"produit(s) acheté(s)"}</Text>
               <Text style={styles.saleDetails}>Ref : {item.identifiant_vente} </Text>

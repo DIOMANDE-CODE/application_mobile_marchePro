@@ -1,7 +1,7 @@
 import { stylesCss } from "@/styles/styles";
 import { formatDateHeureFR } from "@/utils/dateFormat";
 import { memo } from "react";
-import { FlatList, Text, TouchableOpacity, View } from "react-native";
+import { FlatList, Text, TextInput, TouchableOpacity, View } from "react-native";
 
 // Import des composants
 
@@ -10,16 +10,16 @@ type Client = {
   identifiant_client: string;
   nom_client: string;
   numero_telephone_client: string;
-  date_creation:string;
+  date_creation: string;
 };
 
 type ListeDesClientsProps = {
   data: Client[];
   onSelectedId: (id: string) => void;
-  onEndReached : () => void;
+  onEndReached: () => void;
 };
 
-const ListeDesClients = ({ data, onSelectedId,onEndReached }: ListeDesClientsProps) => {
+const ListeDesClients = ({ data, onSelectedId, onEndReached }: ListeDesClientsProps) => {
   return (
     <FlatList
       style={styles.content}
@@ -38,19 +38,16 @@ const ListeDesClients = ({ data, onSelectedId,onEndReached }: ListeDesClientsPro
       ListHeaderComponent={
         <>
           <Text style={styles.sectionTitle}>{"Clients du jour"}</Text>
-          {/* <View style={styles.filters}>
-            <TouchableOpacity
-              style={[styles.filterBtn, styles.filterBtnActive]}
-            >
-              <Text style={styles.textLight}>Tous</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.filterBtn}>
-              <Text>Fidèles</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.filterBtn}>
-              <Text>Nouveaux</Text>
-            </TouchableOpacity>
-          </View> */}
+          <View style={styles.card}>
+            <Text style={styles.label}>Recherchez un client</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Ex: Yao Amoin"
+
+              returnKeyType="search"
+
+            />
+          </View>
         </>
       }
       renderItem={({ item }) => (

@@ -1,7 +1,7 @@
 import { stylesCss } from "@/styles/styles";
 import { formatMoneyFR } from "@/utils/moneyFormat";
 import { memo } from "react";
-import { FlatList, Pressable, Text, View } from "react-native";
+import { FlatList, Pressable, Text, TextInput, View } from "react-native";
 
 // import des composants
 
@@ -16,7 +16,7 @@ type Commande = {
     details_commandes: [];
     total_ttc: number;
     etat_commande: string;
-    code_livraison:string;
+    code_livraison: string;
 };
 
 type ListVentesProps = {
@@ -42,49 +42,64 @@ const ListCommandes = ({ data, onSelectedId, onEndReached }: ListVentesProps) =>
                 </View>
             }
             ListHeaderComponent={
-                <Text style={styles.sectionTitle}>{"Commandes du jour"}</Text>
+                <>
+                    <Text style={styles.sectionTitle}>{"Commandes du jour"}</Text>
+                    <View style={styles.card}>
+                        <Text style={styles.label}>Recherchez une commande</Text>
+                        <TextInput
+                            style={styles.input}
+                            placeholder="Ex: M-A1A11A"
+
+                            returnKeyType="search"
+
+                        />
+                    </View>
+                </>
             }
             renderItem={({ item }) => (
-                <Pressable onPress={() => onSelectedId(item.identifiant_commande)}>
-                    <View style={styles.saleItem}>
-                        <View style={styles.saleInfo}>
-                            <Text style={styles.saleClient}>{item.client.nom_client}</Text>
-                            <Text style={styles.saleDetails}>{item.details_commandes.length} {"produit(s) commandé(s)"}</Text>
-                            <Text style={styles.saleDetails}>Total : {formatMoneyFR(item.total_ttc)} FCFA</Text>
-                            <Text style={styles.saleDetails}>Ref : {item.identifiant_commande}</Text>
-                            <Text style={styles.saleDetails}>Code Livraison : {item.code_livraison}</Text>
-                        </View>
-                        {
-                            item.etat_commande === "en_cours" && (
-                                <Text style={[styles.productStock, styles.badgeWarning]}>
-                                    en attente
-                                </Text>
-                            )
-                        }
-                        {
-                            item.etat_commande === "valide" && (
-                                <Text style={[styles.productStock, styles.badgePrimary]}>
-                                    Livraison...
-                                </Text>
-                            )
-                        }
-                        {
-                            item.etat_commande === "livre" && (
-                                <Text style={[styles.productStock, styles.badgeSuccess]}>
-                                    Livrée
-                                </Text>
-                            )
-                        }
-                         {
-                            item.etat_commande === "annule" && (
-                                <Text style={[styles.productStock, styles.badgeGrey]}>
-                                    Annulée
-                                </Text>
-                            )
-                        }
+                <>
 
-                    </View>
-                </Pressable>
+                    <Pressable onPress={() => onSelectedId(item.identifiant_commande)}>
+                        <View style={styles.saleItem}>
+                            <View style={styles.saleInfo}>
+                                <Text style={styles.saleClient}>{item.client.nom_client}</Text>
+                                <Text style={styles.saleDetails}>{item.details_commandes.length} {"produit(s) commandé(s)"}</Text>
+                                <Text style={styles.saleDetails}>Total : {formatMoneyFR(item.total_ttc)} FCFA</Text>
+                                <Text style={styles.saleDetails}>Ref : {item.identifiant_commande}</Text>
+                                <Text style={styles.saleDetails}>Code Livraison : {item.code_livraison}</Text>
+                            </View>
+                            {
+                                item.etat_commande === "en_cours" && (
+                                    <Text style={[styles.productStock, styles.badgeWarning]}>
+                                        en attente
+                                    </Text>
+                                )
+                            }
+                            {
+                                item.etat_commande === "valide" && (
+                                    <Text style={[styles.productStock, styles.badgePrimary]}>
+                                        Livraison...
+                                    </Text>
+                                )
+                            }
+                            {
+                                item.etat_commande === "livre" && (
+                                    <Text style={[styles.productStock, styles.badgeSuccess]}>
+                                        Livrée
+                                    </Text>
+                                )
+                            }
+                            {
+                                item.etat_commande === "annule" && (
+                                    <Text style={[styles.productStock, styles.badgeGrey]}>
+                                        Annulée
+                                    </Text>
+                                )
+                            }
+
+                        </View>
+                    </Pressable>
+                </>
             )}
             onEndReached={onEndReached}
             onEndReachedThreshold={0.4}
