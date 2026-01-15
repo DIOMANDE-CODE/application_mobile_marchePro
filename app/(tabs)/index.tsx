@@ -21,13 +21,14 @@ import api from "@/services/api";
 
 type statsType = {
   total_caisse_jour: string;
-  total_commande_aujourd_hui:string;
-  total_commande_attente_aujourd_hui:string;
-  total_commande_valide_aujourd_hui:string;
-  total_commande_livre_aujourd_hui:string;
-  total_ventes_aujourd_hui:string;
-  total_ventes_commandes_aujourd_hui:string;
-  total_commande_annulee_aujourd_hui:string;
+  total_commande_aujourd_hui: string;
+  total_commande_attente_aujourd_hui: string;
+  total_commande_valide_aujourd_hui: string;
+  total_commande_livre_aujourd_hui: string;
+  total_ventes_aujourd_hui: string;
+  total_ventes_commandes_aujourd_hui: string;
+  total_commande_annulee_aujourd_hui: string;
+  nombre_total_vente_aujourd_hui: string
 };
 
 export default function TableauBord() {
@@ -84,6 +85,11 @@ export default function TableauBord() {
   const handleInfo = useCallback(() => {
     setMenuVisible(false);
     router.push("/(pages)/info");
+  }, [setMenuVisible, router]);
+
+  const addVendeur = useCallback(() => {
+    setMenuVisible(false);
+    router.push("/register");
   }, [setMenuVisible, router]);
 
   const handleLogout = async () => {
@@ -204,6 +210,7 @@ export default function TableauBord() {
                         style={{ position: "absolute", top: 50, right: 10 }}
                       >
                         <Menu
+                          addVendeur={addVendeur}
                           onProfile={handleProfile}
                           onInfo={handleInfo}
                           onLogout={handleLogout}
@@ -337,6 +344,21 @@ export default function TableauBord() {
                           {stats?.total_ventes_aujourd_hui}
                         </Text>
                         <Text style={styles.statLabel}>{"Total caisse vente (FCFA)"}</Text>
+                      </Pressable>
+                    </View>
+                  </View>
+                  <View style={styles.statsContainer}>
+                    <View style={styles.statCard}>
+                      <Pressable
+                        style={{
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                      >
+                        <Text style={styles.statValue}>
+                          {stats?.nombre_total_vente_aujourd_hui}
+                        </Text>
+                        <Text style={styles.statLabel}>{"Total des ventes effectuées"}</Text>
                       </Pressable>
                     </View>
                   </View>

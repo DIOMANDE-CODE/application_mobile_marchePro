@@ -194,6 +194,11 @@ export default function TableauBord() {
     router.push("/profil");
   }, [setMenuVisible, router]);
 
+  const addVendeur = useCallback(() => {
+    setMenuVisible(false);
+    router.push("/register");
+  }, [setMenuVisible, router]);
+
   const handleInfo = useCallback(() => {
     setMenuVisible(false);
     router.push("/(pages)/info");
@@ -326,6 +331,7 @@ export default function TableauBord() {
                       >
                         <Menu
                           onProfile={handleProfile}
+                          addVendeur={addVendeur}
                           onInfo={handleInfo}
                           onLogout={handleLogout}
                         />

@@ -1,11 +1,15 @@
 import api from "@/services/api";
 import { COLORS, stylesCss } from "@/styles/styles";
-import { Link, router } from "expo-router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
+  Dimensions,
   Image,
+  Keyboard,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
   Text,
   TextInput,
   TouchableOpacity,
@@ -22,6 +26,8 @@ export default function PageInscription() {
   const [errorNumero, setErrorNumero] = useState("");
   const [nomError, setNomError] = useState("");
   const [loading, setLoading] = useState(false);
+  const screenHeight = Dimensions.get("window").height;
+  const scrollViewRef = useRef<ScrollView>(null);
 
   // Fonction de validation email
   const validationEmail = (email: string) => {
@@ -80,9 +86,8 @@ export default function PageInscription() {
       if (response.status === 200 || response.status === 201) {
         Alert.alert(
           "Succès",
-          "Nouveau compte crée, connectez-vous avec votre compte"
+          "Nouveau employé ajouté"
         );
-        router.replace("/login");
         // Renitialisation des champs
         setEmail("");
         setNom("");
@@ -126,27 +131,59 @@ export default function PageInscription() {
     }
   };
 
-  // Pre-chargement de la page
+  // Pre-chargement de la page et gestion du clavier
   useEffect(() => {
     setNom("");
     setEmail("");
     setPassword("");
-  }, []);
-  return (
-    <View style={stylesCss.loginContainer}>
-      {/* HEADER */}
-      <View style={styles.loginHeader}>
-        <Image
-          source={require("../assets/logo_marchePro_sans_fond.png")}
-          style={styles.loginLogoImage}
-        />
-        <Text style={styles.loginSubtitle}>
-          Gestion de poissonnerie et boucherie
-        </Text>
-      </View>
 
-      {/* FORMULAIRE */}
-      <View style={styles.loginForm}>
+    // Listener pour réinitialiser la position du scroll quand le clavier se ferme
+    const keyboardDidHideListener = Keyboard.addListener(
+      Platform.OS === "ios" ? "keyboardWillHide" : "keyboardDidHide",
+      () => {
+        if (scrollViewRef.current) {
+          scrollViewRef.current.scrollTo({ y: 0, animated: true });
+        }
+      }
+    );
+
+    return () => {
+      keyboardDidHideListener.remove();
+    };
+  }, []);
+
+  return (
+    <View style={{ flex: 1, backgroundColor: "#fff" }}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={{ flex: 1, backgroundColor: "#fff" }}
+      >
+        <ScrollView
+          ref={scrollViewRef}
+          style={[stylesCss.loginContainer, { backgroundColor: "#fff" }]}
+          contentContainerStyle={{ 
+            minHeight: screenHeight,
+            justifyContent: "center",
+            paddingVertical: 16,
+            backgroundColor: "#fff",
+          }}
+          scrollEnabled={true}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+        >
+        {/* HEADER */}
+        <View style={styles.loginHeader}>
+          <Image
+            source={require("../assets/logo_marchePro_sans_fond.png")}
+            style={styles.loginLogoImage}
+          />
+          <Text style={styles.loginSubtitle}>
+            Gestion de poissonnerie et boucherie
+          </Text>
+        </View>
+
+        {/* FORMULAIRE */}
+        <View style={styles.loginForm}>
         <View style={styles.formGroup}>
           <Text style={styles.formLabel}>
             {"Nom et Prenoms "}
@@ -216,25 +253,12 @@ export default function PageInscription() {
             style={[styles.btn, styles.btnSecondary, styles.btnFull]}
             onPress={Inscription}
           >
-            <Text style={{ color: "white" }}>{"S'inscrire"}</Text>
+            <Text style={{ color: "white" }}>{"Ajouter"}</Text>
           </TouchableOpacity>
         )}
-      </View>
-
-      {/* Lien vers la connexion */}
-      <Text style={{ textAlign: "center" }}>
-        Vous avez un compte ?{" "}
-        <Link
-          href="/login"
-          style={{
-            fontWeight: "bold",
-            color: COLORS.primaryDark,
-            textDecorationLine: "underline",
-          }}
-        >
-          Connectez-vous
-        </Link>
-      </Text>
+        </View>
+      </ScrollView>
+      </KeyboardAvoidingView>
     </View>
   );
 }

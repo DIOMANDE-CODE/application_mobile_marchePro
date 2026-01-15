@@ -46,8 +46,9 @@ type CommandesEnCours = {
   en_livraison: number;
   livrees: number;
   annulees: number;
-  valeur_commande_en_livraison: number,
-  valeur_commande_en_cours: number,
+  valeur_commande_en_livraison: number;
+  valeur_commande_en_cours: number;
+  valeur_commande_annulees: number;
 };
 
 type ProduitsStock = {
@@ -173,7 +174,7 @@ export default function Rapports() {
   };
 
   const dataJourClient = {
-    labels: ["Clients",""],
+    labels: ["Clients", ""],
     datasets: [
       {
         data: [
@@ -241,9 +242,6 @@ export default function Rapports() {
             <View style={styles.headerActions}>
               <TouchableOpacity style={styles.iconBtn} onPress={() => { refreshPage() }}>
                 <Ionicons name="reload-circle" size={35} color={COLORS.light} />
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.iconBtn}>
-                <Ionicons name="download" size={35} color={COLORS.light} />
               </TouchableOpacity>
 
             </View>
@@ -347,7 +345,7 @@ export default function Rapports() {
                     </Pressable>
                   </View>
                 </View>
-                <View style={styles.statsContainer}>
+                     <View style={styles.statsContainer}>
                   <View style={styles.statCard}>
                     <Pressable
                       style={{
@@ -359,6 +357,21 @@ export default function Rapports() {
                         {statsDuJour?.commandes_en_cours.valeur_commande_en_livraison}
                       </Text>
                       <Text style={styles.statLabel}>{"valeur des commandes en cours de livraison (FCFA)"}</Text>
+                    </Pressable>
+                  </View>
+                </View>
+                <View style={styles.statsContainer}>
+                  <View style={styles.statCard}>
+                    <Pressable
+                      style={{
+                        justifyContent: "center",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Text style={styles.statValue}>
+                        {statsDuJour?.commandes_en_cours.valeur_commande_annulees}
+                      </Text>
+                      <Text style={styles.statLabel}>{"Valeur des commandes annulées (FCFA)"}</Text>
                     </Pressable>
                   </View>
                 </View>
@@ -388,7 +401,7 @@ export default function Rapports() {
                   icon="warehouse"
                   data={[
                     { label: "Total", value: statsDuJour?.produits_stock.total_stock || 0, color: "#4ECDC4" },
-                    { label: "Faible stock", value: statsDuJour?.produits_stock.faible_stock || 0, color: "#FFA502" },
+                    { label: "Faible stock", value: statsDuJour?.produits_stock.alerte_faible_stock || 0, color: "#FFA502" },
                     { label: "Rupture", value: statsDuJour?.produits_stock.rupture_stock || 0, color: "#FF6B6B" },
                   ]}
                 />
@@ -561,6 +574,21 @@ export default function Rapports() {
                     </Pressable>
                   </View>
                 </View>
+                     <View style={styles.statsContainer}>
+                  <View style={styles.statCard}>
+                    <Pressable
+                      style={{
+                        justifyContent: "center",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Text style={styles.statValue}>
+                        {statsDuJour?.commandes_en_cours.valeur_commande_annulees}
+                      </Text>
+                      <Text style={styles.statLabel}>{"valeur des commandes annulées (FCFA)"}</Text>
+                    </Pressable>
+                  </View>
+                </View>
 
                 {/* Comparaison avec période précédente */}
                 <ComparisonCard
@@ -705,7 +733,7 @@ export default function Rapports() {
                       <Text style={styles.statLabel}>{"Marge Béneficiaire (FCFA)"}</Text>
                     </Pressable>
                   </View>
-                   <View style={styles.statCard}>
+                  <View style={styles.statCard}>
                     <Pressable
                       style={{
                         justifyContent: "center",
@@ -749,6 +777,21 @@ export default function Rapports() {
                     </Pressable>
                   </View>
                 </View>
+                     <View style={styles.statsContainer}>
+                  <View style={styles.statCard}>
+                    <Pressable
+                      style={{
+                        justifyContent: "center",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Text style={styles.statValue}>
+                        {statsDuJour?.commandes_en_cours.valeur_commande_annulees}
+                      </Text>
+                      <Text style={styles.statLabel}>{"valeur des commandes annulées (FCFA)"}</Text>
+                    </Pressable>
+                  </View>
+                </View>
 
                 {/* Comparaison avec période précédente */}
                 <ComparisonCard
@@ -775,7 +818,7 @@ export default function Rapports() {
                   icon="warehouse"
                   data={[
                     { label: "Total", value: statsDeMois?.produits_stock.total_stock || 0, color: "#4ECDC4" },
-                    { label: "Faible stock", value: statsDeMois?.produits_stock.faible_stock || 0, color: "#FFA502" },
+                    { label: "Faible stock", value: statsDeMois?.produits_stock.alerte_faible_stock || 0, color: "#FFA502" },
                     { label: "Rupture", value: statsDeMois?.produits_stock.rupture_stock || 0, color: "#FF6B6B" },
                   ]}
                 />

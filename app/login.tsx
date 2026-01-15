@@ -1,11 +1,16 @@
 import api, { attachTokenToApi } from "@/services/api";
 import { COLORS, stylesCss } from "@/styles/styles";
 import { router } from "expo-router";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
+  Dimensions,
   Image,
+  Keyboard,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
   Text,
   TextInput,
   TouchableOpacity,
@@ -21,6 +26,8 @@ export default function PageConnexion() {
   const [errorEmail, setErrorEmail] = useState("");
   const [errorPassword, setErrorPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const screenHeight = Dimensions.get("window").height;
+  const scrollViewRef = useRef<ScrollView>(null);
 
   // Verification du mail
   const validationEmail = (email: string) => {
@@ -114,79 +121,104 @@ export default function PageConnexion() {
     }
   };
 
+  // Gestion du clavier et ramener à position initiale
+  useEffect(() => {
+    const keyboardDidHideListener = Keyboard.addListener(
+      Platform.OS === "ios" ? "keyboardWillHide" : "keyboardDidHide",
+      () => {
+        if (scrollViewRef.current) {
+          scrollViewRef.current.scrollTo({ y: 0, animated: true });
+        }
+      }
+    );
+
+    return () => {
+      keyboardDidHideListener.remove();
+    };
+  }, []);
   
   return (
-    <View style={stylesCss.loginContainer}>
-      {/* HEADER */}
-      <View style={styles.loginHeader}>
-        <Image
-          source={require("../assets/logo_marchePro_sans_fond.png")}
-          style={styles.loginLogoImage}
-        />
-        <Text style={styles.loginSubtitle}>
-          Gestion de poissonnerie et boucherie
-        </Text>
-      </View>
-
-      {/* FORMULAIRE */}
-      <View style={styles.loginForm}>
-        <View style={styles.formGroup}>
-          <Text style={styles.formLabel}>
-            {"Adresse email "} <Text style={stylesCss.textDanger}>(*)</Text>
-          </Text>
-          {errorEmail && <Text style={styles.textDanger}>{errorEmail}</Text>}
-          <TextInput
-            style={styles.formControl}
-            placeholder="Entrez votre nom d'utilisateur"
-            value={email}
-            onChangeText={setEmail}
-          />
-        </View>
-
-        <View style={styles.formGroup}>
-          <Text style={styles.formLabel}>
-            Mot de passe <Text style={stylesCss.textDanger}>(*)</Text>
-          </Text>
-          {errorPassword && (
-            <Text style={styles.textDanger}>{errorPassword}</Text>
-          )}
-          <TextInput
-            style={styles.formControl}
-            placeholder="Entrez votre mot de passe"
-            value={password}
-            onChangeText={setPassword}
-            // secureTextEntry
-          />
-        </View>
-
-        {/* Bouton connexion */}
-        {loading ? (
-          <ActivityIndicator color={COLORS.primary} />
-        ) : (
-          <TouchableOpacity
-            style={[styles.btn, styles.btnPrimary, styles.btnFull]}
-            onPress={Connexion_utilisateur}
-          >
-            <Text style={{ color: "white" }}>Se connecter</Text>
-          </TouchableOpacity>
-        )}
-      </View>
-      {/* Lien vers l'inscription */}
-      {/* <Text style={{ textAlign: "center" }}>
-        {" "}
-        <Link
-          href="/register"
-          style={{
-            fontWeight: "bold",
-            color: COLORS.primaryDark,
-            textDecorationLine: "underline",
-          }}
+      <View style={{ flex: 1, backgroundColor: "#fff" }}>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          style={{ flex: 1, backgroundColor: "#fff" }}
         >
-          Ajouter nouveau vendeur
-        </Link>
-      </Text> */}
-    </View>
-  );
+          <ScrollView
+            ref={scrollViewRef}
+            style={[stylesCss.loginContainer, { backgroundColor: "#fff" }]}
+            contentContainerStyle={{ 
+              minHeight: screenHeight,
+              justifyContent: "center",
+              paddingVertical: 16,
+              backgroundColor: "#fff",
+            }}
+            scrollEnabled={true}
+            showsVerticalScrollIndicator={false}
+            keyboardShouldPersistTaps="handled"
+          >
+          {/* HEADER */}
+          <View style={styles.loginHeader}>
+            <Image
+              source={require("../assets/logo_marchePro_sans_fond.png")}
+              style={styles.loginLogoImage}
+            />
+            <Text style={styles.loginSubtitle}>
+              Gestion de poissonnerie et boucherie
+            </Text>
+          </View>
+  
+          {/* FORMULAIRE */}
+          <View style={styles.loginForm}>
+  
+          <View style={styles.formGroup}>
+            <Text style={styles.formLabel}>
+              {"Email "}
+              <Text style={stylesCss.textDanger}>(*)</Text>
+            </Text>
+            {errorEmail && <Text style={styles.textDanger}>{errorEmail}</Text>}
+            <TextInput
+              style={styles.formControl}
+              placeholder="Entrez votre adresse email"
+              keyboardType="email-address"
+              value={email}
+              onChangeText={setEmail}
+            />
+          </View>
+  
+  
+          <View style={styles.formGroup}>
+            <Text style={styles.formLabel}>
+              Mot de passe <Text style={stylesCss.textDanger}>(*)</Text>
+            </Text>
+            {errorPassword && (
+              <Text style={styles.textDanger}>{errorPassword}</Text>
+            )}
+  
+            <TextInput
+              style={styles.formControl}
+              placeholder="Entrez votre mot de passe"
+              // secureTextEntry
+              value={password}
+              onChangeText={setPassword}
+            />
+          </View>
+  
+          {/* Bouton inscription */}
+          {loading ? (
+            <ActivityIndicator color={COLORS.primary} />
+          ) : (
+            <TouchableOpacity
+              style={[styles.btn, styles.btnPrimary, styles.btnFull]}
+              onPress={Connexion_utilisateur}
+            >
+              <Text style={{ color: "white" }}>{"Se connecter"}</Text>
+            </TouchableOpacity>
+          )}
+          </View>
+        </ScrollView>
+        </KeyboardAvoidingView>
+      </View>
+    );
 }
 
 // Code CSS

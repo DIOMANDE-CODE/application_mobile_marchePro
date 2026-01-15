@@ -46,13 +46,14 @@ export const stylesCss = StyleSheet.create({
   loginContainer: {
     flex: 1,
     backgroundColor: "#fff",
-    justifyContent: "center",
-    padding: 20,
+    paddingHorizontal: 20,
+    paddingTop: 16,
+    paddingBottom: 20,
   },
 
   loginHeader: {
     alignItems: "center",
-    marginBottom: 40,
+    marginBottom: 20,
   },
 
   loginLogo: {
@@ -61,9 +62,9 @@ export const stylesCss = StyleSheet.create({
   },
 
   loginLogoImage: {
-    width: 200,
-    height: 200,
-    marginBottom: 10,
+    width: 130,
+    height: 130,
+    marginBottom: 8,
     alignSelf: "center",
   },
 
@@ -77,11 +78,11 @@ export const stylesCss = StyleSheet.create({
   loginSubtitle: {
     color: COLORS.gray,
     textAlign: "center",
-    fontSize: 17,
+    fontSize: 14,
   },
 
   loginForm: {
-    marginBottom: 24,
+    marginBottom: 8,
   },
 
   loginOptions: {
