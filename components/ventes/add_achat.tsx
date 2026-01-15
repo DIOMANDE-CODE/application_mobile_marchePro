@@ -251,6 +251,7 @@ export default function AjoutNouveauAchat({
         <View style={styles.container}>
           {/* Header */}
           <View style={[styles.header, { backgroundColor: COLORS.primary }]}>
+            
             <Pressable onPress={onClose}>
               <Ionicons name="arrow-back" size={25} color={COLORS.light} />
             </Pressable>
