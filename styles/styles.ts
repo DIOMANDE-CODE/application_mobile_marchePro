@@ -31,13 +31,11 @@ export const stylesCss = StyleSheet.create({
 
   // === Layout principal ===
   appContainer: {
-    maxWidth: 480,
-    marginHorizontal: "auto",
+    flex: 1,
     backgroundColor: "#fff",
-    minHeight: "100%",
-    ...SHADOW,
   },
   content: {
+    flex: 1,
     padding: 16,
     paddingBottom: 80,
   },

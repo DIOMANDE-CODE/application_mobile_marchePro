@@ -10,14 +10,13 @@ import { useCallback, useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
-  Button,
   Modal,
   ScrollView,
   Text,
   TextInput,
   TouchableOpacity,
   TouchableWithoutFeedback,
-  View,
+  View
 } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
@@ -103,7 +102,7 @@ export default function EditProduit({
     // Demande de permission
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== "granted") {
-      alert("Permission d’accès à la galerie refusée !");
+      alert("Permission d'accès à la galerie refusée !");
       return;
     }
 
@@ -261,8 +260,8 @@ export default function EditProduit({
           Alert.alert("Erreur 400", message);
         } else if (status === 500) {
           Alert.alert("Erreur 500", "Erreur survenue au serveur");
-        } else if (status === 401) {
-          Alert.alert("Erreur 401", "Mot de passe incorrect");
+        } else if (status === 409) {
+          Alert.alert("Erreur 401", message);
         } else {
           Alert.alert("Erreur", message);
         }
@@ -276,9 +275,11 @@ export default function EditProduit({
 
   // Pre-chargement
   useEffect(() => {
-    info_produit();
-    liste_categorie();
-  }, [info_produit]);
+    if (identifiant) {
+      info_produit();
+      liste_categorie();
+    }
+  }, [identifiant, editVisible, info_produit]);
 
   return (
     <SafeAreaProvider>
@@ -292,7 +293,9 @@ export default function EditProduit({
           <TouchableWithoutFeedback>
             <View style={styles.modalOverlay}>
               <View style={styles.modalContent}>
-                <Text style={styles.modalTitle}>Detail du produit</Text>
+                <Text style={styles.modalTitle}>
+                  Modifier le produit
+                </Text>
 
                 <ScrollView style={styles.modalBody}>
                   {image ? (
@@ -305,7 +308,7 @@ export default function EditProduit({
                         style={{ width: 120, height: 120, borderRadius: 10 }}
                       />
                     </View>
-                  ) : (
+                  ) : photo ? (
                     <View style={{ alignItems: "center", marginVertical: 10 }}>
                       <Image
                         cachePolicy="memory-disk"
@@ -315,9 +318,9 @@ export default function EditProduit({
                         style={{ width: 120, height: 120, borderRadius: 10 }}
                       />
                     </View>
-                  )}
-                  <Text style={styles.label}>Image du produit</Text>
-                  <Button title="Choisir une image" onPress={choisirImage} />
+                  ) : null}
+                  {/* <Text style={styles.label}>Image du produit</Text>
+                  <Button title="Choisir une image" onPress={choisirImage} /> */}
 
                   <Text style={styles.label}>Nom du produit</Text>
                   {erreurNom && (
@@ -355,13 +358,13 @@ export default function EditProduit({
                   )}
                   <TextInput
                     style={styles.input}
-                    placeholder="Ex: 400"
+                    placeholder="Ex: 1500"
                     keyboardType="numeric"
                     value={prix}
                     onChangeText={setPrix}
                   />
 
-                  <Text style={styles.label}>Stock initial</Text>
+                  <Text style={styles.label}>Stock disponible</Text>
                   {erreurQuantite && (
                     <Text style={styles.textDanger}>{erreurQuantite}</Text>
                   )}

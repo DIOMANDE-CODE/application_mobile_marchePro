@@ -56,7 +56,7 @@ const ListVentes = ({ data, onSelectedId, onEndReached }: ListVentesProps) => {
             <Text style={styles.label}>Recherchez une vente</Text>
             <TextInput
               style={styles.input}
-              placeholder="Ex: MarchéPro-V-"
+              placeholder="Ex: 001"
               returnKeyType="search"
               value={searchQuery}
               onChangeText={setSearchQuery}

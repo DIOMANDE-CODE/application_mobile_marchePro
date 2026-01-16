@@ -83,10 +83,9 @@ export default function ListClients() {
   // Foncton rafraichir la page
   const refreshPage = () => {
     setLoading(true);
-    setClient([])
+    listeClient();
     setOffset(0)
     setNext(null)
-    listeClient();
     setLoading(false);
   }
 

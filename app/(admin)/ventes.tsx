@@ -91,10 +91,9 @@ export default function Ventes() {
   // Foncton rafraichir la page
   const refreshPage = () => {
     setLoading(true);
-    setListeVentes([])
+    listeVente();
     setOffset(0)
     setNext(null)
-    listeVente();
     setLoading(false);
   };
 

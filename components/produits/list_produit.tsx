@@ -2,15 +2,15 @@ import CONFIG from "@/constants/config";
 import { stylesCss } from "@/styles/styles";
 import { formatMoneyFR } from "@/utils/moneyFormat";
 import { Image } from "expo-image";
-import { memo, useMemo, useState } from "react";
+import { memo } from "react";
 import { FlatList, Pressable, Text, TextInput, View } from "react-native";
 
-// Déclaration des types
+// Declaration des types
+
 type Categorie = {
   identifiant_categorie: string;
   nom_categorie: string;
 };
-
 type Produit = {
   identifiant_produit: string;
   image_produit: string;
@@ -28,25 +28,12 @@ type ListProduitsProps = {
 };
 
 const ListProduits = ({ data, onSelectProduit, onEndReached }: ListProduitsProps) => {
-  const [searchQuery, setSearchQuery] = useState("");
-
-  // Filtrer les produits en fonction de la recherche
-  const filteredData = useMemo(() => {
-    if (!searchQuery.trim()) {
-      return data;
-    }
-    return data.filter(
-      (produit) =>
-        produit.nom_produit.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        produit.categorie_produit.nom_categorie.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-  }, [data, searchQuery]);
-
+  // Verifier le seuil
   return (
     <FlatList
       style={styles.content}
       keyExtractor={(item) => item.identifiant_produit}
-      data={filteredData}
+      data={data}
       initialNumToRender={5} // évite de tout charger d’un coup
       windowSize={5} // limite le nombre d’éléments gardés en mémoire
       removeClippedSubviews={true} // nettoie les vues invisibles
@@ -64,9 +51,6 @@ const ListProduits = ({ data, onSelectProduit, onEndReached }: ListProduitsProps
               style={styles.input}
               placeholder="Ex: Saucisse"
               returnKeyType="search"
-              value={searchQuery}
-              onChangeText={setSearchQuery}
-              placeholderTextColor="#999"
             />
           </View>
         </>

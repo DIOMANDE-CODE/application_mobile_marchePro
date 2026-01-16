@@ -332,7 +332,7 @@ export default function RecuVente({
     }
   };
 
-// Fonction pour imprimer le reçu
+  // Fonction pour imprimer le reçu
   const imprimerRecu = async () => {
     try {
       const ligneProduits = voirDetail?.details_ventes
@@ -346,7 +346,7 @@ export default function RecuVente({
           </tr>
         `
         )
-        .join(""); 
+        .join("");
 
       const html = `
       <!doctype html>
@@ -516,10 +516,10 @@ export default function RecuVente({
 
         <div class="label">Date</div>
         <div class="value">${formatDateHeureFR(voirDetail?.date_vente).split("-")[0]
-          }</div>
+        }</div>
         <div class="label">Heure</div>
         <div class="value">${formatDateHeureFR(voirDetail?.date_vente).split("-")[1]
-          }</div>
+        }</div>
 
         <div class="label">Vendeur</div>
         <div class="value">${voirDetail?.utilisateur.nom_utilisateur}</div>
@@ -528,16 +528,16 @@ export default function RecuVente({
       <!-- Colonne droite alignée à droite -->
       <div class="meta-right">
           ${voirDetail?.client?.nom_client ? (
-            `<div class="label">Client</div>
+          `<div class="label">Client</div>
             <div class="value">${voirDetail?.client.nom_client}</div>`
-          ) : ``
-          }
+        ) : ``
+        }
 
           ${voirDetail?.client?.numero_telephone_client ? (
-            `<div class="label">Client</div>
+          `<div class="label">Client</div>
             <div class="value">${voirDetail?.client.numero_telephone_client}</div>`
-          ) : ``
-          }
+        ) : ``
+        }
 
         <div class="label">Statut</div>
         <div class="value"><span class="badge-paid">Payé</span></div>

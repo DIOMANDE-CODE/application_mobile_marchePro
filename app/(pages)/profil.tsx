@@ -82,26 +82,40 @@ export default function ProfilUtilisateur() {
 
   // Changer Photo de Profil
   const changePhotoProfil = async () => {
-    const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (permission.status !== "granted") {
-      Alert.alert(
-        "Permission refusée",
-        "Tu dois autoriser l’accès à la galerie."
-      );
-      return;
-    }
+    try {
+      setLoading(true);
 
-    const new_image = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: "images",
-      allowsEditing: true,
-      quality: 1,
-    });
+      const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (permission.status !== "granted") {
+        Alert.alert("Permission refusée", "Tu dois autoriser l’accès à la galerie.");
+        setLoading(false);
+        return;
+      }
 
-    if (!new_image.canceled) {
-      const resizedUri = await resizeAndCompressImage(new_image.assets[0].uri);
-      setImage(resizedUri);
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: "images",
+        allowsEditing: true,
+        quality: 0.7,
+      });
+
+      if (!result.canceled && result.assets && result.assets.length > 0) {
+        const uri = result.assets[0].uri;
+        try {
+          const resizedUri = await resizeAndCompressImage(uri);
+          setImage(resizedUri);
+        } catch (e: any) {
+          console.error("Erreur lors du redimensionnement:", e);
+          Alert.alert("Erreur", "Impossible de traiter l'image sélectionnée");
+        }
+      }
+    } catch (e: any) {
+      console.error("Erreur ImagePicker:", e);
+      Alert.alert("Erreur", e?.message || "Impossible de choisir l'image");
+    } finally {
+      setLoading(false); 
     }
   };
+
 
 
   // Fonction de validation email
@@ -296,41 +310,28 @@ export default function ProfilUtilisateur() {
             {image ? (
               <Image
                 cachePolicy="disk"
-                source={{
-                  uri: `${image}`,
-                }}
-                style={{
-                  width: 100,
-                  height: 100,
-                  borderRadius: 50,
-                  marginBottom: 10,
-                }}
-
+                source={{ uri: image }}
+                style={{ width: 100, height: 100, borderRadius: 50, marginBottom: 10 }}
               />
             ) : (
               <Image
                 cachePolicy="disk"
-                source={{
-                  uri: `${CONFIG.API_IMAGE_BASE_URL}${photo}`,
-                }}
-                style={{
-                  width: 100,
-                  height: 100,
-                  borderRadius: 50,
-                  marginBottom: 10,
-                }}
+                source={{ uri: `${CONFIG.API_IMAGE_BASE_URL}${photo}` }}
+                style={{ width: 100, height: 100, borderRadius: 50, marginBottom: 10 }}
               />
             )}
 
             <Pressable
               onPress={changePhotoProfil}
               style={[stylesCss.btnSm, stylesCss.btnThird]}
+              disabled={loading} 
             >
               <Text style={{ color: COLORS.light, fontWeight: "bold" }}>
-                Changer la photo
+                {"Changer la photo"}
               </Text>
             </Pressable>
           </View>
+
 
           {/* Formulaire */}
           <View style={styles.inputGroup}>

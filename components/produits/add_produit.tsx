@@ -7,7 +7,6 @@ import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
-  Button,
   Image,
   Modal,
   ScrollView,
@@ -15,7 +14,7 @@ import {
   TextInput,
   TouchableOpacity,
   TouchableWithoutFeedback,
-  View,
+  View
 } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
@@ -65,7 +64,7 @@ export default function AjoutNouveauProduit({
     // Demande de permission
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== "granted") {
-      alert("Permission d’accès à la galerie refusée !");
+      alert("Permission d'accès à la galerie refusée !");
       return;
     }
 
@@ -256,8 +255,8 @@ export default function AjoutNouveauProduit({
                       />
                     </View>
                   )}
-                  <Text style={styles.label}>Image du produit</Text>
-                  <Button title="Choisir une image" onPress={choisirImage} />
+                  {/* <Text style={styles.label}>Image du produit</Text>
+                  <Button title="Choisir une image" onPress={choisirImage} /> */}
 
                   <Text style={styles.label}>Nom du produit</Text>
                   {erreurNom && (
