@@ -4,17 +4,17 @@ import { COLORS, stylesCss } from "@/styles/styles";
 import { formatMoneyFR } from "@/utils/moneyFormat";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
-    ActivityIndicator,
-    Alert,
-    FlatList,
-    Image,
-    Pressable,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View
+  ActivityIndicator,
+  Alert,
+  FlatList,
+  Image,
+  Pressable,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View
 } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
@@ -63,6 +63,8 @@ export default function AjoutNouvelleCommande({
   const limit = 7
   const [search, setSearch] = useState("")
   const [searchMessage, setSearchMessage] = useState("")
+  const [searchQuery, setSearchQuery] = useState("")
+
 
   // fonction validation numero
   // Fonction de validation du numero
@@ -255,6 +257,17 @@ export default function AjoutNouvelleCommande({
   const tax = subtotal * 0.0;
   const total = subtotal + tax;
 
+  const filteredData = useMemo(() => {
+    if (!searchQuery.trim()) {
+      return produits;
+    }
+    return produits.filter(
+      (produit) =>
+        produit.nom_produit.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        produit.categorie_produit.nom_categorie.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }, [produits, searchQuery]);
+
   useEffect(() => {
     listeProduitDisponible();
   }, [visible, search]);
@@ -284,7 +297,7 @@ export default function AjoutNouvelleCommande({
           <View>
             {/* FlatList principale */}
             <FlatList
-              data={produits}
+              data={filteredData}
               keyExtractor={(item) => item.identifiant_produit}
               contentContainerStyle={{
                 paddingHorizontal: 16,   // espace gauche/droite
@@ -466,29 +479,11 @@ export default function AjoutNouvelleCommande({
                     <TextInput
                       style={styles.input}
                       placeholder="Ex: Poisson frais"
-                      value={search}
-                      onChangeText={setSearch}
+                      value={searchQuery}
+                      onChangeText={setSearchQuery}
                       returnKeyType="search"
-                      onSubmitEditing={(e) => {
-                        const cleanSearch = e.nativeEvent.text.trim();
-                        setOffset(0);
-                        setProduits([]);
-                        api.get("/produits/list/", {
-                          params: { limit: 7, offset: 0, search: cleanSearch }
-                        }).then((response) => {
-                          const root = response.data;
-                          const pagination = root.data;
-                          if (pagination.results.length === 0) (
-                            setSearchMessage("Aucun Article trouvé")
-                          )
-                          else {
-                            setSearchMessage("")
-                            setProduits(pagination.results);
-                            setNext(pagination.next);
-                          }
+                      placeholderTextColor="#999"
 
-                        });
-                      }}
                     />
                   </View>
                   {
@@ -496,7 +491,7 @@ export default function AjoutNouvelleCommande({
                       <View>
                         <Text style={styles.label}>{searchMessage}</Text>
                       </View>
-                    ):null
+                    ) : null
                   }
 
                 </>
