@@ -1,4 +1,4 @@
-import CONFIG from "@/constants/config";
+
 import api from "@/services/api";
 import { COLORS, stylesCss } from "@/styles/styles";
 import { Ionicons } from "@expo/vector-icons";
@@ -314,7 +314,7 @@ export default function EditProduit({
                         cachePolicy="memory-disk"
                         transition={200}
                         contentFit="cover"
-                        source={{ uri: `${CONFIG.API_IMAGE_BASE_URL}${photo}` }}
+                        source={{ uri: `${process.env.EXPO_PUBLIC_API_IMAGE_URL}${photo}` }}
                         style={{ width: 120, height: 120, borderRadius: 10 }}
                       />
                     </View>

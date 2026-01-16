@@ -1,4 +1,3 @@
-import CONFIG from "@/constants/config";
 import api from "@/services/api";
 import { COLORS, stylesCss } from "@/styles/styles";
 import { Ionicons } from "@expo/vector-icons";
@@ -316,7 +315,7 @@ export default function ProfilUtilisateur() {
             ) : (
               <Image
                 cachePolicy="disk"
-                source={{ uri: `${CONFIG.API_IMAGE_BASE_URL}${photo}` }}
+                source={{ uri: `${process.env.EXPO_PUBLIC_API_IMAGE_URL}${photo}` }}
                 style={{ width: 100, height: 100, borderRadius: 50, marginBottom: 10 }}
               />
             )}

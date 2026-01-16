@@ -1,4 +1,5 @@
-export const formatDateHeureFR = (date: Date | string | number): string => {
+export const formatDateHeureFR = (date?: Date | string | number): string => {
+  if (!date) return "";
   const d = new Date(date);
 
   // Formater la date

@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "",
-    "slug": "gestion_poissonnerie_mobile",
+    "name": "Gestion Poissonnerie",
+    "slug": "marche_pro",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/logo_marchePro.png",
@@ -14,9 +14,11 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
+      "bundleIdentifier": "com.marchepro.gestionpoissonnerie",
       "supportsTablet": true
     },
     "android": {
+      "package": "com.marchepro.gestionpoissonnerie",
       "adaptiveIcon": {
         "foregroundImage": "./assets/logo_marchePro.png",
         "backgroundColor": "#000000"
@@ -44,11 +46,18 @@
         }
       ],
       "expo-secure-store",
-      "expo-sqlite"
+      "expo-sqlite",
+      "expo-web-browser"
     ],
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "858f679e-f148-4f8f-b780-7ba66027e14b"
+      }
     }
   }
 }

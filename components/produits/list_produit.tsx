@@ -1,4 +1,3 @@
-import CONFIG from "@/constants/config";
 import { stylesCss } from "@/styles/styles";
 import { formatMoneyFR } from "@/utils/moneyFormat";
 import { Image } from "expo-image";
@@ -65,7 +64,7 @@ const ListProduits = ({ data, onSelectProduit, onEndReached }: ListProduitsProps
             transition={200}
             contentFit="cover"
             style={styles.productImage}
-            source={{ uri: `${CONFIG.API_IMAGE_BASE_URL}${item.image_produit}` }}
+            source={{ uri: `${process.env.EXPO_PUBLIC_API_IMAGE_URL}${item.image_produit}` }}
           />
           <View style={styles.productInfo}>
             <Text>Nom: </Text>

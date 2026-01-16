@@ -3,15 +3,24 @@ import { formatMoneyFR } from "@/utils/moneyFormat";
 import { memo, useMemo, useState } from "react";
 import { FlatList, Pressable, Text, TextInput, View } from "react-native";
 
-// import des composants
 
-// Déclaration des types
+type Client = {
+  nom_client: string;
+}
+
+type DetailVente = {
+  produit: string;
+  quantite: number;
+  prix_unitaire: number;
+}
+
 type Vente = {
   identifiant_vente: string;
   id: string;
-  details_ventes: [];
+  client: Client;
+  details_ventes: DetailVente[];
   total_ttc: number;
-};
+}
 
 type ListVentesProps = {
   data: Vente[];

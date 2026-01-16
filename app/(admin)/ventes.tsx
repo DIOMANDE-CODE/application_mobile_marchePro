@@ -13,14 +13,23 @@ import ListVentes from "@/components/ventes/list_achat";
 
 type Client = {
   nom_client: string;
-};
+}
+
+type DetailVente = {
+  produit: string;
+  quantite: number;
+  prix_unitaire: number;
+}
+
 type Vente = {
   identifiant_vente: string;
   id: string;
   client: Client;
-  details: [];
+  details_ventes: DetailVente[]; 
   total_ttc: number;
-};
+}
+
+
 
 export default function Ventes() {
   const [showBill, setShowBill] = useState(false);

@@ -1,4 +1,3 @@
-import CONFIG from "@/constants/config";
 import api from "@/services/api";
 import { COLORS, stylesCss } from "@/styles/styles";
 import { formatMoneyFR } from "@/utils/moneyFormat";
@@ -287,7 +286,7 @@ export default function AjoutNouveauAchat({
                   <Image
                     style={styles.productImage}
                     source={{
-                      uri: `${CONFIG.API_IMAGE_BASE_URL}${item.image_produit}`,
+                      uri: `${process.env.EXPO_PUBLIC_API_IMAGE_URL}${item.image_produit}`,
                     }}
                   />
                   <View style={styles.productInfo}>
