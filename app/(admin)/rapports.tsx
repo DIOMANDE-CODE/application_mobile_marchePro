@@ -35,9 +35,14 @@ type VueEnsembleVentes = {
 };
 
 type ComparaisonPeriodePrecedente = {
-  chiffre_affaires_variation: number;
-  nombre_ventes_variation: number;
-  tendance: "hausse" | "baisse" | "stable";
+  ca_evolution: number; // pourcentage (ex: 12.5 pour +12.5%)
+  ventes_evolution: number; // pourcentage
+  ca_periode_actuelle?: number; // valeur absolue période actuelle
+  ca_periode_precedente?: number; // valeur absolue période précédente
+  // compatibilité ascendante: certains backends peuvent encore renvoyer l'ancien schéma
+  chiffre_affaires_variation?: number;
+  nombre_ventes_variation?: number;
+  tendance?: "hausse" | "baisse" | "stable";
 };
 
 type CommandesEnCours = {
@@ -994,11 +999,17 @@ interface ComparisonCardProps {
 function ComparisonCard({ comparaison, titre }: ComparisonCardProps) {
   if (!comparaison) return null;
 
-  const isHausse = comparaison.tendance === "hausse";
-  const iconName =
-    isHausse ? "trending-up" :
-      comparaison.tendance === "baisse" ? "trending-down" : "minus";
+  // Support both new schema and legacy fields as fallback
+  const caEvolution = (comparaison as any).ca_evolution ?? (comparaison as any).chiffre_affaires_variation ?? 0;
+  const ventesEvolution = (comparaison as any).ventes_evolution ?? (comparaison as any).nombre_ventes_variation ?? 0;
+  const caActuelle = (comparaison as any).ca_periode_actuelle ?? (comparaison as any).ca_periode_actuelle;
+  const caPrecedente = (comparaison as any).ca_periode_precedente ?? (comparaison as any).ca_periode_precedente;
+
+  const isHausse = caEvolution > 0;
+  const iconName = isHausse ? "trending-up" : caEvolution < 0 ? "trending-down" : "minus";
   const iconColor = isHausse ? "#26D07C" : "#FF6B6B";
+
+  const fmt = (v?: number) => (v === undefined || v === null ? "-" : Intl.NumberFormat('fr-FR').format(v) + " FCFA");
 
   return (
     <View style={customStyles.comparisonCard}>
@@ -1010,14 +1021,14 @@ function ComparisonCard({ comparaison, titre }: ComparisonCardProps) {
         <View style={customStyles.comparisonItem}>
           <Text style={customStyles.comparisonLabel}>Chiffre d'affaires</Text>
           <Text style={[customStyles.comparisonValue, { color: isHausse ? "#26D07C" : "#FF6B6B" }]}>
-            {comparaison.chiffre_affaires_variation > 0 ? "+" : ""}{(comparaison.chiffre_affaires_variation ?? 0).toFixed(2)}%
+            {caEvolution > 0 ? "+" : ""}{caEvolution.toFixed(2)}%
           </Text>
+          <Text style={customStyles.comparisonSub}>{fmt(caActuelle)} / {fmt(caPrecedente)}</Text>
         </View>
         <View style={customStyles.comparisonItem}>
           <Text style={customStyles.comparisonLabel}>Nombre de ventes</Text>
-          <Text style={[customStyles.comparisonValue, { color: isHausse ? "#26D07C" : "#FF6B6B" }]}>
-            {comparaison.nombre_ventes_variation > 0 ? "+" : ""}
-            {(comparaison.nombre_ventes_variation ?? 0).toFixed(2)}%
+          <Text style={[customStyles.comparisonValue, { color: ventesEvolution > 0 ? "#26D07C" : "#FF6B6B" }]}>
+            {ventesEvolution > 0 ? "+" : ""}{ventesEvolution.toFixed(2)}%
           </Text>
         </View>
       </View>
@@ -1229,6 +1240,12 @@ const customStyles = StyleSheet.create({
   comparisonValue: {
     fontSize: 18,
     fontWeight: "700",
+  },
+  comparisonSub: {
+    fontSize: 12,
+    color: "#777",
+    marginTop: 6,
+    fontWeight: "500",
   },
   statusGrid: {
     flexDirection: "row",

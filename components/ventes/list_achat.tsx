@@ -1,6 +1,6 @@
 import { stylesCss } from "@/styles/styles";
 import { formatMoneyFR } from "@/utils/moneyFormat";
-import { memo } from "react";
+import { memo, useMemo, useState } from "react";
 import { FlatList, Pressable, Text, TextInput, View } from "react-native";
 
 // import des composants
@@ -20,10 +20,24 @@ type ListVentesProps = {
 };
 
 const ListVentes = ({ data, onSelectedId, onEndReached }: ListVentesProps) => {
+
+  const [searchQuery, setSearchQuery] = useState("");
+
+  // Filtrer les ventes en fonction de la recherche
+  const filteredData = useMemo(() => {
+    if (!searchQuery.trim()) {
+      return data;
+    }
+    return data.filter(
+      (vente) =>
+        vente.identifiant_vente.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }, [data, searchQuery]);
+
   return (
     <FlatList
       style={styles.content}
-      data={data}
+      data={filteredData}
       initialNumToRender={10} // évite de tout charger d’un coup
       windowSize={5} // limite le nombre d’éléments gardés en mémoire
       removeClippedSubviews={true} // nettoie les vues invisibles
@@ -43,8 +57,10 @@ const ListVentes = ({ data, onSelectedId, onEndReached }: ListVentesProps) => {
             <TextInput
               style={styles.input}
               placeholder="Ex: MarchéPro-V-"
-
               returnKeyType="search"
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+              placeholderTextColor="#999"
 
             />
           </View>

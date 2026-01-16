@@ -1,6 +1,6 @@
 import { stylesCss } from "@/styles/styles";
 import { formatDateHeureFR } from "@/utils/dateFormat";
-import { memo } from "react";
+import { memo, useMemo, useState } from "react";
 import { FlatList, Text, TextInput, TouchableOpacity, View } from "react-native";
 
 // Import des composants
@@ -20,10 +20,25 @@ type ListeDesClientsProps = {
 };
 
 const ListeDesClients = ({ data, onSelectedId, onEndReached }: ListeDesClientsProps) => {
+
+  const [searchQuery, setSearchQuery] = useState("");
+  
+    // Filtrer les clients en fonction de la recherche
+    const filteredData = useMemo(() => {
+      if (!searchQuery.trim()) {
+        return data;
+      }
+      return data.filter(
+        (client) =>
+          client.nom_client.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          client.numero_telephone_client.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }, [data, searchQuery]);
+
   return (
     <FlatList
       style={styles.content}
-      data={data}
+      data={filteredData}
       initialNumToRender={10} // évite de tout charger d’un coup
       windowSize={5} // limite le nombre d’éléments gardés en mémoire
       removeClippedSubviews={true} // nettoie les vues invisibles
@@ -43,9 +58,10 @@ const ListeDesClients = ({ data, onSelectedId, onEndReached }: ListeDesClientsPr
             <TextInput
               style={styles.input}
               placeholder="Ex: Yao Amoin"
-
               returnKeyType="search"
-
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+              placeholderTextColor="#999"
             />
           </View>
         </>

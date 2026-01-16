@@ -2,7 +2,7 @@ import api from "@/services/api";
 import { COLORS, stylesCss } from "@/styles/styles";
 import { Ionicons } from "@expo/vector-icons";
 import { useCallback, useEffect, useState } from "react";
-import { ActivityIndicator, Pressable, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Pressable, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
 // import des composants
@@ -31,7 +31,6 @@ export default function Produits() {
   const [produit, setProduit] = useState<Produit[]>([]);
   const [loading, setLoading] = useState(false);
   const [loadingProduit, setLoadingProduit] = useState(false);
-  const [search, setSearch] = useState("")
 
   const [offset, setOffset] = useState(0)
   const [next, setNext] = useState(null)
@@ -94,7 +93,7 @@ export default function Produits() {
     setOffset(0)
     setNext(null)
     listeProduit();
-  }, [isVisible, editVisible, idProduit, search]);
+  }, [isVisible, editVisible, idProduit]);
 
   if (loading)
     return (
@@ -139,29 +138,6 @@ export default function Produits() {
           )}
 
           {/* Contenu principal */}
-          <View style={stylesCss.card}>
-            <Text style={styles.label}>Recherchez un article</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Ex: Poisson frais"
-              value={search}
-              onChangeText={setSearch}
-              returnKeyType="search"
-              onSubmitEditing={(e) => {
-                const cleanSearch = e.nativeEvent.text.trim();
-                setOffset(0);
-                setProduit([]);
-                api.get("/produits/list/", {
-                  params: { limit: 7, offset: 0, search: cleanSearch }
-                }).then((response) => {
-                  const root = response.data;
-                  const pagination = root.data;
-                  setProduit(pagination.results);
-                  setNext(pagination.next);
-                });
-              }}
-            />
-          </View>
           <ListProduits data={produit} onSelectProduit={modifierProduit} onEndReached={() => {
             if (!loadingProduit && next) {
               listeProduit();
