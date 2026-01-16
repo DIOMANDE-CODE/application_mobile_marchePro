@@ -4,7 +4,7 @@ import { COLORS, stylesCss } from "@/styles/styles";
 import { formatMoneyFR } from "@/utils/moneyFormat";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -57,6 +57,7 @@ export default function AjoutNouveauAchat({
   const [offset, setOffset] = useState(0)
   const [next, setNext] = useState(null)
   const limit = 7
+  const [searchQuery, setSearchQuery] = useState("")
   const [search, setSearch] = useState("")
   const [searchMessage, setSearchMessage] = useState("")
 
@@ -138,6 +139,18 @@ export default function AjoutNouveauAchat({
       }
     }
   };
+
+
+  const filteredData = useMemo(() => {
+    if (!searchQuery.trim()) {
+      return produits;
+    }
+    return produits.filter(
+      (produit) =>
+        produit.nom_produit.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        produit.categorie_produit.nom_categorie.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }, [produits, searchQuery]);
 
   // Foncton rafraichir la page
   const refreshPage = () => {
@@ -251,7 +264,7 @@ export default function AjoutNouveauAchat({
         <View style={styles.container}>
           {/* Header */}
           <View style={[styles.header, { backgroundColor: COLORS.primary }]}>
-            
+
             <Pressable onPress={onClose}>
               <Ionicons name="arrow-back" size={25} color={COLORS.light} />
             </Pressable>
@@ -263,7 +276,7 @@ export default function AjoutNouveauAchat({
           <View>
             {/* FlatList principale */}
             <FlatList
-              data={produits}
+              data={filteredData}
               keyExtractor={(item) => item.identifiant_produit}
               contentContainerStyle={{
                 paddingHorizontal: 16,   // espace gauche/droite
@@ -417,29 +430,11 @@ export default function AjoutNouveauAchat({
                     <TextInput
                       style={styles.input}
                       placeholder="Ex: Poisson frais"
-                      value={search}
-                      onChangeText={setSearch}
+                      value={searchQuery}
+                      onChangeText={setSearchQuery}
                       returnKeyType="search"
-                      onSubmitEditing={(e) => {
-                        const cleanSearch = e.nativeEvent.text.trim();
-                        setOffset(0);
-                        setProduits([]);
-                        api.get("/produits/list/", {
-                          params: { limit: 7, offset: 0, search: cleanSearch }
-                        }).then((response) => {
-                          const root = response.data;
-                          const pagination = root.data;
-                          if (pagination.results.length === 0) (
-                            setSearchMessage("Aucun Article trouvé")
-                          )
-                          else {
-                            setSearchMessage("")
-                            setProduits(pagination.results);
-                            setNext(pagination.next);
-                          }
+                      placeholderTextColor="#999"
 
-                        });
-                      }}
                     />
                   </View>
                   {
