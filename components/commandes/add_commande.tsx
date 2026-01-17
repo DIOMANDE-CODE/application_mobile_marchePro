@@ -34,6 +34,7 @@ type Produit = {
   quantite_produit_disponible: number;
   seuil_alerte_produit: number;
   categorie_produit: Categorie;
+  thumbnail:string
 };
 
 type Cart = {
@@ -145,6 +146,8 @@ export default function AjoutNouvelleCommande({
         setNext(pagination.next);
       }
     } catch (error: any) {
+        console.error("Erreur dans listeProduitDisponible:", error);
+
       if (error.response) {
         const status = error.response.status;
         const message = error.response.data;
@@ -298,6 +301,10 @@ export default function AjoutNouvelleCommande({
             <FlatList
               data={filteredData}
               keyExtractor={(item) => item.identifiant_produit}
+              initialNumToRender={5} // évite de tout charger d’un coup
+              windowSize={21} // limite le nombre d’éléments gardés en mémoire
+              removeClippedSubviews={true} // nettoie les vues invisibles
+              maxToRenderPerBatch={10}
               contentContainerStyle={{
                 paddingHorizontal: 16,   // espace gauche/droite
                 paddingBottom: 32,       // espace en bas
@@ -307,7 +314,7 @@ export default function AjoutNouvelleCommande({
                   <Image
                     style={styles.productImage}
                     source={{
-                      uri: `${process.env.EXPO_PUBLIC_API_IMAGE_URL}${item.image_produit}`,
+                      uri: `${process.env.EXPO_PUBLIC_API_IMAGE_URL}${item.thumbnail}`,
                     }}
                   />
                   <View style={styles.productInfo}>

@@ -95,6 +95,6 @@ export default function RootLayout() {
         <Stack.Screen name="(admin)" options={{ headerShown: false }} />
         <Stack.Screen name="(pages)" options={{ headerShown: false }} />
       </Stack>
-    </>
+    </> 
   );
 }

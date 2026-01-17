@@ -50,13 +50,15 @@ export default function EditProduit({
   const [listCategorie, setListCategorie] = useState<Categorie[]>([]);
   const [photo, setPhoto] = useState("");
   const [loading, setLoading] = useState(false);
+  const [optimizedImage, setOptimizedImage] = useState<string | null>(null);
+
 
   // Fonction de redimensionnement de l'image
   const resizeAndCompressImage = async (uri: string) => {
     const result = await ImageManipulator.manipulateAsync(
       uri,
       [{ resize: { width: 800 } }], // tableau d'actions
-      { compress: 0.7, format: ImageManipulator.SaveFormat.JPEG } // options de sauvegarde
+      { compress: 0.5, format: ImageManipulator.SaveFormat.JPEG } // options de sauvegarde
     );
 
     return result.uri;
@@ -241,6 +243,8 @@ export default function EditProduit({
         }
       }
     } catch (error: any) {
+        console.error("Erreur dans edit_produit:", error);
+
       if (error.response) {
         const status = error.response.status;
         const data = error.response.data.errors;
@@ -276,8 +280,7 @@ export default function EditProduit({
   // Pre-chargement
   useEffect(() => {
     if (identifiant) {
-      info_produit();
-      liste_categorie();
+      Promise.all([info_produit(), liste_categorie()]);
     }
   }, [identifiant, editVisible, info_produit]);
 

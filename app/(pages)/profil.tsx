@@ -59,7 +59,7 @@ export default function ProfilUtilisateur() {
         setNom(data.nom_utilisateur);
         setEmail(data.email_utilisateur);
         setNumero(data.numero_telephone_utilisateur);
-        setPhoto(data.photo_profil_utilisateur);
+        setPhoto(data.thumbnail);
       }
     } catch (error: any) {
       if (error.response) {
@@ -209,6 +209,8 @@ export default function ProfilUtilisateur() {
         Alert.alert("Succès", "Informations mises à jour");
       }
     } catch (error: any) {
+        console.error("Erreur dans la fonction sauvegarder profil:", error);
+
       if (error.response) {
         const status = error.response.status;
         const data = error.response.data.errors;

@@ -231,6 +231,8 @@ export default function TableauBord() {
         setStats(data.data);
       }
     } catch (error: any) {
+      console.error("Erreur dans stats_du_jour:", error);
+
       if (error.response) {
         const status = error.response.status;
         const message = error.response.data;

@@ -29,6 +29,8 @@ export default function Ventes() {
           setListeVentes(data.data);
         }
       } catch (error: any) {
+        console.error("Erreur dans listeVente:", error);
+
         if (error.response) {
           const status = error.response.status;
           const message = error.response.data;
@@ -52,6 +54,8 @@ export default function Ventes() {
           setListeVentes(data.data);
         }
       } catch (error: any) {
+        console.error("Erreur dans listeVente:", error);
+
         if (error.response) {
           const status = error.response.status;
           const message = error.response.data;

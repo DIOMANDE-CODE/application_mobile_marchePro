@@ -95,6 +95,8 @@ export default function Rapports() {
         setStatsDuJour(data.data);
       }
     } catch (error: any) {
+      console.error("Erreur dans stats_du_jour:", error);
+
       if (error.response) {
         const status = error.response.status;
         const message = error.response.data;
@@ -122,6 +124,8 @@ export default function Rapports() {
       }
     } catch (error: any) {
       if (error.response) {
+        console.error("Erreur dans stats_de_semaine:", error);
+
         const status = error.response.status;
         const message = error.response.data;
 
@@ -148,6 +152,8 @@ export default function Rapports() {
       }
     } catch (error: any) {
       if (error.response) {
+        console.error("Erreur dans stats_de_mois:", error);
+
         const status = error.response.status;
         const message = error.response.data;
 
@@ -350,7 +356,7 @@ export default function Rapports() {
                     </Pressable>
                   </View>
                 </View>
-                     <View style={styles.statsContainer}>
+                <View style={styles.statsContainer}>
                   <View style={styles.statCard}>
                     <Pressable
                       style={{
@@ -579,7 +585,7 @@ export default function Rapports() {
                     </Pressable>
                   </View>
                 </View>
-                     <View style={styles.statsContainer}>
+                <View style={styles.statsContainer}>
                   <View style={styles.statCard}>
                     <Pressable
                       style={{
@@ -782,7 +788,7 @@ export default function Rapports() {
                     </Pressable>
                   </View>
                 </View>
-                     <View style={styles.statsContainer}>
+                <View style={styles.statsContainer}>
                   <View style={styles.statCard}>
                     <Pressable
                       style={{

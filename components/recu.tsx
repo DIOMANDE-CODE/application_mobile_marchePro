@@ -602,6 +602,8 @@ export default function RecuVente({
       }
     } catch (error: any) {
       if (error.response) {
+        console.error("Erreur dans detailVente:", error);
+
         const status = error.response.status;
         const message = error.response.data;
 

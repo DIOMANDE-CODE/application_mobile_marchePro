@@ -52,7 +52,7 @@ type DetailCommande = {
     utilisateur: Utilisateur;
     details_commandes: Details_commandes[];
     etat_commande: string;
-    code_livraison:string;
+    code_livraison: string;
 };
 
 export default function DetailCommande({
@@ -90,6 +90,8 @@ export default function DetailCommande({
                 refreshPage()
             }
         } catch (error: any) {
+            console.error("Erreur dans validerCommande:", error);
+
             if (error.response) {
                 const status = error.response.status;
                 const data = error.response.data.errors;
@@ -137,6 +139,8 @@ export default function DetailCommande({
                 refreshPage()
             }
         } catch (error: any) {
+            console.error("Erreur dans annulerCommande:", error);
+
             if (error.response) {
                 const status = error.response.status;
                 const data = error.response.data.errors;
@@ -183,6 +187,8 @@ export default function DetailCommande({
                 refreshPage()
             }
         } catch (error: any) {
+            console.error("Erreur dans livrerCommande:", error);
+
             if (error.response) {
                 const status = error.response.status;
                 const data = error.response.data.errors;
@@ -218,11 +224,11 @@ export default function DetailCommande({
 
     // Fonction d'impression de reçu
     // Fonction pour imprimer le reçu
-      const imprimerRecu = async () => {
+    const imprimerRecu = async () => {
         try {
-          const ligneProduits = voirDetail?.details_commandes
-            .map(
-              (item) => `
+            const ligneProduits = voirDetail?.details_commandes
+                .map(
+                    (item) => `
               <tr>
                 <td>${item.produit}</td>
                 <td class="col-qty">${item.quantite}</td>
@@ -230,10 +236,10 @@ export default function DetailCommande({
                 <td class="col-total">${formatMoneyFR(item.sous_total)}</td>
               </tr>
             `
-            )
-            .join("");
-    
-          const html = `
+                )
+                .join("");
+
+            const html = `
           <!doctype html>
     <html lang="fr">
     <head>
@@ -401,10 +407,10 @@ export default function DetailCommande({
     
             <div class="label">Date</div>
             <div class="value">${formatDateHeureFR(voirDetail?.date_commande).split("-")[0]
-            }</div>
+                }</div>
             <div class="label">Heure</div>
             <div class="value">${formatDateHeureFR(voirDetail?.date_commande).split("-")[1]
-            }</div>
+                }</div>
     
             <div class="label">Vendeur</div>
             <div class="value">${voirDetail?.utilisateur.nom_utilisateur}</div>
@@ -413,16 +419,16 @@ export default function DetailCommande({
           <!-- Colonne droite alignée à droite -->
           <div class="meta-right">
               ${voirDetail?.client?.nom_client ? (
-              `<div class="label">Client</div>
+                    `<div class="label">Client</div>
                 <div class="value">${voirDetail?.client.nom_client}</div>`
-            ) : ``
-            }
+                ) : ``
+                }
     
               ${voirDetail?.client?.numero_telephone_client ? (
-              `<div class="label">Client</div>
+                    `<div class="label">Client</div>
                 <div class="value">${voirDetail?.client.numero_telephone_client}</div>`
-            ) : ``
-            }
+                ) : ``
+                }
     
             <div class="label">Statut</div>
             <div class="value"><span class="badge-paid">Payé</span></div>
@@ -466,15 +472,15 @@ export default function DetailCommande({
     </body>
     </html>
         `;
-    
-          // Impression directe (ouvre le dialogue d’impression du système)
-          await Print.printAsync({ html });
-    
+
+            // Impression directe (ouvre le dialogue d’impression du système)
+            await Print.printAsync({ html });
+
         } catch (error) {
-          Alert.alert("Erreur", "Impossible d'imprimer le reçu");
-          console.error(error);
+            Alert.alert("Erreur", "Impossible d'imprimer le reçu");
+            console.error(error);
         }
-      };
+    };
 
 
     // Afficher le détail de la vente
@@ -488,6 +494,8 @@ export default function DetailCommande({
                 setVoirDetail(data);
             }
         } catch (error: any) {
+            console.error("Erreur dans detailCommande:", error);
+
             if (error.response) {
                 const status = error.response.status;
                 const message = error.response.data;

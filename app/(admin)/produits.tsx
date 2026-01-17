@@ -22,6 +22,7 @@ interface Produit {
   quantite_produit_disponible: number;
   seuil_alerte_produit: number;
   categorie_produit: Categorie;
+  thumbnail:string;
 }
 
 export default function Produits() {
@@ -34,7 +35,7 @@ export default function Produits() {
 
   const [offset, setOffset] = useState(0)
   const [next, setNext] = useState(null)
-  const limit = 7
+  const limit = 10
 
   // Lister les clients
   const listeProduit = async () => {

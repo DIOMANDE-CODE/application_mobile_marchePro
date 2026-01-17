@@ -71,6 +71,8 @@ export default function DetailVente() {
           }
         }
       } catch (error: any) {
+        console.error("Erreur dans fonction_valider:", error);
+
         if (error.response) {
           const status = error.response.status;
           const data = error.response.data.errors;
@@ -118,6 +120,8 @@ export default function DetailVente() {
           }
         }
       } catch (error: any) {
+        console.error("Erreur dans fonction_valider:", error);
+
         if (error.response) {
           const status = error.response.status;
           const data = error.response.data.errors;

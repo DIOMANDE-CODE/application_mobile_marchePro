@@ -50,6 +50,8 @@ export default function TableauBord() {
         // setProduits(data.data);
       }
     } catch (error: any) {
+        console.error("Erreur dans listPrduitsStockFaible:", error);
+
       if (error.response) {
         const status = error.response.status;
         const message = error.response.data;

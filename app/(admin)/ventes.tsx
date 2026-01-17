@@ -68,6 +68,8 @@ export default function Ventes() {
         setNext(pagination.next);
       }
     } catch (error: any) {
+        console.error("Erreur dans listeVente:", error);
+
       if (error.response) {
         const status = error.response.status;
         const message = error.response.data;

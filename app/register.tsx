@@ -99,6 +99,8 @@ export default function PageInscription() {
         setErrorNumero("");
       }
     } catch (error: any) {
+        console.error("Erreur dans PageInscription:", error);
+
       if (error.response) {
         const status = error.response.status;
         const data = error.response.data.errors;

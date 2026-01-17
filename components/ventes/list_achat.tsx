@@ -1,6 +1,6 @@
 import { stylesCss } from "@/styles/styles";
 import { formatMoneyFR } from "@/utils/moneyFormat";
-import { memo, useMemo, useState } from "react";
+import { memo, useCallback, useMemo, useState } from "react";
 import { FlatList, Pressable, Text, TextInput, View } from "react-native";
 
 
@@ -32,6 +32,23 @@ const ListVentes = ({ data, onSelectedId, onEndReached }: ListVentesProps) => {
 
   const [searchQuery, setSearchQuery] = useState("");
 
+  const renderItem = useCallback(({ item }: { item: Vente }) => (
+  <Pressable onPress={() => onSelectedId(item.identifiant_vente)}>
+    <View style={styles.saleItem}>
+      <View style={styles.saleInfo}>
+        <Text style={styles.saleDetails}>
+          {item.details_ventes.length} {"produit(s) acheté(s)"}
+        </Text>
+        <Text style={styles.saleDetails}>Ref : {item.identifiant_vente}</Text>
+      </View>
+      <Text style={styles.saleAmount}>
+        {formatMoneyFR(item.total_ttc)} FCFA
+      </Text>
+    </View>
+  </Pressable>
+), [onSelectedId]);
+
+
   // Filtrer les ventes en fonction de la recherche
   const filteredData = useMemo(() => {
     if (!searchQuery.trim()) {
@@ -47,9 +64,10 @@ const ListVentes = ({ data, onSelectedId, onEndReached }: ListVentesProps) => {
     <FlatList
       style={styles.content}
       data={filteredData}
-      initialNumToRender={10} // évite de tout charger d’un coup
-      windowSize={5} // limite le nombre d’éléments gardés en mémoire
+      initialNumToRender={5} // évite de tout charger d’un coup
+      windowSize={21} // limite le nombre d’éléments gardés en mémoire
       removeClippedSubviews={true} // nettoie les vues invisibles
+      maxToRenderPerBatch={10}
       keyExtractor={(item) => item.id}
       ListEmptyComponent={
         <View style={{ alignItems: "center", paddingVertical: 40 }}>
@@ -75,17 +93,7 @@ const ListVentes = ({ data, onSelectedId, onEndReached }: ListVentesProps) => {
           </View>
         </>
       }
-      renderItem={({ item }) => (
-        <Pressable onPress={() => onSelectedId(item.identifiant_vente)}>
-          <View style={styles.saleItem}>
-            <View style={styles.saleInfo}>
-              <Text style={styles.saleDetails}>{item.details_ventes.length} {"produit(s) acheté(s)"}</Text>
-              <Text style={styles.saleDetails}>Ref : {item.identifiant_vente} </Text>
-            </View>
-            <Text style={styles.saleAmount}>{formatMoneyFR(item.total_ttc)} FCFA</Text>
-          </View>
-        </Pressable>
-      )}
+      renderItem={renderItem}
       onEndReached={onEndReached}
       onEndReachedThreshold={0.4}
     />
