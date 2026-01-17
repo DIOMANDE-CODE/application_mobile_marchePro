@@ -50,8 +50,8 @@
       "expo-web-browser"
     ],
     "experiments": {
-      "typedRoutes": false,
-      "reactCompiler": false
+      "typedRoutes": true,
+      "reactCompiler": true
     },
     "extra": {
       "router": {},

@@ -1,5 +1,6 @@
+import { Text } from "react-native"
 export default function Index() {
     return (
-        <p>Hello</p>
+        <Text>Hello</Text>
     )
 }
