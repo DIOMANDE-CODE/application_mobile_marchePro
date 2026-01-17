@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Gestion Poissonnerie",
+    "name": "MarchéPro",
     "slug": "marche_pro",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -12,7 +12,7 @@
     },
     "scheme": "gestionpoissonneriemobile",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
+    "newArchEnabled": false,
     "ios": {
       "bundleIdentifier": "com.marchepro.gestionpoissonnerie",
       "supportsTablet": true
@@ -50,8 +50,8 @@
       "expo-web-browser"
     ],
     "experiments": {
-      "typedRoutes": true,
-      "reactCompiler": true
+      "typedRoutes": false,
+      "reactCompiler": false
     },
     "extra": {
       "router": {},
