@@ -1,10 +1,10 @@
 import api from "@/services/api";
 import { COLORS } from "@/styles/styles";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useRouter, useSegments } from "expo-router";
+import { Redirect, useRouter, useSegments } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import { useEffect, useState } from "react";
-import { ActivityIndicator, Alert, StatusBar, Text, View } from "react-native";
+import { ActivityIndicator, Alert, StatusBar, View } from "react-native";
 import "react-native-reanimated";
 
 export default function Index() {
@@ -88,9 +88,7 @@ export default function Index() {
     return (
         <>
             <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent={true} />
-            <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-                <Text>Bienvenue sur MarchéPro</Text>
-            </View>
+            <Redirect href="/login" />
         </>
     );
 }

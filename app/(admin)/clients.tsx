@@ -65,7 +65,7 @@ export default function ListClients() {
       if (error.response) {
         const status = error.response.status;
         const message = error.response.data;
-        console.error("Erreur dans listeClient:", error);
+        console.error("Erreur dans listeClients:", error);
 
         if (status === 400) {
           Alert.alert("", message.errors || "Erreur de saisie");
