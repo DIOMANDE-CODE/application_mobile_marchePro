@@ -3,7 +3,7 @@ import { COLORS, stylesCss } from "@/styles/styles";
 import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useCallback, useEffect, useState } from "react";
-import { ActivityIndicator, Alert, Pressable, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Alert, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
 // import des composants
@@ -11,26 +11,63 @@ import AjoutNouvelleCommande from "@/components/commandes/add_commande";
 import ListCommandes from "@/components/commandes/list_commande";
 import DetailCommande from "../(pages)/detail_commande";
 
+
+type Client = {
+  nom_client: string;
+};
+type Commande = {
+  identifiant_commande: string;
+  id: string;
+  client: Client;
+  details_commandes: [];
+  total_ttc: number;
+  etat_commande: string;
+  code_livraison: string;
+};
+
 export default function Commandes() {
   const [showBill, setShowBill] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
-  const [listeCommandes, setListeCommandes] = useState([]);
+  const [listeCommandes, setListeCommandes] = useState<Commande[]>([]);
   const [selectedCommandeId, setSelectedCommandeId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [loadingCommande, setLoadingCommande] = useState(false);
+
+  const [offset, setOffset] = useState(0)
+  const [next, setNext] = useState(null)
+  const limit = 10
 
   // Afficher les commandes
-  const listeCommande = async () => {
+  const listeCommande = async (customOffset = offset) => {
+    setLoading(true);
+    setLoadingCommande(true);
     const role = await AsyncStorage.getItem("user_role");
     if (role === "admin") {
       try {
-        const response = await api.get("/commandes/list/");
+        const response = await api.get("/commandes/list/", {
+          params: { limit, offset: customOffset },
+        });
         if (response.status === 200) {
-          const data = response.data;
-          setListeCommandes(data.data);
+          const root = response.data;
+          const pagination = root.data;
+
+          setListeCommandes((prev) => {
+            const merged = [...prev, ...pagination.results];
+
+            const unique = merged.filter(
+              (item, index, self) =>
+                index === self.findIndex(
+                  (p) => p.identifiant_commande === item.identifiant_commande
+                )
+            );
+            return unique;
+          });
+
+          setOffset(customOffset + pagination.results.length);
+          setNext(pagination.next);
+
         }
       } catch (error: any) {
-        console.error("Erreur dans listeCommande:", error);
-
         if (error.response) {
           const status = error.response.status;
           const message = error.response.data;
@@ -46,19 +83,38 @@ export default function Commandes() {
           }
         }
       }
+      setLoadingCommande(false);
+      setLoading(false);
     } else {
       try {
-        const response = await api.get("/commandes/list/vendeur");
+        const response = await api.get("/commandes/list/vendeur/", {
+          params: { limit, offset: customOffset },
+        });
         if (response.status === 200) {
-          const data = response.data;
-          setListeCommandes(data.data);
+          const root = response.data;
+          const pagination = root.data;
+
+
+          setListeCommandes((prev) => {
+            const merged = [...prev, ...pagination.results];
+
+            const unique = merged.filter(
+              (item, index, self) =>
+                index === self.findIndex(
+                  (p) => p.identifiant_commande === item.identifiant_commande
+                )
+            );
+            return unique;
+          });
+
+          setOffset(customOffset + pagination.results.length);
+          setNext(pagination.next);
         }
       } catch (error: any) {
-        console.error("Erreur dans listeCommande:", error);
-
         if (error.response) {
           const status = error.response.status;
           const message = error.response.data;
+
 
           if (status === 400) {
             Alert.alert("", message.errors || "Erreur de saisie");
@@ -70,6 +126,9 @@ export default function Commandes() {
             Alert.alert("Erreur", error.message || "Erreur survenue");
           }
         }
+      } finally {
+        setLoadingCommande(false);
+        setLoading(false);
       }
     }
   };
@@ -79,32 +138,25 @@ export default function Commandes() {
       setSelectedCommandeId(id);
       setShowBill(true);
     },
-    [setShowBill]
+    []
   );
 
   const closeDetail = useCallback(() => {
+    refreshPage();
     setShowBill(false);
-  }, [setShowBill]);
+  }, []);
 
   // Foncton rafraichir la page
-  const refreshPage = () => {
-    setLoading(true);
-    listeCommande();
-    setLoading(false);
+  const refreshPage = async () => {
+    setListeCommandes([]);
+    await listeCommande(0); // force offset = 0
   };
 
-  useEffect(() => {
-    listeCommande();
-  }, [showBill, isVisible]);
 
-  if (loading)
-    return (
-      <ActivityIndicator
-        size="large"
-        color={COLORS.primary}
-        style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-      />
-    );
+  useEffect(() => {
+    listeCommande(0);
+  }, [isVisible, showBill]);
+
   return (
     <SafeAreaProvider>
       <SafeAreaView style={{ flex: 1 }}>
@@ -132,15 +184,30 @@ export default function Commandes() {
                     color={COLORS.light}
                   />
                 </TouchableOpacity>
-                <Pressable
-                  style={styles.iconBtn}
-                  onPress={() => setIsVisible(!isVisible)}
-                >
-                  <Ionicons name="add-circle" size={35} color={COLORS.light} />
-                </Pressable>
+                <TouchableOpacity style={styles.iconBtn} onPress={() => setIsVisible(!isVisible)}>
+                  <Ionicons
+                    name="add-circle"
+                    size={35}
+                    color={COLORS.light}
+                  />
+                </TouchableOpacity>
               </View>
             </View>
-            <ListCommandes data={listeCommandes} onSelectedId={afficherDetail} />
+            {
+              loading ? (
+                <ActivityIndicator
+                  size="large"
+                  color={COLORS.primary}
+                  style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+                />
+              ) : (
+                <ListCommandes data={listeCommandes} onSelectedId={afficherDetail} onEndReached={() => {
+                  if (!loadingCommande && next) {
+                    listeCommande();
+                  }
+                }} />
+              )
+            }
           </View>
         )}
       </SafeAreaView>

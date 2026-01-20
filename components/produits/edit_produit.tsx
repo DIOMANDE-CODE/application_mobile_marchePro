@@ -243,7 +243,6 @@ export default function EditProduit({
         }
       }
     } catch (error: any) {
-        console.error("Erreur dans edit_produit:", error);
 
       if (error.response) {
         const status = error.response.status;

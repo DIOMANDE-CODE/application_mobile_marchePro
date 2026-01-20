@@ -12,10 +12,9 @@ import {
     ScrollView,
     Text,
     TouchableOpacity,
-    TouchableWithoutFeedback,
-    View,
+    View
 } from "react-native";
-import { SafeAreaProvider } from "react-native-safe-area-context";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
 // Téléchargement du reçu de vente
 import * as Print from "expo-print";
@@ -90,7 +89,6 @@ export default function DetailCommande({
                 refreshPage()
             }
         } catch (error: any) {
-            console.error("Erreur dans validerCommande:", error);
 
             if (error.response) {
                 const status = error.response.status;
@@ -139,7 +137,6 @@ export default function DetailCommande({
                 refreshPage()
             }
         } catch (error: any) {
-            console.error("Erreur dans annulerCommande:", error);
 
             if (error.response) {
                 const status = error.response.status;
@@ -187,7 +184,6 @@ export default function DetailCommande({
                 refreshPage()
             }
         } catch (error: any) {
-            console.error("Erreur dans livrerCommande:", error);
 
             if (error.response) {
                 const status = error.response.status;
@@ -478,7 +474,6 @@ export default function DetailCommande({
 
         } catch (error) {
             Alert.alert("Erreur", "Impossible d'imprimer le reçu");
-            console.error(error);
         }
     };
 
@@ -494,7 +489,6 @@ export default function DetailCommande({
                 setVoirDetail(data);
             }
         } catch (error: any) {
-            console.error("Erreur dans detailCommande:", error);
 
             if (error.response) {
                 const status = error.response.status;
@@ -531,7 +525,7 @@ export default function DetailCommande({
 
     return (
         <SafeAreaProvider>
-            <TouchableWithoutFeedback>
+            <SafeAreaView style={{ flex: 1 }}>
                 <View style={stylesCss.container}>
                     {/* HEADER */}
                     <View style={stylesCss.header}>
@@ -545,9 +539,12 @@ export default function DetailCommande({
 
                     {/* CONTENU */}
                     <ScrollView
-                        style={stylesCss.content}
+                        style={{ flex: 1, padding: 16 }}
+                        contentContainerStyle={{ paddingBottom: 100 }}
+
                         collapsable={false}
                         ref={viewRef}
+                        showsVerticalScrollIndicator={true}
                     >
                         {/* En-tête du reçu */}
                         <View style={stylesCss.receiptHeader}>
@@ -672,9 +669,9 @@ export default function DetailCommande({
                         {loading ? (
                             <ActivityIndicator color={COLORS.primary} />
                         ) : role === "vendeur" && voirDetail.etat_commande === 'en_cours' ? (
-                            <>
+                            <View style={{ flexDirection: 'row', gap: 10, marginTop: 20, marginBottom: 20 }}>
                                 <TouchableOpacity
-                                    style={[styles.btn, styles.btnPrimary, { margin: 50 }]}
+                                    style={[styles.btn, styles.btnPrimary, { flex: 1 }]}
                                     onPress={() => validerCommande(voirDetail.identifiant_commande)}
                                 >
                                     <Ionicons
@@ -685,7 +682,7 @@ export default function DetailCommande({
                                     <Text style={[styles.btnText]}>Valider la commande</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity
-                                    style={[styles.btn, styles.btnDanger, { margin: 50, top: -80 }]}
+                                    style={[styles.btn, styles.btnDanger, { flex: 1 }]}
                                     onPress={() => annulerCommande(voirDetail.identifiant_commande)}
                                 >
                                     <Ionicons
@@ -695,11 +692,11 @@ export default function DetailCommande({
                                     />
                                     <Text style={[styles.btnText]}>Annuler la commande</Text>
                                 </TouchableOpacity>
-                            </>
+                            </View>
                         ) : role === "vendeur" && voirDetail.etat_commande === 'valide' ? (
-                            <>
+                            <View style={{ flexDirection: 'row', gap: 10, marginTop: 20, marginBottom: 20 }}>
                                 <TouchableOpacity
-                                    style={[styles.btn, styles.btnSuccess, { margin: 50 }]}
+                                    style={[styles.btn, styles.btnSuccess, { flex: 1 }]}
                                     onPress={() => livrerCommande(voirDetail.identifiant_commande)}
                                 >
                                     <Ionicons
@@ -710,7 +707,7 @@ export default function DetailCommande({
                                     <Text style={[styles.btnText]}>Commmande Livrée</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity
-                                    style={[styles.btn, styles.btnDanger, { margin: 50, top: -80 }]}
+                                    style={[styles.btn, styles.btnDanger, { flex: 1 }]}
                                     onPress={() => annulerCommande(voirDetail.identifiant_commande)}
                                 >
                                     <Ionicons
@@ -720,26 +717,24 @@ export default function DetailCommande({
                                     />
                                     <Text style={[styles.btnText]}>Annuler la commande</Text>
                                 </TouchableOpacity>
-                            </>
+                            </View>
 
                         ) : (
-                            <>
-                                <TouchableOpacity
-                                    style={[styles.btn, styles.btnPrimary, { position: "relative", margin: 50, top: 0 }]}
-                                    onPress={() => imprimerRecu()}
-                                >
-                                    <Ionicons
-                                        name="print"
-                                        size={20}
-                                        color={COLORS.light}
-                                    />
-                                    <Text style={[styles.btnText]}>Imprimez le reçu </Text>
-                                </TouchableOpacity>
-                            </>
+                            <TouchableOpacity
+                                style={[styles.btn, styles.btnPrimary, { marginTop: 20, marginBottom: 20 }]}
+                                onPress={() => imprimerRecu()}
+                            >
+                                <Ionicons
+                                    name="print"
+                                    size={20}
+                                    color={COLORS.light}
+                                />
+                                <Text style={[styles.btnText]}>Imprimez le reçu </Text>
+                            </TouchableOpacity>
                         )}
                     </ScrollView>
                 </View>
-            </TouchableWithoutFeedback>
+            </SafeAreaView>
         </SafeAreaProvider>
     );
 }

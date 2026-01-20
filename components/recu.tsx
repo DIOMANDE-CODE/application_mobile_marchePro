@@ -10,10 +10,9 @@ import {
   ScrollView,
   Text,
   TouchableOpacity,
-  TouchableWithoutFeedback,
-  View,
+  View
 } from "react-native";
-import { SafeAreaProvider } from "react-native-safe-area-context";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
 // Téléchargement du reçu de vente
 import * as Print from "expo-print";
@@ -325,10 +324,8 @@ export default function RecuVente({
 
       // Sauvegarde / partage du fichier
       await Sharing.shareAsync(pdfUri);
-      Alert.alert("Succès", "Reçu envoyé avec succès !");
     } catch (error) {
       Alert.alert("Erreur", "Impossible de générer le reçu PDF");
-      console.error(error);
     }
   };
 
@@ -587,7 +584,6 @@ export default function RecuVente({
 
     } catch (error) {
       Alert.alert("Erreur", "Impossible d'imprimer le reçu");
-      console.error(error);
     }
   };
 
@@ -602,7 +598,6 @@ export default function RecuVente({
       }
     } catch (error: any) {
       if (error.response) {
-        console.error("Erreur dans detailVente:", error);
 
         const status = error.response.status;
         const message = error.response.data;
@@ -638,7 +633,7 @@ export default function RecuVente({
 
   return (
     <SafeAreaProvider>
-      <TouchableWithoutFeedback>
+      <SafeAreaView style={{ flex: 1 }}>
         <View style={stylesCss.container}>
           {/* HEADER */}
           <View style={stylesCss.header}>
@@ -656,6 +651,7 @@ export default function RecuVente({
           {/* CONTENU */}
           <ScrollView
             style={stylesCss.content}
+            contentContainerStyle={{ paddingBottom: 20 }}
             collapsable={false}
             ref={viewRef}
           >
@@ -780,7 +776,7 @@ export default function RecuVente({
           </ScrollView>
 
         </View>
-      </TouchableWithoutFeedback>
+      </SafeAreaView>
     </SafeAreaProvider>
   );
 }

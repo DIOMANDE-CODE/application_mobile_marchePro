@@ -15,7 +15,7 @@ interface Client {
   identifiant_client: string;
   nom_client: string;
   numero_telephone_client: string;
-  date_creation : string;
+  date_creation: string;
 }
 
 export default function ListClients() {
@@ -25,8 +25,8 @@ export default function ListClients() {
   const [client, setClient] = useState<Client[]>([]);
   const [loading, setLoading] = useState(false);
   const [loadingClient, setLoadingClient] = useState(false);
-  const [offset,setOffset] = useState(0)
-  const [next,setNext] = useState(null)
+  const [offset, setOffset] = useState(0)
+  const [next, setNext] = useState(null)
   const limit = 10
 
   //   Fonction modifier client
@@ -36,36 +36,35 @@ export default function ListClients() {
   };
 
   // Lister les clients
-  const listeClient = async () => {
+  const listeClient = async (customOffset=offset) => {
     if (loadingClient) return;
     setLoadingClient(true)
     try {
-      const response = await api.get("/clients/list/",{
-        params : {
-          limit,offset
+      const response = await api.get("/clients/list/", {
+        params: {
+          limit, offset: customOffset
         }
       });
       if (response.status === 200) {
         const root = response.data
         const pagination = root.data;
         setClient((prev) => {
-          const merged = [...prev,...pagination.results];
+          const merged = [...prev, ...pagination.results];
 
           const unique = merged.filter(
-            (item,index,self) => index === self.findIndex((p) => p.identifiant_client === item.identifiant_client)
+            (item, index, self) => index === self.findIndex((p) => p.identifiant_client === item.identifiant_client)
           );
           return unique;
         });
 
-        setOffset((prev) => prev + pagination.results.length);
+        setOffset(customOffset + pagination.results.length);
         setNext(pagination.next)
-        
+
       }
     } catch (error: any) {
       if (error.response) {
         const status = error.response.status;
         const message = error.response.data;
-        console.error("Erreur dans listeClients:", error);
 
         if (status === 400) {
           Alert.alert("", message.errors || "Erreur de saisie");
@@ -82,22 +81,15 @@ export default function ListClients() {
   };
 
   // Foncton rafraichir la page
-  const refreshPage = () => {
-    setLoading(true);
-    listeClient();
-    setOffset(0)
-    setNext(null)
-    setLoading(false);
+  const refreshPage = async () => {
+    setClient([]);
+    await listeClient(0);
   }
 
   // Pre-chargement
   useEffect(() => {
-    setOffset(0)
-    setNext(null)
-    listeClient();
+    listeClient(0);
   }, [isVisible, editVisible, idClient]);
-
-  if (loading) return (<ActivityIndicator size="large" color={COLORS.primary} style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}/>);
   return (
     <SafeAreaProvider>
       <SafeAreaView style={{ flex: 1 }}>
@@ -123,11 +115,18 @@ export default function ListClients() {
             onEditClose={() => setEditVisible(false)}
           />
         )}
-        <ListeDesClients data={client} onSelectedId={modifierClient} onEndReached = {() => {
-          if (!loadingClient && next){
-            listeClient()
-          }
-        }} />
+        {
+          loading ? (
+            <ActivityIndicator size="large" color={COLORS.primary} style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }} />
+          ) : (
+            <ListeDesClients data={client} onSelectedId={modifierClient} onEndReached={() => {
+              if (!loadingClient && next) {
+                listeClient()
+              }
+            }} />
+          )
+        }
+
       </SafeAreaView>
     </SafeAreaProvider>
   );

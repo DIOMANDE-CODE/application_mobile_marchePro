@@ -71,7 +71,6 @@ export default function DetailVente() {
           }
         }
       } catch (error: any) {
-        console.error("Erreur dans fonction_valider:", error);
 
         if (error.response) {
           const status = error.response.status;
@@ -120,7 +119,6 @@ export default function DetailVente() {
           }
         }
       } catch (error: any) {
-        console.error("Erreur dans fonction_valider:", error);
 
         if (error.response) {
           const status = error.response.status;
@@ -194,7 +192,7 @@ export default function DetailVente() {
           </View>
 
           {/* CONTENU */}
-          <ScrollView style={styles.content}>
+          <ScrollView style={styles.content} contentContainerStyle={{ paddingBottom: 20 }} showsVerticalScrollIndicator={true}>
             {/* En-tête du reçu */}
             <View style={styles.receiptHeader}>
               <Text style={styles.title}>MarchéPro</Text>

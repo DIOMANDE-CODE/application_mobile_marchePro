@@ -11,22 +11,62 @@ import ListCommandes from "@/components/commandes/list_commande";
 import AjoutNouveauAchat from "@/components/ventes/add_achat";
 import DetailCommande from "../(pages)/detail_commande";
 
+
+type Client = {
+  nom_client: string;
+};
+type Commande = {
+  identifiant_commande: string;
+  id: string;
+  client: Client;
+  details_commandes: [];
+  total_ttc: number;
+  etat_commande: string;
+  code_livraison: string;
+};
+
 export default function Commandes() {
   const [showBill, setShowBill] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
-  const [listeCommandes, setListeCommandes] = useState([]);
+  const [listeCommandes, setListeCommandes] = useState<Commande[]>([]);
   const [selectedCommandeId, setSelectedCommandeId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [loadingCommande, setLoadingCommande] = useState(false);
+
+  const [offset, setOffset] = useState(0)
+  const [next, setNext] = useState(null)
+  const limit = 10
 
   // Afficher les commandes
-  const listeCommande = async () => {
+  const listeCommande = async (customOffset = offset) => {
+    setLoading(true);
+    if (loadingCommande) return;
+    setLoadingCommande(true);
     const role = await AsyncStorage.getItem("user_role");
     if (role === "admin") {
       try {
-        const response = await api.get("/commandes/list/");
+        const response = await api.get("/commandes/list/", {
+          params: { limit, offset: customOffset },
+        });
         if (response.status === 200) {
-          const data = response.data;
-          setListeCommandes(data.data.results);
+          const root = response.data;
+          const pagination = root.data;
+
+          setListeCommandes((prev) => {
+            const merged = [...prev, ...pagination.results];
+
+            const unique = merged.filter(
+              (item, index, self) =>
+                index === self.findIndex(
+                  (p) => p.identifiant_commande === item.identifiant_commande
+                )
+            );
+            return unique;
+          });
+
+          setOffset(customOffset + pagination.results.length);
+          setNext(pagination.next);
+
         }
       } catch (error: any) {
         if (error.response) {
@@ -44,18 +84,39 @@ export default function Commandes() {
           }
         }
       }
+      setLoadingCommande(false);
+      setLoading(false);
     } else {
+      setLoading(true);
+      if (loadingCommande) return;
+      setLoadingCommande(true);
       try {
-        const response = await api.get("/commandes/list/vendeur");
+        const response = await api.get("/commandes/list/vendeur", {
+          params: { limit, offset: customOffset },
+        });
         if (response.status === 200) {
-          const data = response.data;
-          setListeCommandes(data.data);
+          const root = response.data;
+          const pagination = root.data;
+
+          setListeCommandes((prev) => {
+            const merged = [...prev, ...pagination.results];
+
+            const unique = merged.filter(
+              (item, index, self) =>
+                index === self.findIndex(
+                  (p) => p.identifiant_commande === item.identifiant_commande
+                )
+            );
+            return unique;
+          });
+
+          setOffset(customOffset + pagination.results.length);
+          setNext(pagination.next);
         }
       } catch (error: any) {
         if (error.response) {
           const status = error.response.status;
           const message = error.response.data;
-          console.error("Erreur dans listeCommande:", error);
 
 
           if (status === 400) {
@@ -69,6 +130,8 @@ export default function Commandes() {
           }
         }
       }
+      setLoadingCommande(false);
+      setLoading(false);
     }
   };
 
@@ -81,18 +144,19 @@ export default function Commandes() {
   );
 
   const closeDetail = useCallback(() => {
+    refreshPage();
     setShowBill(false);
-  }, [setShowBill]);
+  }, []);
 
   // Foncton rafraichir la page
-  const refreshPage = () => {
-    setLoading(true);
-    listeCommande();
-    setLoading(false);
+  const refreshPage = async () => {
+    setListeCommandes([]);
+    await listeCommande(0);
   };
 
   useEffect(() => {
-    listeCommande();
+    listeCommande(0);
+
   }, [showBill, isVisible]);
 
   if (loading)
@@ -132,7 +196,22 @@ export default function Commandes() {
                 </TouchableOpacity>
               </View>
             </View>
-            <ListCommandes data={listeCommandes} onSelectedId={afficherDetail} />
+            {
+              loading ? (
+                <ActivityIndicator
+                  size="large"
+                  color={COLORS.primary}
+                  style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+                />
+              ) : (
+                <ListCommandes data={listeCommandes} onSelectedId={afficherDetail} onEndReached={() => {
+                  if (!loadingCommande && next) {
+                    listeCommande();
+                  }
+                }} />
+              )
+            }
+
           </View>
         )}
       </SafeAreaView>

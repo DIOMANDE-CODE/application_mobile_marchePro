@@ -11,25 +11,67 @@ import RecuVente from "@/components/recu";
 import AjoutNouveauAchat from "@/components/ventes/add_achat";
 import ListVentes from "@/components/ventes/list_achat";
 
+
+type Client = {
+  nom_client: string;
+}
+
+type DetailVente = {
+  produit: string;
+  quantite: number;
+  prix_unitaire: number;
+}
+
+type Vente = {
+  identifiant_vente: string;
+  id: string;
+  client: Client;
+  details_ventes: DetailVente[];
+  total_ttc: number;
+}
+
 export default function Ventes() {
   const [showBill, setShowBill] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
-  const [listeVentes, setListeVentes] = useState([]);
+  const [listeVentes, setListeVentes] = useState<Vente[]>([]);
   const [selectedVenteId, setSelectedVenteId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [loadingVente, setLoadingVente] = useState(false);
+  const [offset, setOffset] = useState(0)
+  const [next, setNext] = useState(null)
+  const limit = 10
 
   // Afficher les ventes
-  const listeVente = async () => {
+  const listeVente = async (customOffset=offset) => {
+    if (loadingVente) return;
+    setLoadingVente(true)
     const role = await AsyncStorage.getItem("user_role");
     if (role === "admin") {
       try {
-        const response = await api.get("/ventes/list/");
+        const response = await api.get("/ventes/list/", {
+          params: { limit, offset: customOffset}
+        });
         if (response.status === 200) {
-          const data = response.data;
-          setListeVentes(data.data);
+          const root = response.data;
+          const pagination = root.data
+
+          setListeVentes((prev) => {
+            const merged = [...prev, ...pagination.results];
+
+            const unique = merged.filter(
+              (item, index, self) =>
+                index === self.findIndex(
+                  (p) => p.identifiant_vente === item.identifiant_vente
+                )
+            );
+            return unique;
+          });
+
+
+          setOffset(customOffset + pagination.results.length);
+          setNext(pagination.next);
         }
       } catch (error: any) {
-        console.error("Erreur dans listeVente:", error);
 
         if (error.response) {
           const status = error.response.status;
@@ -45,16 +87,37 @@ export default function Ventes() {
             Alert.alert("Erreur", error.message || "Erreur survenue");
           }
         }
+      } finally {
+
+        setLoadingVente(false);
       }
     } else {
       try {
-        const response = await api.get("/ventes/list/vendeur");
+        const response = await api.get("/ventes/list/vendeur/", {
+          params: { limit, offset: customOffset}
+        });
         if (response.status === 200) {
-          const data = response.data;
-          setListeVentes(data.data);
+          const root = response.data;
+          const pagination = root.data
+
+          setListeVentes((prev) => {
+            const results = pagination.results;
+            const merged = [...prev, ...results];
+
+            const unique = merged.filter(
+              (item, index, self) =>
+                index === self.findIndex(
+                  (p) => p.identifiant_vente === item.identifiant_vente
+                )
+            );
+            return unique;
+          });
+
+
+          setOffset(customOffset + pagination.results.length);
+          setNext(pagination.next);
         }
       } catch (error: any) {
-        console.error("Erreur dans listeVente:", error);
 
         if (error.response) {
           const status = error.response.status;
@@ -70,6 +133,8 @@ export default function Ventes() {
             Alert.alert("Erreur", error.message || "Erreur survenue");
           }
         }
+      } finally {
+        setLoadingVente(false);
       }
     }
   };
@@ -83,18 +148,18 @@ export default function Ventes() {
   );
 
   const closeDetail = useCallback(() => {
+    refreshPage();
     setShowBill(false);
   }, [setShowBill]);
 
   // Foncton rafraichir la page
-  const refreshPage = () => {
-    setLoading(true);
-    listeVente();
-    setLoading(false);
+  const refreshPage = async () => {
+    setListeVentes([]);
+    await listeVente(0);
   };
 
   useEffect(() => {
-    listeVente();
+    listeVente(0);
   }, [showBill, isVisible]);
 
   if (loading)
@@ -140,7 +205,11 @@ export default function Ventes() {
                 </Pressable>
               </View>
             </View>
-            <ListVentes data={listeVentes} onSelectedId={afficherDetail} />
+            <ListVentes data={listeVentes} onSelectedId={afficherDetail} onEndReached={() => {
+              if (!loadingVente && next) {
+                listeVente()
+              }
+            }} />
           </View>
         )}
       </SafeAreaView>

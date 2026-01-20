@@ -95,7 +95,6 @@ export default function Rapports() {
         setStatsDuJour(data.data);
       }
     } catch (error: any) {
-      console.error("Erreur dans stats_du_jour:", error);
 
       if (error.response) {
         const status = error.response.status;
@@ -124,7 +123,6 @@ export default function Rapports() {
       }
     } catch (error: any) {
       if (error.response) {
-        console.error("Erreur dans stats_de_semaine:", error);
 
         const status = error.response.status;
         const message = error.response.data;
@@ -152,7 +150,6 @@ export default function Rapports() {
       }
     } catch (error: any) {
       if (error.response) {
-        console.error("Erreur dans stats_de_mois:", error);
 
         const status = error.response.status;
         const message = error.response.data;
@@ -242,7 +239,6 @@ export default function Rapports() {
     stats_de_mois();
   }, []);
 
-  if (loading) return (<ActivityIndicator size="large" color={COLORS.primary} style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }} />);
   return (
     <SafeAreaProvider>
       <SafeAreaView style={{ flex: 1 }}>
@@ -258,643 +254,649 @@ export default function Rapports() {
             </View>
           </View>
 
-          <ScrollView style={styles.content}>
-            {/* Filtres */}
-            <View style={styles.filters}>
-              {filters.map((f) => (
-                <TouchableOpacity
-                  key={f}
-                  style={[
-                    styles.filterBtn,
-                    filter === f && styles.filterBtnActive,
-                  ]}
-                  onPress={() => setFilter(f)}
-                >
-                  <Text
-                    style={filter === f ? styles.filterTextActive : undefined}
-                  >
-                    {f}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-
-            {filter === "Aujourd'hui" ? (
-              <>
-                {/* Statistiques du jour - Vue ensemble ventes */}
-                <View style={styles.statsContainer}>
-                  <View style={styles.statCard}>
-                    <Pressable
-                      style={{
-                        justifyContent: "center",
-                        alignItems: "center",
-                      }}
-                    >
-                      <Text style={styles.statValue}>
-                        {statsDuJour?.vue_ensemble_ventes.chiffre_affaires}
-                      </Text>
-                      <Text style={styles.statLabel}>{"Chiffre d'affaire (FCFA)"}</Text>
-                    </Pressable>
-                  </View>
-
-                  <View style={styles.statCard}>
-                    <Pressable
-                      style={{
-                        justifyContent: "center",
-                        alignItems: "center",
-                      }}
-                    >
-                      <Text style={styles.statValue}>
-                        {statsDuJour?.vue_ensemble_ventes.nombre_ventes}
-                      </Text>
-                      <Text style={styles.statLabel}>
-                        {"Ventes"}
-                      </Text>
-                    </Pressable>
-                  </View>
-                </View>
-                <View style={styles.statsContainer}>
-                  <View style={styles.statCard}>
-                    <Pressable
-                      style={{
-                        justifyContent: "center",
-                        alignItems: "center",
-                      }}
-                    >
-                      <Text style={styles.statValue}>
-                        {statsDuJour?.vue_ensemble_ventes.marge_beneficiaire_estimee}
-                      </Text>
-                      <Text style={styles.statLabel}>{"Marge Béneficiaire (FCFA)"}</Text>
-                    </Pressable>
-                  </View>
-                  <View style={styles.statCard}>
-                    <Pressable
-                      style={{
-                        justifyContent: "center",
-                        alignItems: "center",
-                      }}
-                    >
-                      <Text style={styles.statValue}>
-                        {statsDuJour?.clients.nouveaux_clients}
-                      </Text>
-                      <Text style={styles.statLabel}>{"Nouveaux clients"}</Text>
-                    </Pressable>
-                  </View>
-                </View>
-                <View style={styles.statsContainer}>
-                  <View style={styles.statCard}>
-                    <Pressable
-                      style={{
-                        justifyContent: "center",
-                        alignItems: "center",
-                      }}
-                    >
-                      <Text style={styles.statValue}>
-                        {statsDuJour?.commandes_en_cours.valeur_commande_en_cours}
-                      </Text>
-                      <Text style={styles.statLabel}>{"Valeur des commandes en cours (FCFA)"}</Text>
-                    </Pressable>
-                  </View>
-                </View>
-                <View style={styles.statsContainer}>
-                  <View style={styles.statCard}>
-                    <Pressable
-                      style={{
-                        justifyContent: "center",
-                        alignItems: "center",
-                      }}
-                    >
-                      <Text style={styles.statValue}>
-                        {statsDuJour?.commandes_en_cours.valeur_commande_en_livraison}
-                      </Text>
-                      <Text style={styles.statLabel}>{"valeur des commandes en cours de livraison (FCFA)"}</Text>
-                    </Pressable>
-                  </View>
-                </View>
-                <View style={styles.statsContainer}>
-                  <View style={styles.statCard}>
-                    <Pressable
-                      style={{
-                        justifyContent: "center",
-                        alignItems: "center",
-                      }}
-                    >
-                      <Text style={styles.statValue}>
-                        {statsDuJour?.commandes_en_cours.valeur_commande_annulees}
-                      </Text>
-                      <Text style={styles.statLabel}>{"Valeur des commandes annulées (FCFA)"}</Text>
-                    </Pressable>
-                  </View>
-                </View>
-
-                {/* Comparaison avec période précédente */}
-                <ComparisonCard
-                  comparaison={statsDuJour?.comparaison_periode_precedente}
-                  titre="Comparaison avec hier"
-                />
-
-                {/* Statut des commandes */}
-                <StatusCard
-                  title="État des Commandes"
-                  icon="package-variant-closed"
-                  data={[
-                    { label: "Annulées", value: statsDuJour?.commandes_en_cours.annulees || 0, color: "#6c757d" },
-                    { label: "En livraison", value: statsDuJour?.commandes_en_cours.en_livraison || 0, color: "#FFA502" },
-                    { label: "En cours", value: statsDuJour?.commandes_en_cours.en_cours || 0, color: "#FF6B6B" },
-                    { label: "Livrées", value: statsDuJour?.commandes_en_cours.livrees || 0, color: "#26D07C" },
-                    { label: "Total", value: statsDuJour?.commandes_en_cours.total_commande || 0, color: "#4ECDC4" },
-                  ]}
-                />
-
-                {/* Statut du stock */}
-                <StatusCard
-                  title="État du Stock"
-                  icon="warehouse"
-                  data={[
-                    { label: "Total", value: statsDuJour?.produits_stock.total_stock || 0, color: "#4ECDC4" },
-                    { label: "Faible stock", value: statsDuJour?.produits_stock.alerte_faible_stock || 0, color: "#FFA502" },
-                    { label: "Rupture", value: statsDuJour?.produits_stock.rupture_stock || 0, color: "#FF6B6B" },
-                  ]}
-                />
-
-                {/* Graphiques des ventes */}
-                <View style={customStyles.chartContainer}>
-                  <View style={customStyles.cardHeader}>
-                    <MaterialCommunityIcons name="chart-bar" size={24} color={COLORS.primary} />
-                    <Text style={customStyles.cardTitle}>Statistiques des ventes</Text>
-                  </View>
-                  <View>
-                    <BarChart
-                      data={dataJourVente}
-                      width={screenwidth - 50}
-                      height={280}
-                      yAxisLabel=""
-                      yAxisSuffix=""
-                      chartConfig={{
-                        backgroundColor: "#fff",
-                        backgroundGradientFrom: "#fff",
-                        backgroundGradientTo: "#f9f9f9",
-                        decimalPlaces: 0,
-                        color: (opacity = 1) => `rgba(0, 47, 85, ${opacity})`,
-                        labelColor: (opacity = 1) =>
-                          `rgba(50, 50, 50, ${opacity})`,
-                        style: { borderRadius: 8 },
-                        barPercentage: 0.7,
-                      }}
-                      style={{ marginVertical: 12, borderRadius: 8 }}
-                    />
-                  </View>
-                </View>
-
-
-                {/* Graphiques des ventes */}
-                <View style={customStyles.chartContainer}>
-                  <View style={customStyles.cardHeader}>
-                    <MaterialCommunityIcons name="chart-bar" size={24} color={COLORS.primary} />
-                    <Text style={customStyles.cardTitle}>Statistiques des clients</Text>
-                  </View>
-                  <View>
-                    <BarChart
-                      data={dataJourClient}
-                      width={screenwidth - 50}
-                      height={280}
-                      yAxisLabel=""
-                      yAxisSuffix=""
-                      chartConfig={{
-                        backgroundColor: "#fff",
-                        backgroundGradientFrom: "#fff",
-                        backgroundGradientTo: "#f9f9f9",
-                        decimalPlaces: 0,
-                        color: (opacity = 1) => `rgba(255, 107, 107, ${opacity})`,
-                        labelColor: (opacity = 1) =>
-                          `rgba(50, 50, 50, ${opacity})`,
-                        style: { borderRadius: 8 },
-                        barPercentage: 0.7,
-                      }}
-                      style={{ marginVertical: 12, borderRadius: 8 }}
-                    />
-                  </View>
-                </View>
-
-                {/* Top produits du jour */}
-                <View style={customStyles.chartContainer}>
-                  <View style={customStyles.cardHeader}>
-                    <MaterialCommunityIcons name="medal" size={24} color="#FFD700" />
-                    <Text style={customStyles.cardTitle}>Top produits vendus</Text>
-                  </View>
-                  {statsDuJour?.vue_ensemble_ventes.produits_plus_vendus && statsDuJour.vue_ensemble_ventes.produits_plus_vendus.length > 0 ? (
-                    statsDuJour?.vue_ensemble_ventes.produits_plus_vendus.slice(0, 3).map((p, idx) => (
-                      <TopProductItem key={idx} index={idx} product={p} />
-                    ))
-                  ) : (
-                    <Text style={customStyles.emptyText}>
-                      Aucun produit vendu aujourd'hui
-                    </Text>
-                  )}
-                </View>
-              </>
-            ) : filter === "Semaine" ? (
-              <>
-                {/* Statistiques de la semaine */}
-                <View style={styles.statsContainer}>
-                  <View style={styles.statCard}>
-                    <Pressable
-                      style={{
-                        justifyContent: "center",
-                        alignItems: "center",
-                      }}
-                    >
-                      <Text style={styles.statValue}>
-                        {statsDeSemaine?.vue_ensemble_ventes.chiffre_affaires}
-                      </Text>
-                      <Text style={styles.statLabel}>{"Chiffre d'affaire (FCFA)"}</Text>
-                    </Pressable>
-                  </View>
-
-                  <View style={styles.statCard}>
-                    <Pressable
-                      style={{
-                        justifyContent: "center",
-                        alignItems: "center",
-                      }}
-                    >
-                      <Text style={styles.statValue}>
-                        {statsDeSemaine?.vue_ensemble_ventes.nombre_ventes}
-                      </Text>
-                      <Text style={styles.statLabel}>
-                        {"Vente"}
-                      </Text>
-                    </Pressable>
-                  </View>
-                </View>
-                <View style={styles.statsContainer}>
-                  <View style={styles.statCard}>
-                    <Pressable
-                      style={{
-                        justifyContent: "center",
-                        alignItems: "center",
-                      }}
-                    >
-                      <Text style={styles.statValue}>
-                        {statsDeSemaine?.vue_ensemble_ventes.marge_beneficiaire_estimee}
-                      </Text>
-                      <Text style={styles.statLabel}>{"Marge Béneficiaire (FCFA)"}</Text>
-                    </Pressable>
-                  </View>
-                  <View style={styles.statCard}>
-                    <Pressable
-                      style={{
-                        justifyContent: "center",
-                        alignItems: "center",
-                      }}
-                    >
-                      <Text style={styles.statValue}>
-                        {statsDeSemaine?.clients.nouveaux_clients}
-                      </Text>
-                      <Text style={styles.statLabel}>{"Nouveaux clients"}</Text>
-                    </Pressable>
-                  </View>
-                </View>
-                <View style={styles.statsContainer}>
-                  <View style={styles.statCard}>
-                    <Pressable
-                      style={{
-                        justifyContent: "center",
-                        alignItems: "center",
-                      }}
-                    >
-                      <Text style={styles.statValue}>
-                        {statsDeSemaine?.commandes_en_cours.valeur_commande_en_cours}
-                      </Text>
-                      <Text style={styles.statLabel}>{"Valeur des commandes en cours (FCFA)"}</Text>
-                    </Pressable>
-                  </View>
-                </View>
-                <View style={styles.statsContainer}>
-                  <View style={styles.statCard}>
-                    <Pressable
-                      style={{
-                        justifyContent: "center",
-                        alignItems: "center",
-                      }}
-                    >
-                      <Text style={styles.statValue}>
-                        {statsDeSemaine?.commandes_en_cours.valeur_commande_en_livraison}
-                      </Text>
-                      <Text style={styles.statLabel}>{"valeur des commandes en cours de livraison (FCFA)"}</Text>
-                    </Pressable>
-                  </View>
-                </View>
-                <View style={styles.statsContainer}>
-                  <View style={styles.statCard}>
-                    <Pressable
-                      style={{
-                        justifyContent: "center",
-                        alignItems: "center",
-                      }}
-                    >
-                      <Text style={styles.statValue}>
-                        {statsDuJour?.commandes_en_cours.valeur_commande_annulees}
-                      </Text>
-                      <Text style={styles.statLabel}>{"valeur des commandes annulées (FCFA)"}</Text>
-                    </Pressable>
-                  </View>
-                </View>
-
-                {/* Comparaison avec période précédente */}
-                <ComparisonCard
-                  comparaison={statsDeSemaine?.comparaison_periode_precedente}
-                  titre="Comparaison avec semaine précédente"
-                />
-
-                {/* Statut des commandes */}
-                <StatusCard
-                  title="État des Commandes"
-                  icon="package-variant-closed"
-                  data={[
-                    { label: "Annulées", value: statsDeSemaine?.commandes_en_cours.annulees || 0, color: "#6c757d" },
-                    { label: "En livraison", value: statsDeSemaine?.commandes_en_cours.en_livraison || 0, color: "#FFA502" },
-                    { label: "En cours", value: statsDeSemaine?.commandes_en_cours.en_cours || 0, color: "#FF6B6B" },
-                    { label: "Livrées", value: statsDeSemaine?.commandes_en_cours.livrees || 0, color: "#26D07C" },
-                    { label: "Total", value: statsDeSemaine?.commandes_en_cours.total_commande || 0, color: "#4ECDC4" },
-                  ]}
-                />
-
-                {/* Statut du stock */}
-                <StatusCard
-                  title="État du Stock"
-                  icon="warehouse"
-                  data={[
-                    { label: "Total", value: statsDeSemaine?.produits_stock.total_stock || 0, color: "#4ECDC4" },
-                    { label: "Faible stock", value: statsDeSemaine?.produits_stock.alerte_faible_stock || 0, color: "#FFA502" },
-                    { label: "Rupture", value: statsDeSemaine?.produits_stock.rupture_stock || 0, color: "#FF6B6B" },
-                  ]}
-                />
-
-                {/* Graphiques */}
-                <View style={customStyles.chartContainer}>
-                  <View style={customStyles.cardHeader}>
-                    <MaterialCommunityIcons name="chart-line" size={24} color={COLORS.primary} />
-                    <Text style={customStyles.cardTitle}>Performance du chiffre d'affaire</Text>
-                  </View>
-                  <View>
-                    <LineChart
-                      data={{
-                        labels: ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"],
-                        datasets: [
-                          {
-                            data: [
-                              Math.random() * (statsDeSemaine?.vue_ensemble_ventes.chiffre_affaires || 1000),
-                              Math.random() * (statsDeSemaine?.vue_ensemble_ventes.chiffre_affaires || 1000),
-                              Math.random() * (statsDeSemaine?.vue_ensemble_ventes.chiffre_affaires || 1000),
-                              Math.random() * (statsDeSemaine?.vue_ensemble_ventes.chiffre_affaires || 1000),
-                              Math.random() * (statsDeSemaine?.vue_ensemble_ventes.chiffre_affaires || 1000),
-                              Math.random() * (statsDeSemaine?.vue_ensemble_ventes.chiffre_affaires || 1000),
-                              statsDeSemaine?.vue_ensemble_ventes.chiffre_affaires || 1000,
-                            ],
-                          },
-                        ],
-                      }}
-                      width={screenwidth - 50}
-                      height={280}
-                      yAxisLabel=""
-                      yAxisSuffix=""
-                      chartConfig={{
-                        backgroundColor: "#fff",
-                        backgroundGradientFrom: "#fff",
-                        backgroundGradientTo: "#f9f9f9",
-                        decimalPlaces: 0,
-                        color: (opacity = 1) => `rgba(76, 205, 196, ${opacity})`,
-                        labelColor: (opacity = 1) =>
-                          `rgba(50, 50, 50, ${opacity})`,
-                        style: { borderRadius: 8 },
-                        propsForDots: {
-                          r: "6",
-                          strokeWidth: "2",
-                          stroke: "#4ECDC4"
-                        }
-                      }}
-                      style={{ marginVertical: 12, borderRadius: 8 }}
-                    />
-                  </View>
-                </View>
-
-                {/* Top produits semaine */}
-                <View style={customStyles.chartContainer}>
-                  <View style={customStyles.cardHeader}>
-                    <MaterialCommunityIcons name="medal" size={24} color="#FFD700" />
-                    <Text style={customStyles.cardTitle}>Top produits de la semaine</Text>
-                  </View>
-                  {statsDeSemaine?.vue_ensemble_ventes.produits_plus_vendus && statsDeSemaine.vue_ensemble_ventes.produits_plus_vendus.length > 0 ? (
-                    statsDeSemaine?.vue_ensemble_ventes.produits_plus_vendus.slice(0, 3).map((p, idx) => (
-                      <TopProductItem key={idx} index={idx} product={p} />
-                    ))
-                  ) : (
-                    <Text style={customStyles.emptyText}>
-                      Aucun produit vendu cette semaine
-                    </Text>
-                  )}
-                </View>
-              </>
-            ) : (
-              <>
-                {/* Statistiques du mois */}
-                <View style={styles.statsContainer}>
-                  <View style={styles.statCard}>
-                    <Pressable
-                      style={{
-                        justifyContent: "center",
-                        alignItems: "center",
-                      }}
-                    >
-                      <Text style={styles.statValue}>
-                        {statsDeMois?.vue_ensemble_ventes.chiffre_affaires}
-                      </Text>
-                      <Text style={styles.statLabel}>{"Chiffre d'affaire (FCFA)"}</Text>
-                    </Pressable>
-                  </View>
-
-                  <View style={styles.statCard}>
-                    <Pressable
-                      style={{
-                        justifyContent: "center",
-                        alignItems: "center",
-                      }}
-                    >
-                      <Text style={styles.statValue}>
-                        {statsDeMois?.vue_ensemble_ventes.nombre_ventes}
-                      </Text>
-                      <Text style={styles.statLabel}>
-                        {"Vente"}
-                      </Text>
-                    </Pressable>
-                  </View>
-                </View>
-                <View style={styles.statsContainer}>
-                  <View style={styles.statCard}>
-                    <Pressable
-                      style={{
-                        justifyContent: "center",
-                        alignItems: "center",
-                      }}
-                    >
-                      <Text style={styles.statValue}>
-                        {statsDeMois?.vue_ensemble_ventes.marge_beneficiaire_estimee}
-                      </Text>
-                      <Text style={styles.statLabel}>{"Marge Béneficiaire (FCFA)"}</Text>
-                    </Pressable>
-                  </View>
-                  <View style={styles.statCard}>
-                    <Pressable
-                      style={{
-                        justifyContent: "center",
-                        alignItems: "center",
-                      }}
-                    >
-                      <Text style={styles.statValue}>
-                        {statsDeMois?.clients.nouveaux_clients}
-                      </Text>
-                      <Text style={styles.statLabel}>{"Nouveaux clients"}</Text>
-                    </Pressable>
-                  </View>
-                </View>
-                <View style={styles.statsContainer}>
-                  <View style={styles.statCard}>
-                    <Pressable
-                      style={{
-                        justifyContent: "center",
-                        alignItems: "center",
-                      }}
-                    >
-                      <Text style={styles.statValue}>
-                        {statsDeMois?.commandes_en_cours.valeur_commande_en_cours}
-                      </Text>
-                      <Text style={styles.statLabel}>{"Valeur des commandes en cours (FCFA)"}</Text>
-                    </Pressable>
-                  </View>
-                </View>
-                <View style={styles.statsContainer}>
-                  <View style={styles.statCard}>
-                    <Pressable
-                      style={{
-                        justifyContent: "center",
-                        alignItems: "center",
-                      }}
-                    >
-                      <Text style={styles.statValue}>
-                        {statsDeMois?.commandes_en_cours.valeur_commande_en_livraison}
-                      </Text>
-                      <Text style={styles.statLabel}>{"valeur des commandes en cours de livraison (FCFA)"}</Text>
-                    </Pressable>
-                  </View>
-                </View>
-                <View style={styles.statsContainer}>
-                  <View style={styles.statCard}>
-                    <Pressable
-                      style={{
-                        justifyContent: "center",
-                        alignItems: "center",
-                      }}
-                    >
-                      <Text style={styles.statValue}>
-                        {statsDuJour?.commandes_en_cours.valeur_commande_annulees}
-                      </Text>
-                      <Text style={styles.statLabel}>{"valeur des commandes annulées (FCFA)"}</Text>
-                    </Pressable>
-                  </View>
-                </View>
-
-                {/* Comparaison avec période précédente */}
-                <ComparisonCard
-                  comparaison={statsDeMois?.comparaison_periode_precedente}
-                  titre="Comparaison avec mois précédent"
-                />
-
-                {/* Statut des commandes */}
-                <StatusCard
-                  title="État des Commandes"
-                  icon="package-variant-closed"
-                  data={[
-                    { label: "Annulées", value: statsDeMois?.commandes_en_cours.annulees || 0, color: "#6c757d" },
-                    { label: "En livraison", value: statsDeMois?.commandes_en_cours.en_livraison || 0, color: "#FFA502" },
-                    { label: "En cours", value: statsDeMois?.commandes_en_cours.en_cours || 0, color: "#FF6B6B" },
-                    { label: "Livrées", value: statsDeMois?.commandes_en_cours.livrees || 0, color: "#26D07C" },
-                    { label: "Total", value: statsDeMois?.commandes_en_cours.total_commande || 0, color: "#4ECDC4" },
-                  ]}
-                />
-
-                {/* Statut du stock */}
-                <StatusCard
-                  title="État du Stock"
-                  icon="warehouse"
-                  data={[
-                    { label: "Total", value: statsDeMois?.produits_stock.total_stock || 0, color: "#4ECDC4" },
-                    { label: "Faible stock", value: statsDeMois?.produits_stock.alerte_faible_stock || 0, color: "#FFA502" },
-                    { label: "Rupture", value: statsDeMois?.produits_stock.rupture_stock || 0, color: "#FF6B6B" },
-                  ]}
-                />
-
-                {/* Graphiques */}
-                <View style={customStyles.chartContainer}>
-                  <View style={customStyles.cardHeader}>
-                    <MaterialCommunityIcons name="chart-pie" size={24} color={COLORS.primary} />
-                    <Text style={customStyles.cardTitle}>Distribution des ventes</Text>
-                  </View>
-                  <View style={{ alignItems: 'center', marginVertical: 12 }}>
-                    <PieChart
-                      data={[
-                        {
-                          name: "Ventes",
-                          population: statsDeMois?.vue_ensemble_ventes.chiffre_affaires || 1,
-                          color: "#FF6B6B",
-                          legendFontColor: "#333",
-                          legendFontSize: 12,
-                        },
-                        {
-                          name: "Marge",
-                          population: statsDeMois?.vue_ensemble_ventes.marge_beneficiaire_estimee || 1,
-                          color: "#FFA502",
-                          legendFontColor: "#333",
-                          legendFontSize: 12,
-                        },
+          {
+            loading ? (<ActivityIndicator size="large" color={COLORS.primary} style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }} />) : (
+              <ScrollView style={styles.content}>
+                {/* Filtres */}
+                <View style={styles.filters}>
+                  {filters.map((f) => (
+                    <TouchableOpacity
+                      key={f}
+                      style={[
+                        styles.filterBtn,
+                        filter === f && styles.filterBtnActive,
                       ]}
-                      width={screenwidth - 50}
-                      height={280}
-                      chartConfig={{
-                        backgroundColor: "#fff",
-                        backgroundGradientFrom: "#fff",
-                        backgroundGradientTo: "#f9f9f9",
-                        decimalPlaces: 2,
-                        color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-                        style: { borderRadius: 8 },
-                      }}
-                      style={{ marginVertical: 0, borderRadius: 8 }}
-                      accessor="population"
-                      backgroundColor="transparent"
-                      paddingLeft="35"
-                    />
-                  </View>
+                      onPress={() => setFilter(f)}
+                    >
+                      <Text
+                        style={filter === f ? styles.filterTextActive : undefined}
+                      >
+                        {f}
+                      </Text>
+                    </TouchableOpacity>
+                  ))}
                 </View>
 
-                {/* Top produits mois */}
-                <View style={customStyles.chartContainer}>
-                  <View style={customStyles.cardHeader}>
-                    <MaterialCommunityIcons name="medal" size={24} color="#FFD700" />
-                    <Text style={customStyles.cardTitle}>Top produits du mois</Text>
-                  </View>
-                  {statsDeMois?.vue_ensemble_ventes.produits_plus_vendus && statsDeMois.vue_ensemble_ventes.produits_plus_vendus.length > 0 ? (
-                    statsDeMois?.vue_ensemble_ventes.produits_plus_vendus.slice(0, 3).map((p, idx) => (
-                      <TopProductItem key={idx} index={idx} product={p} />
-                    ))
-                  ) : (
-                    <Text style={customStyles.emptyText}>
-                      Aucun produit vendu ce mois
-                    </Text>
-                  )}
-                </View>
-              </>
-            )}
-          </ScrollView>
+                {filter === "Aujourd'hui" ? (
+                  <>
+                    {/* Statistiques du jour - Vue ensemble ventes */}
+                    <View style={styles.statsContainer}>
+                      <View style={styles.statCard}>
+                        <Pressable
+                          style={{
+                            justifyContent: "center",
+                            alignItems: "center",
+                          }}
+                        >
+                          <Text style={styles.statValue}>
+                            {statsDuJour?.vue_ensemble_ventes.chiffre_affaires}
+                          </Text>
+                          <Text style={styles.statLabel}>{"Chiffre d'affaire (FCFA)"}</Text>
+                        </Pressable>
+                      </View>
+
+                      <View style={styles.statCard}>
+                        <Pressable
+                          style={{
+                            justifyContent: "center",
+                            alignItems: "center",
+                          }}
+                        >
+                          <Text style={styles.statValue}>
+                            {statsDuJour?.vue_ensemble_ventes.nombre_ventes}
+                          </Text>
+                          <Text style={styles.statLabel}>
+                            {"Total ventes et commandes"}
+                          </Text>
+                        </Pressable>
+                      </View>
+                    </View>
+                    <View style={styles.statsContainer}>
+                      <View style={styles.statCard}>
+                        <Pressable
+                          style={{
+                            justifyContent: "center",
+                            alignItems: "center",
+                          }}
+                        >
+                          <Text style={styles.statValue}>
+                            {statsDuJour?.vue_ensemble_ventes.marge_beneficiaire_estimee}
+                          </Text>
+                          <Text style={styles.statLabel}>{"Marge Béneficiaire (FCFA)"}</Text>
+                        </Pressable>
+                      </View>
+                      <View style={styles.statCard}>
+                        <Pressable
+                          style={{
+                            justifyContent: "center",
+                            alignItems: "center",
+                          }}
+                        >
+                          <Text style={styles.statValue}>
+                            {statsDuJour?.clients.nouveaux_clients}
+                          </Text>
+                          <Text style={styles.statLabel}>{"Nouveaux clients"}</Text>
+                        </Pressable>
+                      </View>
+                    </View>
+                    <View style={styles.statsContainer}>
+                      <View style={styles.statCard}>
+                        <Pressable
+                          style={{
+                            justifyContent: "center",
+                            alignItems: "center",
+                          }}
+                        >
+                          <Text style={styles.statValue}>
+                            {statsDuJour?.commandes_en_cours.valeur_commande_en_cours}
+                          </Text>
+                          <Text style={styles.statLabel}>{"Valeur des commandes en cours (FCFA)"}</Text>
+                        </Pressable>
+                      </View>
+                    </View>
+                    <View style={styles.statsContainer}>
+                      <View style={styles.statCard}>
+                        <Pressable
+                          style={{
+                            justifyContent: "center",
+                            alignItems: "center",
+                          }}
+                        >
+                          <Text style={styles.statValue}>
+                            {statsDuJour?.commandes_en_cours.valeur_commande_en_livraison}
+                          </Text>
+                          <Text style={styles.statLabel}>{"valeur des commandes en cours de livraison (FCFA)"}</Text>
+                        </Pressable>
+                      </View>
+                    </View>
+                    <View style={styles.statsContainer}>
+                      <View style={styles.statCard}>
+                        <Pressable
+                          style={{
+                            justifyContent: "center",
+                            alignItems: "center",
+                          }}
+                        >
+                          <Text style={styles.statValue}>
+                            {statsDuJour?.commandes_en_cours.valeur_commande_annulees}
+                          </Text>
+                          <Text style={styles.statLabel}>{"Valeur des commandes annulées (FCFA)"}</Text>
+                        </Pressable>
+                      </View>
+                    </View>
+
+                    {/* Comparaison avec période précédente */}
+                    <ComparisonCard
+                      comparaison={statsDuJour?.comparaison_periode_precedente}
+                      titre="Comparaison avec hier"
+                    />
+
+                    {/* Statut des commandes */}
+                    <StatusCard
+                      title="État des Commandes"
+                      icon="package-variant-closed"
+                      data={[
+                        { label: "Annulées", value: statsDuJour?.commandes_en_cours.annulees || 0, color: "#6c757d" },
+                        { label: "En livraison", value: statsDuJour?.commandes_en_cours.en_livraison || 0, color: "#FFA502" },
+                        { label: "En cours", value: statsDuJour?.commandes_en_cours.en_cours || 0, color: "#FF6B6B" },
+                        { label: "Livrées", value: statsDuJour?.commandes_en_cours.livrees || 0, color: "#26D07C" },
+                        { label: "Total", value: statsDuJour?.commandes_en_cours.total_commande || 0, color: "#4ECDC4" },
+                      ]}
+                    />
+
+                    {/* Statut du stock */}
+                    <StatusCard
+                      title="État du Stock"
+                      icon="warehouse"
+                      data={[
+                        { label: "Total", value: statsDuJour?.produits_stock.total_stock || 0, color: "#4ECDC4" },
+                        { label: "Faible stock", value: statsDuJour?.produits_stock.alerte_faible_stock || 0, color: "#FFA502" },
+                        { label: "Rupture", value: statsDuJour?.produits_stock.rupture_stock || 0, color: "#FF6B6B" },
+                      ]}
+                    />
+
+                    {/* Graphiques des ventes */}
+                    <View style={customStyles.chartContainer}>
+                      <View style={customStyles.cardHeader}>
+                        <MaterialCommunityIcons name="chart-bar" size={24} color={COLORS.primary} />
+                        <Text style={customStyles.cardTitle}>Statistiques des ventes</Text>
+                      </View>
+                      <View>
+                        <BarChart
+                          data={dataJourVente}
+                          width={screenwidth - 50}
+                          height={280}
+                          yAxisLabel=""
+                          yAxisSuffix=""
+                          chartConfig={{
+                            backgroundColor: "#fff",
+                            backgroundGradientFrom: "#fff",
+                            backgroundGradientTo: "#f9f9f9",
+                            decimalPlaces: 0,
+                            color: (opacity = 1) => `rgba(0, 47, 85, ${opacity})`,
+                            labelColor: (opacity = 1) =>
+                              `rgba(50, 50, 50, ${opacity})`,
+                            style: { borderRadius: 8 },
+                            barPercentage: 0.7,
+                          }}
+                          style={{ marginVertical: 12, borderRadius: 8 }}
+                        />
+                      </View>
+                    </View>
+
+
+                    {/* Graphiques des ventes */}
+                    <View style={customStyles.chartContainer}>
+                      <View style={customStyles.cardHeader}>
+                        <MaterialCommunityIcons name="chart-bar" size={24} color={COLORS.primary} />
+                        <Text style={customStyles.cardTitle}>Statistiques des clients</Text>
+                      </View>
+                      <View>
+                        <BarChart
+                          data={dataJourClient}
+                          width={screenwidth - 50}
+                          height={280}
+                          yAxisLabel=""
+                          yAxisSuffix=""
+                          chartConfig={{
+                            backgroundColor: "#fff",
+                            backgroundGradientFrom: "#fff",
+                            backgroundGradientTo: "#f9f9f9",
+                            decimalPlaces: 0,
+                            color: (opacity = 1) => `rgba(255, 107, 107, ${opacity})`,
+                            labelColor: (opacity = 1) =>
+                              `rgba(50, 50, 50, ${opacity})`,
+                            style: { borderRadius: 8 },
+                            barPercentage: 0.7,
+                          }}
+                          style={{ marginVertical: 12, borderRadius: 8 }}
+                        />
+                      </View>
+                    </View>
+
+                    {/* Top produits du jour */}
+                    <View style={customStyles.chartContainer}>
+                      <View style={customStyles.cardHeader}>
+                        <MaterialCommunityIcons name="medal" size={24} color="#FFD700" />
+                        <Text style={customStyles.cardTitle}>Top produits vendus</Text>
+                      </View>
+                      {statsDuJour?.vue_ensemble_ventes.produits_plus_vendus && statsDuJour.vue_ensemble_ventes.produits_plus_vendus.length > 0 ? (
+                        statsDuJour?.vue_ensemble_ventes.produits_plus_vendus.slice(0, 3).map((p, idx) => (
+                          <TopProductItem key={idx} index={idx} product={p} />
+                        ))
+                      ) : (
+                        <Text style={customStyles.emptyText}>
+                          Aucun produit vendu aujourd'hui
+                        </Text>
+                      )}
+                    </View>
+                  </>
+                ) : filter === "Semaine" ? (
+                  <>
+                    {/* Statistiques de la semaine */}
+                    <View style={styles.statsContainer}>
+                      <View style={styles.statCard}>
+                        <Pressable
+                          style={{
+                            justifyContent: "center",
+                            alignItems: "center",
+                          }}
+                        >
+                          <Text style={styles.statValue}>
+                            {statsDeSemaine?.vue_ensemble_ventes.chiffre_affaires}
+                          </Text>
+                          <Text style={styles.statLabel}>{"Chiffre d'affaire (FCFA)"}</Text>
+                        </Pressable>
+                      </View>
+
+                      <View style={styles.statCard}>
+                        <Pressable
+                          style={{
+                            justifyContent: "center",
+                            alignItems: "center",
+                          }}
+                        >
+                          <Text style={styles.statValue}>
+                            {statsDeSemaine?.vue_ensemble_ventes.nombre_ventes}
+                          </Text>
+                          <Text style={styles.statLabel}>
+                            {"Total ventes et commandes"}
+                          </Text>
+                        </Pressable>
+                      </View>
+                    </View>
+                    <View style={styles.statsContainer}>
+                      <View style={styles.statCard}>
+                        <Pressable
+                          style={{
+                            justifyContent: "center",
+                            alignItems: "center",
+                          }}
+                        >
+                          <Text style={styles.statValue}>
+                            {statsDeSemaine?.vue_ensemble_ventes.marge_beneficiaire_estimee}
+                          </Text>
+                          <Text style={styles.statLabel}>{"Marge Béneficiaire (FCFA)"}</Text>
+                        </Pressable>
+                      </View>
+                      <View style={styles.statCard}>
+                        <Pressable
+                          style={{
+                            justifyContent: "center",
+                            alignItems: "center",
+                          }}
+                        >
+                          <Text style={styles.statValue}>
+                            {statsDeSemaine?.clients.nouveaux_clients}
+                          </Text>
+                          <Text style={styles.statLabel}>{"Nouveaux clients"}</Text>
+                        </Pressable>
+                      </View>
+                    </View>
+                    <View style={styles.statsContainer}>
+                      <View style={styles.statCard}>
+                        <Pressable
+                          style={{
+                            justifyContent: "center",
+                            alignItems: "center",
+                          }}
+                        >
+                          <Text style={styles.statValue}>
+                            {statsDeSemaine?.commandes_en_cours.valeur_commande_en_cours}
+                          </Text>
+                          <Text style={styles.statLabel}>{"Valeur des commandes en cours (FCFA)"}</Text>
+                        </Pressable>
+                      </View>
+                    </View>
+                    <View style={styles.statsContainer}>
+                      <View style={styles.statCard}>
+                        <Pressable
+                          style={{
+                            justifyContent: "center",
+                            alignItems: "center",
+                          }}
+                        >
+                          <Text style={styles.statValue}>
+                            {statsDeSemaine?.commandes_en_cours.valeur_commande_en_livraison}
+                          </Text>
+                          <Text style={styles.statLabel}>{"valeur des commandes en cours de livraison (FCFA)"}</Text>
+                        </Pressable>
+                      </View>
+                    </View>
+                    <View style={styles.statsContainer}>
+                      <View style={styles.statCard}>
+                        <Pressable
+                          style={{
+                            justifyContent: "center",
+                            alignItems: "center",
+                          }}
+                        >
+                          <Text style={styles.statValue}>
+                            {statsDuJour?.commandes_en_cours.valeur_commande_annulees}
+                          </Text>
+                          <Text style={styles.statLabel}>{"valeur des commandes annulées (FCFA)"}</Text>
+                        </Pressable>
+                      </View>
+                    </View>
+
+                    {/* Comparaison avec période précédente */}
+                    <ComparisonCard
+                      comparaison={statsDeSemaine?.comparaison_periode_precedente}
+                      titre="Comparaison avec semaine précédente"
+                    />
+
+                    {/* Statut des commandes */}
+                    <StatusCard
+                      title="État des Commandes"
+                      icon="package-variant-closed"
+                      data={[
+                        { label: "Annulées", value: statsDeSemaine?.commandes_en_cours.annulees || 0, color: "#6c757d" },
+                        { label: "En livraison", value: statsDeSemaine?.commandes_en_cours.en_livraison || 0, color: "#FFA502" },
+                        { label: "En cours", value: statsDeSemaine?.commandes_en_cours.en_cours || 0, color: "#FF6B6B" },
+                        { label: "Livrées", value: statsDeSemaine?.commandes_en_cours.livrees || 0, color: "#26D07C" },
+                        { label: "Total", value: statsDeSemaine?.commandes_en_cours.total_commande || 0, color: "#4ECDC4" },
+                      ]}
+                    />
+
+                    {/* Statut du stock */}
+                    <StatusCard
+                      title="État du Stock"
+                      icon="warehouse"
+                      data={[
+                        { label: "Total", value: statsDeSemaine?.produits_stock.total_stock || 0, color: "#4ECDC4" },
+                        { label: "Faible stock", value: statsDeSemaine?.produits_stock.alerte_faible_stock || 0, color: "#FFA502" },
+                        { label: "Rupture", value: statsDeSemaine?.produits_stock.rupture_stock || 0, color: "#FF6B6B" },
+                      ]}
+                    />
+
+                    {/* Graphiques */}
+                    <View style={customStyles.chartContainer}>
+                      <View style={customStyles.cardHeader}>
+                        <MaterialCommunityIcons name="chart-line" size={24} color={COLORS.primary} />
+                        <Text style={customStyles.cardTitle}>Performance du chiffre d'affaire</Text>
+                      </View>
+                      <View>
+                        <LineChart
+                          data={{
+                            labels: ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"],
+                            datasets: [
+                              {
+                                data: [
+                                  Math.random() * (statsDeSemaine?.vue_ensemble_ventes.chiffre_affaires || 1000),
+                                  Math.random() * (statsDeSemaine?.vue_ensemble_ventes.chiffre_affaires || 1000),
+                                  Math.random() * (statsDeSemaine?.vue_ensemble_ventes.chiffre_affaires || 1000),
+                                  Math.random() * (statsDeSemaine?.vue_ensemble_ventes.chiffre_affaires || 1000),
+                                  Math.random() * (statsDeSemaine?.vue_ensemble_ventes.chiffre_affaires || 1000),
+                                  Math.random() * (statsDeSemaine?.vue_ensemble_ventes.chiffre_affaires || 1000),
+                                  statsDeSemaine?.vue_ensemble_ventes.chiffre_affaires || 1000,
+                                ],
+                              },
+                            ],
+                          }}
+                          width={screenwidth - 50}
+                          height={280}
+                          yAxisLabel=""
+                          yAxisSuffix=""
+                          chartConfig={{
+                            backgroundColor: "#fff",
+                            backgroundGradientFrom: "#fff",
+                            backgroundGradientTo: "#f9f9f9",
+                            decimalPlaces: 0,
+                            color: (opacity = 1) => `rgba(76, 205, 196, ${opacity})`,
+                            labelColor: (opacity = 1) =>
+                              `rgba(50, 50, 50, ${opacity})`,
+                            style: { borderRadius: 8 },
+                            propsForDots: {
+                              r: "6",
+                              strokeWidth: "2",
+                              stroke: "#4ECDC4"
+                            }
+                          }}
+                          style={{ marginVertical: 12, borderRadius: 8 }}
+                        />
+                      </View>
+                    </View>
+
+                    {/* Top produits semaine */}
+                    <View style={customStyles.chartContainer}>
+                      <View style={customStyles.cardHeader}>
+                        <MaterialCommunityIcons name="medal" size={24} color="#FFD700" />
+                        <Text style={customStyles.cardTitle}>Top produits de la semaine</Text>
+                      </View>
+                      {statsDeSemaine?.vue_ensemble_ventes.produits_plus_vendus && statsDeSemaine.vue_ensemble_ventes.produits_plus_vendus.length > 0 ? (
+                        statsDeSemaine?.vue_ensemble_ventes.produits_plus_vendus.slice(0, 3).map((p, idx) => (
+                          <TopProductItem key={idx} index={idx} product={p} />
+                        ))
+                      ) : (
+                        <Text style={customStyles.emptyText}>
+                          Aucun produit vendu cette semaine
+                        </Text>
+                      )}
+                    </View>
+                  </>
+                ) : (
+                  <>
+                    {/* Statistiques du mois */}
+                    <View style={styles.statsContainer}>
+                      <View style={styles.statCard}>
+                        <Pressable
+                          style={{
+                            justifyContent: "center",
+                            alignItems: "center",
+                          }}
+                        >
+                          <Text style={styles.statValue}>
+                            {statsDeMois?.vue_ensemble_ventes.chiffre_affaires}
+                          </Text>
+                          <Text style={styles.statLabel}>{"Chiffre d'affaire (FCFA)"}</Text>
+                        </Pressable>
+                      </View>
+
+                      <View style={styles.statCard}>
+                        <Pressable
+                          style={{
+                            justifyContent: "center",
+                            alignItems: "center",
+                          }}
+                        >
+                          <Text style={styles.statValue}>
+                            {statsDeMois?.vue_ensemble_ventes.nombre_ventes}
+                          </Text>
+                          <Text style={styles.statLabel}>
+                            {"Total ventes et commandes"}
+                          </Text>
+                        </Pressable>
+                      </View>
+                    </View>
+                    <View style={styles.statsContainer}>
+                      <View style={styles.statCard}>
+                        <Pressable
+                          style={{
+                            justifyContent: "center",
+                            alignItems: "center",
+                          }}
+                        >
+                          <Text style={styles.statValue}>
+                            {statsDeMois?.vue_ensemble_ventes.marge_beneficiaire_estimee}
+                          </Text>
+                          <Text style={styles.statLabel}>{"Marge Béneficiaire (FCFA)"}</Text>
+                        </Pressable>
+                      </View>
+                      <View style={styles.statCard}>
+                        <Pressable
+                          style={{
+                            justifyContent: "center",
+                            alignItems: "center",
+                          }}
+                        >
+                          <Text style={styles.statValue}>
+                            {statsDeMois?.clients.nouveaux_clients}
+                          </Text>
+                          <Text style={styles.statLabel}>{"Nouveaux clients"}</Text>
+                        </Pressable>
+                      </View>
+                    </View>
+                    <View style={styles.statsContainer}>
+                      <View style={styles.statCard}>
+                        <Pressable
+                          style={{
+                            justifyContent: "center",
+                            alignItems: "center",
+                          }}
+                        >
+                          <Text style={styles.statValue}>
+                            {statsDeMois?.commandes_en_cours.valeur_commande_en_cours}
+                          </Text>
+                          <Text style={styles.statLabel}>{"Valeur des commandes en cours (FCFA)"}</Text>
+                        </Pressable>
+                      </View>
+                    </View>
+                    <View style={styles.statsContainer}>
+                      <View style={styles.statCard}>
+                        <Pressable
+                          style={{
+                            justifyContent: "center",
+                            alignItems: "center",
+                          }}
+                        >
+                          <Text style={styles.statValue}>
+                            {statsDeMois?.commandes_en_cours.valeur_commande_en_livraison}
+                          </Text>
+                          <Text style={styles.statLabel}>{"valeur des commandes en cours de livraison (FCFA)"}</Text>
+                        </Pressable>
+                      </View>
+                    </View>
+                    <View style={styles.statsContainer}>
+                      <View style={styles.statCard}>
+                        <Pressable
+                          style={{
+                            justifyContent: "center",
+                            alignItems: "center",
+                          }}
+                        >
+                          <Text style={styles.statValue}>
+                            {statsDuJour?.commandes_en_cours.valeur_commande_annulees}
+                          </Text>
+                          <Text style={styles.statLabel}>{"valeur des commandes annulées (FCFA)"}</Text>
+                        </Pressable>
+                      </View>
+                    </View>
+
+                    {/* Comparaison avec période précédente */}
+                    <ComparisonCard
+                      comparaison={statsDeMois?.comparaison_periode_precedente}
+                      titre="Comparaison avec mois précédent"
+                    />
+
+                    {/* Statut des commandes */}
+                    <StatusCard
+                      title="État des Commandes"
+                      icon="package-variant-closed"
+                      data={[
+                        { label: "Annulées", value: statsDeMois?.commandes_en_cours.annulees || 0, color: "#6c757d" },
+                        { label: "En livraison", value: statsDeMois?.commandes_en_cours.en_livraison || 0, color: "#FFA502" },
+                        { label: "En cours", value: statsDeMois?.commandes_en_cours.en_cours || 0, color: "#FF6B6B" },
+                        { label: "Livrées", value: statsDeMois?.commandes_en_cours.livrees || 0, color: "#26D07C" },
+                        { label: "Total", value: statsDeMois?.commandes_en_cours.total_commande || 0, color: "#4ECDC4" },
+                      ]}
+                    />
+
+                    {/* Statut du stock */}
+                    <StatusCard
+                      title="État du Stock"
+                      icon="warehouse"
+                      data={[
+                        { label: "Total", value: statsDeMois?.produits_stock.total_stock || 0, color: "#4ECDC4" },
+                        { label: "Faible stock", value: statsDeMois?.produits_stock.alerte_faible_stock || 0, color: "#FFA502" },
+                        { label: "Rupture", value: statsDeMois?.produits_stock.rupture_stock || 0, color: "#FF6B6B" },
+                      ]}
+                    />
+
+                    {/* Graphiques */}
+                    <View style={customStyles.chartContainer}>
+                      <View style={customStyles.cardHeader}>
+                        <MaterialCommunityIcons name="chart-pie" size={24} color={COLORS.primary} />
+                        <Text style={customStyles.cardTitle}>Distribution des ventes</Text>
+                      </View>
+                      <View style={{ alignItems: 'center', marginVertical: 12 }}>
+                        <PieChart
+                          data={[
+                            {
+                              name: "Ventes",
+                              population: statsDeMois?.vue_ensemble_ventes.chiffre_affaires || 1,
+                              color: "#FF6B6B",
+                              legendFontColor: "#333",
+                              legendFontSize: 12,
+                            },
+                            {
+                              name: "Marge",
+                              population: statsDeMois?.vue_ensemble_ventes.marge_beneficiaire_estimee || 1,
+                              color: "#FFA502",
+                              legendFontColor: "#333",
+                              legendFontSize: 12,
+                            },
+                          ]}
+                          width={screenwidth - 50}
+                          height={280}
+                          chartConfig={{
+                            backgroundColor: "#fff",
+                            backgroundGradientFrom: "#fff",
+                            backgroundGradientTo: "#f9f9f9",
+                            decimalPlaces: 2,
+                            color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+                            style: { borderRadius: 8 },
+                          }}
+                          style={{ marginVertical: 0, borderRadius: 8 }}
+                          accessor="population"
+                          backgroundColor="transparent"
+                          paddingLeft="35"
+                        />
+                      </View>
+                    </View>
+
+                    {/* Top produits mois */}
+                    <View style={customStyles.chartContainer}>
+                      <View style={customStyles.cardHeader}>
+                        <MaterialCommunityIcons name="medal" size={24} color="#FFD700" />
+                        <Text style={customStyles.cardTitle}>Top produits du mois</Text>
+                      </View>
+                      {statsDeMois?.vue_ensemble_ventes.produits_plus_vendus && statsDeMois.vue_ensemble_ventes.produits_plus_vendus.length > 0 ? (
+                        statsDeMois?.vue_ensemble_ventes.produits_plus_vendus.slice(0, 3).map((p, idx) => (
+                          <TopProductItem key={idx} index={idx} product={p} />
+                        ))
+                      ) : (
+                        <Text style={customStyles.emptyText}>
+                          Aucun produit vendu ce mois
+                        </Text>
+                      )}
+                    </View>
+                  </>
+                )}
+              </ScrollView>
+            )
+          }
+
+
         </View>
       </SafeAreaView>
     </SafeAreaProvider>

@@ -103,12 +103,10 @@ export default function ProfilUtilisateur() {
           const resizedUri = await resizeAndCompressImage(uri);
           setImage(resizedUri);
         } catch (e: any) {
-          console.error("Erreur lors du redimensionnement:", e);
           Alert.alert("Erreur", "Impossible de traiter l'image sélectionnée");
         }
       }
     } catch (e: any) {
-      console.error("Erreur ImagePicker:", e);
       Alert.alert("Erreur", e?.message || "Impossible de choisir l'image");
     } finally {
       setLoading(false); 
@@ -209,7 +207,6 @@ export default function ProfilUtilisateur() {
         Alert.alert("Succès", "Informations mises à jour");
       }
     } catch (error: any) {
-        console.error("Erreur dans la fonction sauvegarder profil:", error);
 
       if (error.response) {
         const status = error.response.status;

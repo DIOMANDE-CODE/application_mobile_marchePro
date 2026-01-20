@@ -192,6 +192,33 @@ export const stylesCss = StyleSheet.create({
     color: COLORS.primaryDark,
   },
 
+
+
+  // === Style des boutons ajouter et retirer dans le panier ===
+  Addbtn: {
+    backgroundColor: "#002f55",
+    paddingVertical: 7,          // espace haut/bas
+    paddingHorizontal: 20,        // espace gauche/droite
+    borderRadius: 8,              // coins arrondis
+    marginVertical: 10,            // espace entre les boutons
+    marginHorizontal: 4,         // espace entre les boutons
+    alignItems: "center",         // centre le texte
+  },
+  Removebtn: {
+    backgroundColor: "#dc3545",
+    paddingVertical: 7,          // espace haut/bas
+    paddingHorizontal: 20,        // espace gauche/droite
+    borderRadius: 8,              // coins arrondis
+    marginVertical: 10,            // espace entre les boutons
+    alignItems: "center",         // centre le texte
+  },
+  AddRemovbtnText: {
+    color: "#fff",                // texte blanc
+    fontSize: 16,
+    fontWeight: "bold",
+    textAlign: "center",
+  },
+
   // === Statistiques ===
   statsContainer: {
     flexDirection: "row",

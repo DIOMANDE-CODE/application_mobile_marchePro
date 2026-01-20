@@ -87,7 +87,6 @@ export default function PageConnexion() {
         setErrorPassword("");
       }
     } catch (error: any) {
-        console.error("Erreur dans connexion_utilisateur:", error);
 
       if (error.response) {
         const status = error.response.status;

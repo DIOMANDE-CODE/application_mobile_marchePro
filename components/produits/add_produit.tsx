@@ -193,7 +193,6 @@ export default function AjoutNouveauProduit({
         setImage("");
       }
     } catch (error: any) {
-        console.error("Erreur dans ajouterProduit:", error);
 
       if (error.response) {
         const status = error.response.status;

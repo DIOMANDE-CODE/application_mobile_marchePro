@@ -2,7 +2,7 @@ import api from "@/services/api";
 import { COLORS, stylesCss } from "@/styles/styles";
 import { Ionicons } from "@expo/vector-icons";
 import { useCallback, useEffect, useState } from "react";
-import { ActivityIndicator, Alert, Pressable, Text, View } from "react-native";
+import { ActivityIndicator, Alert, Pressable, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
 // import des composants
@@ -25,7 +25,7 @@ type Vente = {
   identifiant_vente: string;
   id: string;
   client: Client;
-  details_ventes: DetailVente[]; 
+  details_ventes: DetailVente[];
   total_ttc: number;
 }
 
@@ -38,23 +38,24 @@ export default function Ventes() {
   const [selectedVenteId, setSelectedVenteId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [loadingVente, setLoadingVente] = useState(false);
-  const [offset,setOffset] = useState(0)
-  const [next,setNext] = useState(null)
-  const limit = 7
+  const [offset, setOffset] = useState(0)
+  const [next, setNext] = useState(null)
+  const limit = 10
 
   // Afficher les ventes
-  const listeVente = async () => {
+  const listeVente = async (customOffset=offset) => {
     if (loadingVente) return;
     setLoadingVente(true)
     try {
       const response = await api.get("/ventes/list/", {
-        params : {limit,offset}
+        params: { limit, offset: customOffset }
       });
       if (response.status === 200) {
         const root = response.data;
         const pagination = root.data
+
         setListeVentes((prev) => {
-          const merged = [...prev,...pagination.results];
+          const merged = [...prev, ...pagination.results];
 
           const unique = merged.filter(
             (item, index, self) =>
@@ -64,11 +65,12 @@ export default function Ventes() {
           );
           return unique;
         });
-        setOffset((prev) => prev + pagination.results.length);
+
+
+        setOffset(customOffset + pagination.results.length);
         setNext(pagination.next);
       }
     } catch (error: any) {
-        console.error("Erreur dans listeVente:", error);
 
       if (error.response) {
         const status = error.response.status;
@@ -85,6 +87,7 @@ export default function Ventes() {
         }
       }
     }
+    setLoadingVente(false)
   };
 
   const afficherDetail = useCallback(
@@ -96,32 +99,19 @@ export default function Ventes() {
   );
 
   const closeDetail = useCallback(() => {
+    refreshPage();
     setShowBill(false);
   }, [setShowBill]);
 
   // Foncton rafraichir la page
-  const refreshPage = () => {
-    setLoading(true);
-    listeVente();
-    setOffset(0)
-    setNext(null)
-    setLoading(false);
+  const refreshPage = async () => {
+    setListeVentes([]);
+    await listeVente(0);
   };
 
   useEffect(() => {
-    setOffset(0)
-    setNext(null)
     listeVente();
   }, [showBill, isVisible]);
-
-  if (loading)
-    return (
-      <ActivityIndicator
-        size="large"
-        color={COLORS.primary}
-        style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-      />
-    );
   return (
     <SafeAreaProvider>
       <SafeAreaView style={{ flex: 1 }}>
@@ -142,13 +132,13 @@ export default function Ventes() {
             <View style={styles.header}>
               <Text style={styles.headerTitle}>Ventes</Text>
               <View style={styles.headerActions}>
-                <Pressable style={styles.iconBtn} onPress={refreshPage}>
+                <TouchableOpacity style={styles.iconBtn} onPress={refreshPage}>
                   <Ionicons
                     name="reload-circle"
                     size={35}
                     color={COLORS.light}
                   />
-                </Pressable>
+                </TouchableOpacity>
                 <Pressable
                   style={styles.iconBtn}
                   onPress={() => setIsVisible(!isVisible)}
@@ -157,11 +147,21 @@ export default function Ventes() {
                 </Pressable>
               </View>
             </View>
-            <ListVentes data={listeVentes} onSelectedId={afficherDetail} onEndReached = {() => {
-              if (!loadingVente && next){
-                listeVente()
-              } 
-            }} />
+            {
+              loading ? (<ActivityIndicator
+                size="large"
+                color={COLORS.primary} style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
+              />
+              ) : (
+                <ListVentes data={listeVentes} onSelectedId={afficherDetail} onEndReached={() => {
+                  if (!loadingVente && next) {
+                    listeVente()
+                  }
+                }} />
+              )
+            }
+          
+
           </View>
         )}
       </SafeAreaView>

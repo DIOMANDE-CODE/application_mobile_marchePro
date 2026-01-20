@@ -22,7 +22,7 @@ interface Produit {
   quantite_produit_disponible: number;
   seuil_alerte_produit: number;
   categorie_produit: Categorie;
-  thumbnail:string;
+  thumbnail: string;
 }
 
 export default function Produits() {
@@ -96,18 +96,10 @@ export default function Produits() {
     listeProduit();
   }, [isVisible, editVisible, idProduit]);
 
-  if (loading)
-    return (
-      <ActivityIndicator
-        size="large"
-        color={COLORS.primary}
-        style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-      />
-    );
   return (
     <SafeAreaProvider>
       <SafeAreaView style={{ flex: 1 }}>
-        <View style={styles.container}> 
+        <View style={styles.container}>
           {/* Header */}
           <View style={styles.header}>
             <Text style={styles.headerTitle}>Gestion des produits</Text>
@@ -139,6 +131,15 @@ export default function Produits() {
           )}
 
           {/* Contenu principal */}
+          {
+            loading && (
+              <ActivityIndicator
+                size="large"
+                color={COLORS.primary}
+                style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+              />
+            )
+          }
           <ListProduits data={produit} onSelectProduit={modifierProduit} onEndReached={() => {
             if (!loadingProduit && next) {
               listeProduit();

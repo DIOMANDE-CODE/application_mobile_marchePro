@@ -68,7 +68,6 @@ export default function EditClient({
         Alert.alert("Succès", "Modification effectuée");
       }
     } catch (error: any) {
-        console.error("Erreur dans modifierClient:", error);
 
       if (error.response) {
         const status = error.response.status;

@@ -68,7 +68,6 @@ export default function AjoutNouveauClient({
         onClose();
       }
     } catch (error: any) {
-        console.error("Erreur dans ajouterNouveauClient:", error);
 
       if (error.response) {
         const status = error.response.status;

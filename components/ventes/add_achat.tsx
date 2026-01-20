@@ -34,7 +34,7 @@ type Produit = {
   quantite_produit_disponible: number;
   seuil_alerte_produit: number;
   categorie_produit: Categorie;
-  thumbnail:string
+  thumbnail: string
 };
 
 type Cart = {
@@ -123,7 +123,6 @@ export default function AjoutNouveauAchat({
         setNext(pagination.next);
       }
     } catch (error: any) {
-      console.error("Erreur dans listeProduitDisponible:", error);
 
       if (error.response) {
         const status = error.response.status;
@@ -307,25 +306,17 @@ export default function AjoutNouveauAchat({
                   </View>
 
                   <TouchableOpacity
-                    style={[styles.btn, { paddingRight: 1 }]}
+                    style={stylesCss.Addbtn}
                     onPress={() => ajouterProduit(item.identifiant_produit)}
                   >
-                    <Ionicons
-                      name="add-circle"
-                      size={30}
-                      color={COLORS.primaryDark}
-                    />
+                    <Text style={stylesCss.AddRemovbtnText}>Ajouter</Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity
-                    style={styles.btn}
+                    style={stylesCss.Removebtn}
                     onPress={() => retirerProduit(item.identifiant_produit)}
                   >
-                    <Ionicons
-                      name="remove-circle"
-                      size={30}
-                      color={COLORS.danger}
-                    />
+                    <Text style={stylesCss.AddRemovbtnText}>Retirer</Text>
                   </TouchableOpacity>
                 </View>
               )}
@@ -463,3 +454,4 @@ export default function AjoutNouveauAchat({
 }
 
 const styles = stylesCss;
+

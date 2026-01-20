@@ -1,6 +1,6 @@
 import { stylesCss } from "@/styles/styles";
 import { formatMoneyFR } from "@/utils/moneyFormat";
-import { memo, useCallback, useMemo, useState } from "react";
+import { memo, useMemo, useState } from "react";
 import { FlatList, Pressable, Text, TextInput, View } from "react-native";
 
 // import des composants
@@ -29,9 +29,8 @@ const ListCommandes = ({ data, onSelectedId, onEndReached }: ListVentesProps) =>
 
     const [searchQuery, setSearchQuery] = useState("")
 
-    const renderItem = useCallback(({ item }: { item: Commande }) => (
+    const renderItem = ({ item }: { item: Commande }) => (
         <>
-
             <Pressable onPress={() => onSelectedId(item.identifiant_commande)}>
                 <View style={styles.saleItem}>
                     <View style={styles.saleInfo}>
@@ -73,7 +72,7 @@ const ListCommandes = ({ data, onSelectedId, onEndReached }: ListVentesProps) =>
                 </View>
             </Pressable>
         </>
-    ), [onSelectedId])
+    );
 
     // Filtre des commandes
     const filteredData = useMemo(() => {
@@ -92,6 +91,7 @@ const ListCommandes = ({ data, onSelectedId, onEndReached }: ListVentesProps) =>
         <FlatList
             style={styles.content}
             data={filteredData}
+
             initialNumToRender={5} // évite de tout charger d’un coup
             windowSize={21} // limite le nombre d’éléments gardés en mémoire
             removeClippedSubviews={true} // nettoie les vues invisibles

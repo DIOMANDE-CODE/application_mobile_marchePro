@@ -50,7 +50,6 @@ export default function TableauBord() {
         // setProduits(data.data);
       }
     } catch (error: any) {
-        console.error("Erreur dans listPrduitsStockFaible:", error);
 
       if (error.response) {
         const status = error.response.status;
@@ -222,187 +221,197 @@ export default function TableauBord() {
                   </View>
                 </TouchableWithoutFeedback>
               )}
+              {
+                loading ? (
+                  <ActivityIndicator
+                    size="large"
+                    color={COLORS.primary}
+                    style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+                  />
+                ) : (
+                  <ScrollView style={styles.content}>
+                    {/* Section Aujourd'hui */}
+                    <View style={styles.section}>
+                      <Text style={styles.sectionTitle}>
+                        {"Statistiques du jour"}
+                      </Text>
 
-              <ScrollView style={styles.content}>
-                {/* Section Aujourd'hui */}
-                <View style={styles.section}>
-                  <Text style={styles.sectionTitle}>
-                    {"Statistiques du jour"}
-                  </Text>
+                      <View style={styles.statsContainer}>
+                        <View style={styles.statCard}>
+                          <Pressable
+                            style={{
+                              justifyContent: "center",
+                              alignItems: "center",
+                            }}
+                          >
+                            <Text style={styles.statValue}>
+                              {stats?.total_commande_aujourd_hui}
+                            </Text>
+                            <Text style={styles.statLabel}>{"Total des commandes"}</Text>
+                          </Pressable>
+                        </View>
 
-                  <View style={styles.statsContainer}>
-                    <View style={styles.statCard}>
-                      <Pressable
-                        style={{
-                          justifyContent: "center",
-                          alignItems: "center",
-                        }}
-                      >
-                        <Text style={styles.statValue}>
-                          {stats?.total_commande_aujourd_hui}
-                        </Text>
-                        <Text style={styles.statLabel}>{"Total des commandes"}</Text>
-                      </Pressable>
-                    </View>
-
-                    <View style={styles.statCard}>
-                      <Pressable
-                        style={{
-                          justifyContent: "center",
-                          alignItems: "center",
-                        }}
-                      >
-                        <Text style={styles.statValue}>
-                          {stats?.total_commande_annulee_aujourd_hui}
-                        </Text>
-                        <Text style={styles.statLabel}>
-                          {"Commandes annulées"}
-                        </Text>
-                      </Pressable>
-                    </View>
-                  </View>
-                  <View style={styles.statsContainer}>
-                    <View style={styles.statCard}>
-                      <Pressable
-                        style={{
-                          justifyContent: "center",
-                          alignItems: "center",
-                        }}
-                      >
-                        <Text style={styles.statValue}>
-                          {stats?.total_commande_attente_aujourd_hui}
-                        </Text>
-                        <Text style={styles.statLabel}>{"Commandes en attente"}</Text>
-                      </Pressable>
-                    </View>
-                    <View style={styles.statCard}>
-                      <Pressable
-                        style={{
-                          justifyContent: "center",
-                          alignItems: "center",
-                        }}
-                      >
-                        <Text style={styles.statValue}>
-                          {stats?.total_commande_valide_aujourd_hui}
-                        </Text>
-                        <Text style={styles.statLabel}>{"Commandes en livraison"}</Text>
-                      </Pressable>
-                    </View>
-                  </View>
-                  <View style={styles.statsContainer}>
-                    <View style={styles.statCard}>
-                      <Pressable
-                        style={{
-                          justifyContent: "center",
-                          alignItems: "center",
-                        }}
-                      >
-                        <Text style={styles.statValue}>
-                          {stats?.total_commande_livre_aujourd_hui}
-                        </Text>
-                        <Text style={styles.statLabel}>{"Commandes livrées"}</Text>
-                      </Pressable>
-                    </View>
-                  </View>
-                  <View style={styles.statsContainer}>
-                    <View style={styles.statCard}>
-                      <Pressable
-                        style={{
-                          justifyContent: "center",
-                          alignItems: "center",
-                        }}
-                      >
-                        <Text style={styles.statValue}>
-                          {stats?.total_caisse_jour}
-                        </Text>
-                        <Text style={styles.statLabel}>{"Total Caisse (FCFA)"}</Text>
-                      </Pressable>
-                    </View>
-                  </View>
-                  <View style={styles.statsContainer}>
-                    <View style={styles.statCard}>
-                      <Pressable
-                        style={{
-                          justifyContent: "center",
-                          alignItems: "center",
-                        }}
-                      >
-                        <Text style={styles.statValue}>
-                          {stats?.total_ventes_commandes_aujourd_hui}
-                        </Text>
-                        <Text style={styles.statLabel}>{"Total caisse commandes (FCFA)"}</Text>
-                      </Pressable>
-                    </View>
-                  </View>
-                  <View style={styles.statsContainer}>
-                    <View style={styles.statCard}>
-                      <Pressable
-                        style={{
-                          justifyContent: "center",
-                          alignItems: "center",
-                        }}
-                      >
-                        <Text style={styles.statValue}>
-                          {stats?.total_ventes_aujourd_hui}
-                        </Text>
-                        <Text style={styles.statLabel}>{"Total caisse vente (FCFA)"}</Text>
-                      </Pressable>
-                    </View>
-                  </View>
-                  <View style={styles.statsContainer}>
-                    <View style={styles.statCard}>
-                      <Pressable
-                        style={{
-                          justifyContent: "center",
-                          alignItems: "center",
-                        }}
-                      >
-                        <Text style={styles.statValue}>
-                          {stats?.nombre_total_vente_aujourd_hui}
-                        </Text>
-                        <Text style={styles.statLabel}>{"Total des ventes effectuées"}</Text>
-                      </Pressable>
-                    </View>
-                  </View>
-
-                  <View style={styles.quickActions}>
-                    <Pressable
-                      style={[styles.btn, styles.btnSuccess]}
-                      onPress={() => router.push("/(tabs)/ventes")}
-                    >
-                      <Text style={styles.btnText}>Voir mes ventes</Text>
-                    </Pressable>
-                    <Pressable
-                      style={[styles.btn, styles.btnPrimary]}
-                      onPress={() => router.push("/(tabs)/commandes")}
-                    >
-                      <Text style={styles.btnText}>Voir mes commandes</Text>
-                    </Pressable>
-                  </View>
-
-                  {stockproduitfaible.length > 0 && (
-                    <View style={[styles.alert, styles.alertWarning]}>
-                      <Ionicons
-                        name="warning-outline"
-                        size={30}
-                        color={COLORS.danger}
-                      />
-
-                      <View>
-                        <Text style={{ fontWeight: "bold" }}>
-                          {stockproduitfaible.length} produit(s) en stock faible
-                          :
-                        </Text>
-                        <Text>
-                          {stockproduitfaible
-                            .map((item: any) => item.produit.nom_produit)
-                            .join(", ")}
-                        </Text>
+                        <View style={styles.statCard}>
+                          <Pressable
+                            style={{
+                              justifyContent: "center",
+                              alignItems: "center",
+                            }}
+                          >
+                            <Text style={styles.statValue}>
+                              {stats?.total_commande_annulee_aujourd_hui}
+                            </Text>
+                            <Text style={styles.statLabel}>
+                              {"Commandes annulées"}
+                            </Text>
+                          </Pressable>
+                        </View>
                       </View>
+                      <View style={styles.statsContainer}>
+                        <View style={styles.statCard}>
+                          <Pressable
+                            style={{
+                              justifyContent: "center",
+                              alignItems: "center",
+                            }}
+                          >
+                            <Text style={styles.statValue}>
+                              {stats?.total_commande_attente_aujourd_hui}
+                            </Text>
+                            <Text style={styles.statLabel}>{"Commandes en attente"}</Text>
+                          </Pressable>
+                        </View>
+                        <View style={styles.statCard}>
+                          <Pressable
+                            style={{
+                              justifyContent: "center",
+                              alignItems: "center",
+                            }}
+                          >
+                            <Text style={styles.statValue}>
+                              {stats?.total_commande_valide_aujourd_hui}
+                            </Text>
+                            <Text style={styles.statLabel}>{"Commandes en livraison"}</Text>
+                          </Pressable>
+                        </View>
+                      </View>
+                      <View style={styles.statsContainer}>
+                        <View style={styles.statCard}>
+                          <Pressable
+                            style={{
+                              justifyContent: "center",
+                              alignItems: "center",
+                            }}
+                          >
+                            <Text style={styles.statValue}>
+                              {stats?.total_commande_livre_aujourd_hui}
+                            </Text>
+                            <Text style={styles.statLabel}>{"Commandes livrées"}</Text>
+                          </Pressable>
+                        </View>
+                      </View>
+                      <View style={styles.statsContainer}>
+                        <View style={styles.statCard}>
+                          <Pressable
+                            style={{
+                              justifyContent: "center",
+                              alignItems: "center",
+                            }}
+                          >
+                            <Text style={styles.statValue}>
+                              {stats?.total_caisse_jour}
+                            </Text>
+                            <Text style={styles.statLabel}>{"Total Caisse (FCFA)"}</Text>
+                          </Pressable>
+                        </View>
+                      </View>
+                      <View style={styles.statsContainer}>
+                        <View style={styles.statCard}>
+                          <Pressable
+                            style={{
+                              justifyContent: "center",
+                              alignItems: "center",
+                            }}
+                          >
+                            <Text style={styles.statValue}>
+                              {stats?.total_ventes_commandes_aujourd_hui}
+                            </Text>
+                            <Text style={styles.statLabel}>{"Total caisse commandes (FCFA)"}</Text>
+                          </Pressable>
+                        </View>
+                      </View>
+                      <View style={styles.statsContainer}>
+                        <View style={styles.statCard}>
+                          <Pressable
+                            style={{
+                              justifyContent: "center",
+                              alignItems: "center",
+                            }}
+                          >
+                            <Text style={styles.statValue}>
+                              {stats?.total_ventes_aujourd_hui}
+                            </Text>
+                            <Text style={styles.statLabel}>{"Total caisse vente (FCFA)"}</Text>
+                          </Pressable>
+                        </View>
+                      </View>
+                      <View style={styles.statsContainer}>
+                        <View style={styles.statCard}>
+                          <Pressable
+                            style={{
+                              justifyContent: "center",
+                              alignItems: "center",
+                            }}
+                          >
+                            <Text style={styles.statValue}>
+                              {stats?.nombre_total_vente_aujourd_hui}
+                            </Text>
+                            <Text style={styles.statLabel}>{"Total des ventes effectuées"}</Text>
+                          </Pressable>
+                        </View>
+                      </View>
+
+                      <View style={styles.quickActions}>
+                        <Pressable
+                          style={[styles.btn, styles.btnSuccess]}
+                          onPress={() => router.push("/(tabs)/ventes")}
+                        >
+                          <Text style={styles.btnText}>Voir mes ventes</Text>
+                        </Pressable>
+                        <Pressable
+                          style={[styles.btn, styles.btnPrimary]}
+                          onPress={() => router.push("/(tabs)/commandes")}
+                        >
+                          <Text style={styles.btnText}>Voir mes commandes</Text>
+                        </Pressable>
+                      </View>
+
+                      {stockproduitfaible.length > 0 && (
+                        <View style={[styles.alert, styles.alertWarning]}>
+                          <Ionicons
+                            name="warning-outline"
+                            size={30}
+                            color={COLORS.danger}
+                          />
+
+                          <View>
+                            <Text style={{ fontWeight: "bold" }}>
+                              {stockproduitfaible.length} produit(s) en stock faible
+                              :
+                            </Text>
+                            <Text>
+                              {stockproduitfaible
+                                .map((item: any) => item.produit.nom_produit)
+                                .join(", ")}
+                            </Text>
+                          </View>
+                        </View>
+                      )}
                     </View>
-                  )}
-                </View>
-              </ScrollView>
+                  </ScrollView>
+                )
+              }
+
             </View>
           </ScrollView>
         </SafeAreaView>
