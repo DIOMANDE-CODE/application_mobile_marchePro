@@ -366,7 +366,7 @@ export default function TableauBord() {
                             <Text style={styles.statValue}>
                               {stats?.nombre_total_vente_aujourd_hui}
                             </Text>
-                            <Text style={styles.statLabel}>{"Total des ventes effectuées"}</Text>
+                            <Text style={styles.statLabel}>{"Total des commandes et ventes effectuées"}</Text>
                           </Pressable>
                         </View>
                       </View>
