@@ -3,7 +3,6 @@ import api from "@/services/api";
 import { COLORS, stylesCss } from "@/styles/styles";
 import { Ionicons } from "@expo/vector-icons";
 import { Picker } from "@react-native-picker/picker";
-import { Image } from "expo-image";
 import * as ImageManipulator from "expo-image-manipulator";
 import * as ImagePicker from "expo-image-picker";
 import { useCallback, useEffect, useState } from "react";
@@ -50,7 +49,6 @@ export default function EditProduit({
   const [listCategorie, setListCategorie] = useState<Categorie[]>([]);
   const [photo, setPhoto] = useState("");
   const [loading, setLoading] = useState(false);
-  const [optimizedImage, setOptimizedImage] = useState<string | null>(null);
 
 
   // Fonction de redimensionnement de l'image
@@ -300,7 +298,7 @@ export default function EditProduit({
                 </Text>
 
                 <ScrollView style={styles.modalBody}>
-                  {image ? (
+                  {/* {image ? (
                     <View style={{ alignItems: "center", marginVertical: 10 }}>
                       <Image
                         cachePolicy="memory-disk"
@@ -316,11 +314,11 @@ export default function EditProduit({
                         cachePolicy="memory-disk"
                         transition={200}
                         contentFit="cover"
-                        source={{ uri: `${process.env.EXPO_PUBLIC_API_IMAGE_URL}${photo}` }}
+                        source={{ uri: `https://res.cloudinary.com/darkqhocp/${photo}` }}
                         style={{ width: 120, height: 120, borderRadius: 10 }}
                       />
                     </View>
-                  ) : null}
+                  ) : null} */}
                   {/* <Text style={styles.label}>Image du produit</Text>
                   <Button title="Choisir une image" onPress={choisirImage} /> */}
 

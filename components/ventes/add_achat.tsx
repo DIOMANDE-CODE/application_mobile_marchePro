@@ -292,7 +292,7 @@ export default function AjoutNouveauAchat({
                   <Image
                     style={styles.productImage}
                     source={{
-                      uri: `${process.env.EXPO_PUBLIC_API_IMAGE_URL}${item.thumbnail}`,
+                      uri: `${item.thumbnail}`,
                     }}
                   />
                   <View style={styles.productInfo}>

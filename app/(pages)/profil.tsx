@@ -314,7 +314,7 @@ export default function ProfilUtilisateur() {
             ) : (
               <Image
                 cachePolicy="disk"
-                source={{ uri: `${process.env.EXPO_PUBLIC_API_IMAGE_URL}${photo}` }}
+                source={{ uri: `${photo}` }}
                 style={{ width: 100, height: 100, borderRadius: 50, marginBottom: 10 }}
               />
             )}

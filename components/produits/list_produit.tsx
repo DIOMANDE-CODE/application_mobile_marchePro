@@ -49,7 +49,7 @@ const ListProduits = ({ data, onSelectProduit, onEndReached }: ListProduitsProps
         transition={200}
         contentFit="cover"
         style={styles.productImage}
-        source={{ uri: `${process.env.EXPO_PUBLIC_API_IMAGE_URL}${item.thumbnail}` }}
+        source={{ uri: `${item.thumbnail}` }}
       />
       <View style={styles.productInfo}>
         <Text>Nom: </Text>
